@@ -15,9 +15,11 @@ Séance n°4 (08/01/2026)
 
 Séance n°5 (09/01/2026)
 - Mise à jour du Journal.
-- Fin du looping.
 - représentation des forêts sur une carte réalisée.
 - recherche de bases de données pouvant être utile.
 
 Séance n°6 (13/01/2026)
--
+- mise en commun des fichiers.
+- Fin du looping.
+- architecture de données.
+
