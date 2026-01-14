@@ -64,7 +64,7 @@ class BaseDeDonnees:
         """
         self.cursor.execute(f"UPDATE FORET"\
                     f"SET {colonne} = {valeur}"\
-                    f"WHERE id_foret = {id_foret}")
+                    f'WHERE "id_foret" = {id_foret}')
         self.connexion.commit()    
     # - /!\ Ne marche pas encore /!\ 
 
