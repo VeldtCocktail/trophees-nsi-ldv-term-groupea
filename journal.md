@@ -23,3 +23,5 @@ Séance n°6 (13/01/2026)
 - Fin du looping.
 - architecture de données.
 
+Travail hors cours de NSI :
+- 14/01/2026 : Léon : début de réalisation du programme pour l'interaction avec la base de données
