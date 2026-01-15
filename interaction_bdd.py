@@ -7,13 +7,13 @@ class BaseDeDonnees:
     def __init__(self, nom_fichier):
         self.connexion = sqlite3.connect(nom_fichier)
         self.curseur = self.connexion.cursor()
-    
+
     def ajouter_ligne(self, table, valeurs):
         """
         Entrees : self:instance de BaseDeDonnees
                   table:str nom de la table
                   valeurs:list liste des valeurs a inserer dans la table
-        Role : ajoute une ligne dans la table specifiee avec les valeurs 
+        Role : ajoute une ligne dans la table specifiee avec les valeurs
                donnees dans valeurs
         Sortie : modifie la base de donnees
         """
@@ -26,9 +26,9 @@ class BaseDeDonnees:
         """
         Entrees : self:instance de BaseDeDonnees
                   table:str nom de la table
-                  identification:tuple(colonne:str, valeur:any) critere de 
+                  identification:tuple(colonne:str, valeur:any) critere de
                           suppression, ex: ("id_foret", 1)
-        Role : supprime une ligne dans la table specifiee correspondant au 
+        Role : supprime une ligne dans la table specifiee correspondant au
                critere
         Sortie : base de donnees indiquee par self modifiee
         """
@@ -44,7 +44,7 @@ class BaseDeDonnees:
                   table:str nom de la table
                   modif:tuple contient (
                   identification:tuple(colonne:str, valeur:any),
-                                 colonne:str, 
+                                 colonne:str,
                                  valeur:any)
         Role : modifie une valeur dans la table specifiee
         Sortie : base de donnees modifiee
@@ -52,21 +52,21 @@ class BaseDeDonnees:
         identification = modif[0]
         colonne_modif = modif[1]
         nouvelle_valeur = modif[2]
-        
+
         colonne_id = identification[0]
         valeur_id = identification[1]
-        
+
         requete = f'''
-            UPDATE {table} 
+            UPDATE {table}
             SET {colonne_modif} = ?
             WHERE {colonne_id} = ?
         '''
         self.curseur.execute(requete, (nouvelle_valeur, valeur_id))
         self.connexion.commit()
 
-# Avant de recommencer quelconque test sur la bdd, penser a reset la/les 
+# Avant de recommencer quelconque test sur la bdd, penser a reset la/les
 # table(s) affectee(s) avant, afin d'eviter des bugs causes non pas par le code
-# mais par l'utilisateur, merci - Léon
+# mais par l'utilisateur, merci - @Onions/Le G.O.A.T. du gambling 🎰
 
 # Test d'ajout de foret
 bdd = BaseDeDonnees("bdd.db")
