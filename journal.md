@@ -25,8 +25,7 @@
 - Fin du looping.
 - architecture de données.
 ### Séance n°7 (15/01/2026)
-- on est tous capable de faire de grande chose même Marius
-
+- base de données
 
 ## Travail hors cours de NSI :
 
