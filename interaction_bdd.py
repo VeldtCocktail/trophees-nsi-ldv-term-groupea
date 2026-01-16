@@ -5,7 +5,9 @@ class BaseDeDonnees:
     Classe permettant l'interaction avec le fichier de base de donnees
     """
     def __init__(self, nom_fichier):
+        # Connexion avec la base de donnees, a l'aide de sqlite3
         self.connexion = sqlite3.connect(nom_fichier)
+        # Creation du curseur, pour pouvoir executer des commandes
         self.curseur = self.connexion.cursor()
 
     def ajouter_ligne(self, table, valeurs):
@@ -17,9 +19,13 @@ class BaseDeDonnees:
                donnees dans valeurs
         Sortie : modifie la base de donnees
         """
+        # Variable temporaire pour le stockage des valeurs a ajouter
         temp = ", ".join(["?" for element in valeurs])
+        # Variable contenant la requete SQL
         requete = f"INSERT INTO {table} VALUES ({temp})"
+        # On "imprime" cette requete
         self.curseur.execute(requete, valeurs)
+        # Et on l'execute
         self.connexion.commit()
 
     def supprimer_ligne(self, table, identification):
@@ -32,10 +38,16 @@ class BaseDeDonnees:
                critere
         Sortie : base de donnees indiquee par self modifiee
         """
+        # Variables pour identifier la/les lignes a supprimer
+        # Il faut que l'attribut dans la colonne colonne
         colonne = identification[0]
+        # Soit egal a valeur
         valeur = identification[1]
+        # Variable contenant la requete SQL
         requete = f"DELETE FROM {table} WHERE {colonne} = ?"
+        # On "imprime" cette requete
         self.curseur.execute(requete, (valeur,))
+        # Et on l'execute
         self.connexion.commit()
 
     def modifier_ligne(self, table, modif):
@@ -49,19 +61,27 @@ class BaseDeDonnees:
         Role : modifie une valeur dans la table specifiee
         Sortie : base de donnees modifiee
         """
-        identification = modif[0]
+        # Dans quelle colonne on doit modifier la variable
         colonne_modif = modif[1]
+        # Et la nouvelle valeur de ce dernier
         nouvelle_valeur = modif[2]
 
+        # Variable pour l'identification de la/des colonnes a modifier
+        identification = modif[0]
+        # D'abord, dans quelle colonne on verifie
         colonne_id = identification[0]
+        # Et a quelle valeur ce doit etre egal
         valeur_id = identification[1]
 
+        # Variable contenant la requete SQL
         requete = f'''
             UPDATE {table}
             SET {colonne_modif} = ?
             WHERE {colonne_id} = ?
         '''
+        # On "imprime" cette requete
         self.curseur.execute(requete, (nouvelle_valeur, valeur_id))
+        # Et on l'execute
         self.connexion.commit()
 
 # Avant de recommencer quelconque test sur la bdd, penser a reset la/les
