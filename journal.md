@@ -26,6 +26,8 @@
 - architecture de données.
 ### Séance n°7 (15/01/2026)
 - base de données
+- augmentation du nombre de forets
+- enregistrements de  la cartes sous forme html
 
 ## Travail hors cours de NSI :
 
