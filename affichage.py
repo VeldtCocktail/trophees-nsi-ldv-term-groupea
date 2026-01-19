@@ -12,7 +12,7 @@ class MainWindow(QMainWindow):
         
         view = QtWebEngineWidgets.QWebEngineView()
         # besoin d'être connecté à Internet pour que la carte folium marche
-        html = Path('carte.html').read_text(encoding="utf8")
+        html = Path("cartes", "carte.html").read_text(encoding="utf8")
         view.setHtml(html)
         self.setCentralWidget(view)
 
