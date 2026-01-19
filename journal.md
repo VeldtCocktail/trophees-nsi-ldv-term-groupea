@@ -1,6 +1,4 @@
-# Journal
-
-## Séances en cours
+# Journal - A COMPLETER A CHAQUE COURS
 
 ### Séance n°1 (15/12/2025) 
 - réflexion sur le choix de l’application.
