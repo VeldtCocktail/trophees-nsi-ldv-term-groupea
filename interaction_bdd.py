@@ -84,6 +84,61 @@ class BaseDeDonnees:
         # Et on l'execute
         self.connexion.commit()
 
+    def rechercher_ligne(self, table, identification):
+        """
+        Entrees : self:instance de BaseDeDonnees
+                  table:str nom de la table
+                  identification:tuple(colonne:str, valeur:any) critere de
+                          recherche, ex: ("id_foret", 1)
+        Role : recherche une ligne dans la table specifiee correspondant au
+               critere
+        Sortie : liste des lignes trouvees
+        """
+        # Variable pour l'identification de la/des colonnes a rechercher
+        identification = identification[0]
+        # D'abord, dans quelle colonne on verifie
+        colonne = identification[0]
+        # Et a quelle valeur ce doit etre egal
+        valeur = identification[1]
+        # Variable contenant la requete SQL
+        requete = f'''
+            SELECT * FROM {table}
+            WHERE {colonne} = ?
+        '''
+        # On "imprime" cette requete
+        self.curseur.execute(requete, (valeur,))
+        # Et on l'execute
+        return self.curseur.fetchall()
+
+    def rechercher_valeur(self, table, identification, colonne_recherchee):
+        """
+        Entrees : self:instance de BaseDeDonnees
+                  table:str nom de la table
+                  identification:tuple(colonne:str, valeur:any) critere de
+                          recherche, ex: ("id_foret", 1)
+                  colonne_recherchee:str nom de la colonne dont on veut
+                          recuperer la valeur
+        Role : recherche une valeur dans la table specifiee correspondant au
+               critere
+        Sortie : liste des valeurs trouvees
+        """
+        # Variable pour l'identification de la/des colonnes a rechercher
+        identification = identification[0]
+        # D'abord, dans quelle colonne on verifie
+        colonne = identification[0]
+        # Et a quelle valeur ce doit etre egal
+        valeur = identification[1]
+        # Variable contenant la requete SQL
+        requete = f'''
+            SELECT {colonne_recherchee} FROM {table} 
+            WHERE {colonne} = ?
+        '''
+        # On "imprime" cette requete
+        self.curseur.execute(requete, (valeur,))
+        # Et on l'execute
+        return self.curseur.fetchall()
+
+        
 # Avant de recommencer quelconque test sur la bdd, penser a reset la/les
 # table(s) affectee(s) avant, afin d'eviter des bugs causes non pas par le code
 # mais par l'utilisateur, merci - @Onions/Le G.O.A.T. du gambling 🎰
