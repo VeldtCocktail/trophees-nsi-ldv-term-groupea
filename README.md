@@ -17,7 +17,7 @@ Développé dans le cadre du cours de NSI (Numérique et Sciences Informatiques)
 ## Structure du Projet
 
 ```
-nsi_venv/
+racine/
 ├── data/                           # Données du projet
 │   ├── forets_vendee.geojson      # Contours géographiques des forêts
 │   ├── bdd.db                      # Base de données SQLite principale
