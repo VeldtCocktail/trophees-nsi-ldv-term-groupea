@@ -1,5 +1,5 @@
 # Journal - A COMPLETER A CHAQUE COURS
-*Yes sugar daddy* 🥰
+*Yes daddy* 🥰
 
 ### Séance n°1 (15/12/2025) 
 - réflexion sur le choix de l’application.
