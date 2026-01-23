@@ -1,5 +1,5 @@
 # Journal - A COMPLETER A CHAQUE COURS
-*Yes daddy* 🥰
+*Yes p daddy* 🥰
 
 ### Séance n°1 (15/12/2025) 
 - réflexion sur le choix de l’application.
@@ -34,6 +34,7 @@
 
 ### Séance n°9 (23/01/2026)
 - Reformatisation de data/eau.csv
+- Affichage / Interface graphique
 
 ## Travail hors cours de NSI :
 
