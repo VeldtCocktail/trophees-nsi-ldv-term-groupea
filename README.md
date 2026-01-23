@@ -105,10 +105,10 @@ bdd.ajouter_ligne("FORET", (1, "Forêt de Mervent", 5000, 10000, 1, 2, 3, 4))
 ## Équipe
 
 Projet réalisé par des élèves de NSI :
-- Mathéo PASQUIER
-- Charlélie PINEAU
-- Léon RAIFAUD
-- Maden USSEREAU (#legoat) 
+- Mathéo PASQUIER (T08)
+- Charlélie PINEAU (T02)
+- Léon RAIFAUD (T02)(🗿)
+- Maden USSEREAU (T03)(#legoat) 
 
 ## Journal de Bord
 
