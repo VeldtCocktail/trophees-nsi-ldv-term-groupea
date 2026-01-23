@@ -32,6 +32,9 @@
 ### Séance n°8 (16/01/2026)
 - Maden : Affichage de carte.html grâce à PyQt5
 
+### Séance n°9 (23/01/2026)
+- Reformatisation de data/eau.csv
+
 ## Travail hors cours de NSI :
 
 - 14/01/2026 : Léon : début de réalisation du programme pour l'interaction avec la base de données + finalisation le même jour. La classe BaseDeDonnees permet une interaction généralisée avec une base de données compatible SQLite.
