@@ -105,8 +105,10 @@ bdd.ajouter_ligne("FORET", (1, "Forêt de Mervent", 5000, 10000, 1, 2, 3, 4))
 ## Équipe
 
 Projet réalisé par des élèves de NSI :
-- Maden : Interface PyQt5
-- Léon : Base de données et interactions
+- Mathéo PASQUIER
+- Charlélie PINEAU
+- Léon RAIFAUD
+- Maden USSEREAU (#legoat) 
 
 ## Journal de Bord
 
