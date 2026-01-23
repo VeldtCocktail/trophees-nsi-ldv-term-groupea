@@ -1,4 +1,5 @@
 # Journal - A COMPLETER A CHAQUE COURS
+Yes daddy
 
 ### Séance n°1 (15/12/2025) 
 - réflexion sur le choix de l’application.
