@@ -34,7 +34,7 @@
 
 ### Séance n°9 (23/01/2026)
 - Reformatisation de data/eau.csv
-- Affichage / Interface graphique
+- Début de l'interface graphique avec PyQT
 
 ## Travail hors cours de NSI :
 
