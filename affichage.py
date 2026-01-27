@@ -52,6 +52,7 @@ class MainWindow(QWidget):
         texte = self.champ.text()
         print(texte)
     
+    
 app = QApplication(sys.argv)
 window = MainWindow()
 
