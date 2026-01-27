@@ -25,8 +25,8 @@ class MainWindow(QWidget):
         html = Path("cartes", "carte.html").read_text(encoding="utf8")
         view.setHtml(html)
         
-        champ = QLineEdit("")
-        champ.show()
+        self.champ = QLineEdit("")
+        self.champ.show()
 
         ### BOUTON
         bouton_ajouter_foret = QPushButton("Ajouter forêt")
@@ -37,7 +37,7 @@ class MainWindow(QWidget):
         bouton_supprimer_foret.clicked.connect(self.appui_bouton)
 
         ### GESTION LAYOUT
-        layout_boutons.addWidget(champ)
+        layout_boutons.addWidget(self.champ)
         layout_boutons.addWidget(bouton_ajouter_foret)
         layout_boutons.addWidget(bouton_supprimer_foret)
 
@@ -49,7 +49,8 @@ class MainWindow(QWidget):
         self.show()
 
     def appui_bouton(self):
-        self.close()
+        texte = self.champ.text()
+        print(texte)
     
 app = QApplication(sys.argv)
 window = MainWindow()
