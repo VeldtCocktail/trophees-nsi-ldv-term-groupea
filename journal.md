@@ -1,5 +1,5 @@
 # Journal - A COMPLETER A CHAQUE COURS
-*Yes daddy* 🥰
+*Yes daddy 🥰* 
 
 ### Séance n°1 (15/12/2025) 
 - réflexion sur le choix de l’application.
@@ -36,6 +36,9 @@
 - Reformatisation de data/eau.csv
 - Début de l'interface graphique avec PyQT
 
+### Séance n°10 (27/01/2026)
+- interface graphique avec PyQT
+  
 ## Travail hors cours de NSI :
 
 - 14/01/2026 : Léon : début de réalisation du programme pour l'interaction avec la base de données + finalisation le même jour. La classe BaseDeDonnees permet une interaction généralisée avec une base de données compatible SQLite.

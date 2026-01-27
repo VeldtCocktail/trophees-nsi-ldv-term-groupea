@@ -29,7 +29,7 @@ racine/
 │   └── carte.html
 ├── looping/                        # Diagrammes et modèles
 ├── docs/                           # Documentation
-├── main.py                         # Script principal (affichage dans le navigateur)
+├── main.py                         # Script principal (fait absolument rien, merci Maden)
 ├── carte.py                        # Génération de la carte HTML
 ├── affichage.py                    # Interface PyQt5 pour afficher la carte
 ├── interaction_bdd.py              # Classe pour interagir avec la base de données
@@ -107,7 +107,7 @@ bdd.ajouter_ligne("FORET", (1, "Forêt de Mervent", 5000, 10000, 1, 2, 3, 4))
 Projet réalisé par des élèves de NSI :
 - Mathéo PASQUIER (T08)
 - Charlélie PINEAU (T02)
-- Léon RAIFAUD (T02)(🗿)
+- Léon RAIFAUD (T02)(🥡)
 - Maden USSEREAU (T03)(#legoat) 
 
 ## Journal de Bord
