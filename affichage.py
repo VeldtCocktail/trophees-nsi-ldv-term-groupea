@@ -43,6 +43,7 @@ class MainWindow(QWidget):
     def appui_bouton(self):
         self.close()
     
+    
 app = QApplication(sys.argv)
 window = MainWindow()
 
