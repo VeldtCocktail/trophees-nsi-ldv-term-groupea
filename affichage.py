@@ -3,7 +3,8 @@ from PyQt5.QtWidgets import (
     QWidget,
     QPushButton,
     QVBoxLayout,
-    QHBoxLayout
+    QHBoxLayout,
+    QLineEdit
 )
 from PyQt5 import QtWebEngineWidgets
 from pathlib import Path
@@ -24,6 +25,10 @@ class MainWindow(QWidget):
         html = Path("cartes", "carte.html").read_text(encoding="utf8")
         view.setHtml(html)
         
+        champ = QLineEdit("")
+        champ.show()
+        champ.setGeometry(0 , 0 , 0 , 0)
+        ### BOUTON
         bouton_ajouter_foret = QPushButton("Ajouter forêt")
         bouton_ajouter_foret.show()
 
@@ -31,11 +36,14 @@ class MainWindow(QWidget):
         bouton_supprimer_foret.show()
         bouton_supprimer_foret.clicked.connect(self.appui_bouton)
 
+        ### GESTION LAYOUT
+        layout_boutons.addWidget(champ)
         layout_boutons.addWidget(bouton_ajouter_foret)
         layout_boutons.addWidget(bouton_supprimer_foret)
 
         layout_principal.addLayout(layout_boutons)
         layout_principal.addWidget(view)
+        
 
         self.setLayout(layout_principal)
         self.show()
