@@ -27,7 +27,7 @@ class MainWindow(QWidget):
         
         champ = QLineEdit("")
         champ.show()
-        champ.setGeometry(0 , 0 , 0 , 0)
+
         ### BOUTON
         bouton_ajouter_foret = QPushButton("Ajouter forêt")
         bouton_ajouter_foret.show()
