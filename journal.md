@@ -38,6 +38,9 @@
 
 ### Séance n°10 (27/01/2026)
 - interface graphique avec PyQT
+
+### Séance n°11 (29/01/2026)
+- interface graphique avec PyQTs
   
 ## Travail hors cours de NSI :
 
