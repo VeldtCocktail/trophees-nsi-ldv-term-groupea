@@ -1,7 +1,8 @@
 import folium
+import pathlib
 
 carte = folium.Map(location=(46.3930189, -1.480289), zoom_start=12)
 
 folium.GeoJson("data/forets_vendee.geojson").add_to(carte)
 
-carte.save("carte.html")
+carte.save(pathlib.Path("cartes", "carte.html"))
