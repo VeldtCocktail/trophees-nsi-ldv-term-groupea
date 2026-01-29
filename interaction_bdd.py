@@ -1,4 +1,5 @@
 import sqlite3
+import json
 
 class BaseDeDonnees:
     """
@@ -143,12 +144,71 @@ class BaseDeDonnees:
 # table(s) affectee(s) avant, afin d'eviter des bugs causes non pas par le code
 # mais par l'utilisateur, merci - @Onions/Le G.O.A.T. du gambling 🎰
 
-# Test d'ajout de foret
-bdd = BaseDeDonnees("bdd.db")
-bdd.ajouter_ligne("FORET", (1, "Foret de test", 100, 1000, 1, 2, 3, 4))
-input()
-# Test de modification
-bdd.modifier_ligne("FORET", (("id_foret", 1), "nom", "Foret modifiee"))
-input()
-# Et de suppression
-bdd.supprimer_ligne("FORET", ("id_foret", 1))
+if __name__ == "__main__":
+    # Avant de recommencer quelconque test sur la bdd, penser a reset la/les
+    # table(s) affectee(s) avant, afin d'eviter des bugs causes non pas par le code
+    # mais par l'utilisateur, merci - @Onions/Le G.O.A.T. du gambling 🎰
+
+    # Test d'ajout de foret
+    bdd = BaseDeDonnees("bdd.db")
+    bdd.ajouter_ligne("FORET", (1, "Foret de test", 100, 1000, 1, 2, 3, 4))
+    input()
+    # Test de modification
+    bdd.modifier_ligne("FORET", (("id_foret", 1), "nom", "Foret modifiee"))
+    input()
+    # Et de suppression
+    bdd.supprimer_ligne("FORET", ("id_foret", 1))
+
+# TODO
+# Chaque foret = 1 ou plus polygones
+# Il faut que dans la db : 
+# Quand on creee une foret, il faut l'enregistrer dans bdd.db et dans le json, 
+# avec le meme id dans le json
+class JSON:
+    """
+    Classe d'interaction avec le fichier JSON
+    """
+    def __init__(self, json_path):
+        self.json_path = json_path
+        with open(json_path, 'r', encoding='utf-8') as f:
+            self.data = json.load(f)
+
+    def ajouter_foret(self, id_foret, nom, coords):
+        """
+        Entrees : id_foret: identifiant de la foret (doit etre le meme que dans la BDD)
+                  nom: nom de la foret
+                  coords: liste de polygones (MultiPolygon coords)
+        Role : Ajoute une foret au fichier GeoJSON
+        """
+        nouvelle_feature = {
+            "type": "Feature",
+            "properties": {
+                "id": id_foret,
+                "nom": nom
+            },
+            "geometry": {
+                "type": "MultiPolygon",
+                "coordinates": coords
+            }
+        }
+        self.data['features'].append(nouvelle_feature)
+        self.sauvegarder()
+
+    def supprimer_foret(self, id_foret):
+        """
+        Entree : id_foret:int identifiant de la foret a supprimer
+        Role : Supprime une foret du fichier GeoJSON
+        """
+        self.data['features'] = [
+            f for f in self.data['features'] 
+            if f['properties'].get('id') != id_foret
+        ]
+        self.sauvegarder()
+
+    def sauvegarder(self):
+        """
+        Role : Ecrit les modifications dans le fichier JSON
+        """
+        with open(self.json_path, 'w', encoding='utf-8') as f:
+            json.dump(self.data, f, ensure_ascii=False, indent=2)
+
