@@ -16,11 +16,10 @@ class ForestWindow(QWidget):
         super().__init__()
         self.parent = parent
 
-        layout_principal = QHBoxLayout
+        layout_principal = QHBoxLayout()
         layout = QVBoxLayout()
         layout_texte = QVBoxLayout()
 
-        self.setLayout(layout_principal)
 
         self.donnee1 = QLineEdit("")
         self.donnee2 = QLineEdit("")
@@ -30,9 +29,6 @@ class ForestWindow(QWidget):
         self.donnee6 = QLineEdit("")
         self.donnee7 = QLineEdit("")
 
-        layout_principal.addLayout(layout_texte)
-        layout_principal.addLayout(layout)
-
         layout.addWidget(self.donnee1)
         layout.addWidget(self.donnee2)
         layout.addWidget(self.donnee3)
@@ -40,6 +36,13 @@ class ForestWindow(QWidget):
         layout.addWidget(self.donnee5)
         layout.addWidget(self.donnee6)
         layout.addWidget(self.donnee7)
+
+
+        layout_principal.addLayout(layout_texte)
+        layout_principal.addLayout(layout)
+
+        
+        self.setLayout(layout_principal)
 
         self.hide()
 
