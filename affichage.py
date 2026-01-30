@@ -23,7 +23,7 @@ class ForestWindow(QWidget):
         layout = QVBoxLayout()
         layout_texte = QVBoxLayout()
 
-        self.donnee1 = QLineEdit("")
+        self.donnee1 = QLineEdit()
         self.donnee2 = QLineEdit("")
         self.donnee3 = QLineEdit("")
         self.donnee4 = QLineEdit("")
@@ -31,8 +31,8 @@ class ForestWindow(QWidget):
         self.donnee6 = QLineEdit("")
         self.donnee7 = QLineEdit("")
 
-        self.chasseur_Oui = QRadioButton()
-        self.chasseur_Non = QRadioButton()
+        self.chasseur_Oui = QRadioButton("OUI")
+        self.chasseur_Non = QRadioButton("NON")
 
 
         
