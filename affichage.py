@@ -4,8 +4,11 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QVBoxLayout,
     QHBoxLayout,
-    QLineEdit
+    QLineEdit,
+    QRadioButton
 )
+
+
 from PyQt5 import QtWebEngineWidgets
 from pathlib import Path
 import sys
@@ -20,7 +23,6 @@ class ForestWindow(QWidget):
         layout = QVBoxLayout()
         layout_texte = QVBoxLayout()
 
-
         self.donnee1 = QLineEdit("")
         self.donnee2 = QLineEdit("")
         self.donnee3 = QLineEdit("")
@@ -29,6 +31,22 @@ class ForestWindow(QWidget):
         self.donnee6 = QLineEdit("")
         self.donnee7 = QLineEdit("")
 
+        self.chasseur_Oui = QRadioButton()
+        self.chasseur_Non = QRadioButton()
+
+
+        
+        """
+        self.text2
+        self.text3
+        self.text4
+        self.text5
+        self.text6
+        self.text7
+        """
+
+
+
         layout.addWidget(self.donnee1)
         layout.addWidget(self.donnee2)
         layout.addWidget(self.donnee3)
@@ -36,6 +54,19 @@ class ForestWindow(QWidget):
         layout.addWidget(self.donnee5)
         layout.addWidget(self.donnee6)
         layout.addWidget(self.donnee7)
+
+        layout.addWidget(self.chasseur_Oui)
+        layout.addWidget(self.chasseur_Non)
+
+
+        """
+        layout_texte.addWidget(self.text2)
+        layout_texte.addWidget(self.text3)
+        layout_texte.addWidget(self.text4)
+        layout_texte.addWidget(self.text5)
+        layout_texte.addWidget(self.text6)
+        layout_texte.addWidget(self.text7)
+        """
 
 
         layout_principal.addLayout(layout_texte)
@@ -51,6 +82,7 @@ class MainWindow(QWidget):
         super().__init__()
 
         self.fenetre_forets = ForestWindow(self)
+        
 
         self.setWindowTitle("Affichage carte des forêts")
         
