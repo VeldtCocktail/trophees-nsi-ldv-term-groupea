@@ -40,7 +40,7 @@
 - interface graphique avec PyQT
 
 ### Séance n°11 (29/01/2026)
-- interface graphique avec PyQTs
+- interface graphique avec PyQT
   
 ## Travail hors cours de NSI :
 
