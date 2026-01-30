@@ -139,31 +139,7 @@ class BaseDeDonnees:
         # Et on l'execute
         return self.curseur.fetchall()
 
-        
-# Avant de recommencer quelconque test sur la bdd, penser a reset la/les
-# table(s) affectee(s) avant, afin d'eviter des bugs causes non pas par le code
-# mais par l'utilisateur, merci - @Onions/Le G.O.A.T. du gambling 🎰
 
-if __name__ == "__main__":
-    # Avant de recommencer quelconque test sur la bdd, penser a reset la/les
-    # table(s) affectee(s) avant, afin d'eviter des bugs causes non pas par le code
-    # mais par l'utilisateur, merci - @Onions/Le G.O.A.T. du gambling 🎰
-
-    # Test d'ajout de foret
-    bdd = BaseDeDonnees("bdd.db")
-    bdd.ajouter_ligne("FORET", (1, "Foret de test", 100, 1000, 1, 2, 3, 4))
-    input()
-    # Test de modification
-    bdd.modifier_ligne("FORET", (("id_foret", 1), "nom", "Foret modifiee"))
-    input()
-    # Et de suppression
-    bdd.supprimer_ligne("FORET", ("id_foret", 1))
-
-# TODO
-# Chaque foret = 1 ou plus polygones
-# Il faut que dans la db : 
-# Quand on creee une foret, il faut l'enregistrer dans bdd.db et dans le json, 
-# avec le meme id dans le json
 class Interaction_json:
     """
     Classe d'interaction avec le fichier JSON
@@ -213,3 +189,18 @@ class Interaction_json:
             json.dump(self.data, f, ensure_ascii=False, indent=2)
 
 
+# Avant de recommencer quelconque test sur la bdd, penser a reset la/les
+# table(s) affectee(s) avant, afin d'eviter des bugs causes non pas par le code
+# mais par l'utilisateur, merci - @Onions/Le G.O.A.T. du gambling 🎰
+if __name__ == "__main__":
+    print("Debut des tests classe 1...")
+    # Test d'ajout de foret
+    bdd = BaseDeDonnees("bdd.db")
+    bdd.ajouter_ligne("FORET", (1, "Foret de test", 100, 1000, 1, 2, 3, 4))
+    input()
+    # Test de modification
+    bdd.modifier_ligne("FORET", (("id_foret", 1), "nom", "Foret modifiee"))
+    input()
+    # Et de suppression
+    bdd.supprimer_ligne("FORET", ("id_foret", 1))
+    print("Fin des tests classe 1...")
