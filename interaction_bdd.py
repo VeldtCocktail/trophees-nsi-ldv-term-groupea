@@ -164,7 +164,7 @@ if __name__ == "__main__":
 # Il faut que dans la db : 
 # Quand on creee une foret, il faut l'enregistrer dans bdd.db et dans le json, 
 # avec le meme id dans le json
-class JSON:
+class Interaction_json:
     """
     Classe d'interaction avec le fichier JSON
     """
@@ -211,4 +211,5 @@ class JSON:
         """
         with open(self.json_path, 'w', encoding='utf-8') as f:
             json.dump(self.data, f, ensure_ascii=False, indent=2)
+
 
