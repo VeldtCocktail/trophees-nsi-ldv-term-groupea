@@ -9,7 +9,9 @@ Développé dans le cadre du cours de NSI (Numérique et Sciences Informatiques)
 ## Fonctionnalités
 
 - **Carte interactive** : Visualisation géographique des forêts de Vendée grâce à Folium
-- **Interface graphique** : Affichage de la carte dans une fenêtre PyQt5 avec QtWebEngine
+- **Interface graphique avancée** : Affichage de la carte dans une fenêtre PyQt5 avec QtWebEngine
+- **Gestion des clics** : Capture et traitement des coordonnées GPS lors des clics sur la carte (communication JavaScript ↔ Python via QWebChannel)
+- **Interface de gestion des forêts** : Fenêtres dédiées pour ajouter et modifier les informations sur les forêts
 - **Base de données SQLite** : Stockage et gestion des informations sur les forêts
 - **Données géographiques** : Utilisation de fichiers GeoJSON pour les contours des forêts
 - **Informations complémentaires** : Base de données sur les champignons et les risques associés
@@ -27,11 +29,17 @@ racine/
 │   └── eau.csv
 ├── cartes/                         # Cartes HTML générées
 │   └── carte.html
+├── outils_git/                     # Outils d'automatisation Git
+│   ├── commit.sh                   # Script de commit automatisé (Linux/Mac)
+│   ├── commit.bat                  # Script de commit automatisé (Windows)
+│   ├── git-update.sh               # Script de mise à jour (Linux/Mac)
+│   └── git-update.bat              # Script de mise à jour (Windows)
 ├── looping/                        # Diagrammes et modèles
 ├── docs/                           # Documentation
 ├── main.py                         # Script principal (fait absolument rien, merci Maden)
 ├── carte.py                        # Génération de la carte HTML
-├── affichage.py                    # Interface PyQt5 pour afficher la carte
+├── affichage.py                    # Interface PyQt5 avec gestion des forêts
+├── gestion_clicks.py               # Gestion des clics sur la carte (QWebChannel)
 ├── interaction_bdd.py              # Classe pour interagir avec la base de données
 ├── journal.md                      # Journal de bord du projet
 ├── requirements.txt                # Dépendances Python
@@ -44,6 +52,7 @@ racine/
 - **Folium** : Création de cartes interactives
 - **PyQt5** : Interface graphique
 - **QtWebEngine** : Affichage de contenu web dans PyQt5
+- **QWebChannel** : Communication bidirectionnelle JavaScript ↔ Python
 - **SQLite3** : Base de données
 - **GeoJSON** : Format de données géographiques
 
@@ -72,11 +81,17 @@ python main.py
 ```
 Cette commande génère et ouvre la carte des forêts directement dans votre navigateur web.
 
-### Afficher la carte dans une fenêtre PyQt5
+### Afficher la carte avec interface de gestion
 ```bash
 python affichage.py
 ```
-Cette commande affiche la carte dans une fenêtre d'application graphique.
+Cette commande affiche la carte dans une fenêtre d'application graphique avec des boutons pour ajouter et supprimer des forêts.
+
+### Tester la gestion des clics sur la carte
+```bash
+python gestion_clicks.py
+```
+Cette commande affiche la carte avec capture des coordonnées GPS lors des clics (affichées dans la console).
 
 ### Générer uniquement le fichier HTML
 ```bash
@@ -86,7 +101,9 @@ Génère le fichier `carte.html` sans l'afficher.
 
 ## Base de Données
 
-La classe `BaseDeDonnees` dans `interaction_bdd.py` permet d'interagir avec la base de données SQLite. Elle offre les méthodes suivantes :
+La classe `BaseDeDonnees` dans `interaction_bdd.py` permet d'interagir avec la base de données SQLite. Elle a été refactorisée pour offrir une interaction généralisée et robuste avec n'importe quelle base de données compatible SQLite.
+
+### Méthodes disponibles
 
 - `ajouter_ligne(table, valeurs)` : Ajouter une entrée
 - `supprimer_ligne(table, identification)` : Supprimer une entrée
@@ -101,6 +118,58 @@ from interaction_bdd import BaseDeDonnees
 bdd = BaseDeDonnees("data/bdd.db")
 bdd.ajouter_ligne("FORET", (1, "Forêt de Mervent", 5000, 10000, 1, 2, 3, 4))
 ```
+
+## Outils Git (Automatisation)
+
+Le dossier `outils_git/` contient des scripts pour automatiser les opérations Git courantes.
+
+### Scripts de commit automatisé
+
+**Linux/Mac** :
+```bash
+./outils_git/commit.sh -f nom_du_fichier "message de commit"
+./outils_git/commit.sh -d nom_du_dossier "message de commit"
+```
+
+**Windows** :
+```cmd
+outils_git\commit.bat -f nom_du_fichier "message de commit"
+outils_git\commit.bat -d nom_du_dossier "message de commit"
+```
+
+Ces scripts ajoutent automatiquement le fichier ou dossier spécifié, créent un commit avec le message fourni, et poussent les changements vers la branche `main`.
+
+### Scripts de mise à jour
+
+**Linux/Mac** :
+```bash
+./outils_git/git-update.sh
+```
+
+**Windows** :
+```cmd
+outils_git\git-update.bat
+```
+
+Ces scripts récupèrent les dernières modifications depuis le dépôt distant.
+
+## Interface Graphique
+
+### Fenêtre principale (`affichage.py`)
+
+L'interface graphique PyQt5 comprend :
+- Une carte interactive Folium intégrée via QtWebEngine
+- Un panneau latéral avec des boutons de gestion
+- Une fenêtre modale pour ajouter/modifier des forêts avec :
+  - 7 champs de saisie pour les informations de la forêt
+  - Des boutons radio pour indiquer la présence de chasseurs
+
+### Gestion des clics (`gestion_clicks.py`)
+
+Démonstrateur de la communication JavaScript ↔ Python :
+- Utilise `QWebChannel` pour créer un pont entre le JavaScript de la carte Folium et Python
+- Capture les coordonnées GPS (latitude, longitude) lors des clics sur la carte
+- Affiche les coordonnées dans la console Python en temps réel
 
 ## Équipe
 
