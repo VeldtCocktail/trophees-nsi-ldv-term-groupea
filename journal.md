@@ -48,6 +48,7 @@
 ### Séance n°13 (03/02/2026)
 - interface graphique PyQT
 - Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
+- Recherche base de données type d'arbre
   
 ## Travail hors cours de NSI :
 
