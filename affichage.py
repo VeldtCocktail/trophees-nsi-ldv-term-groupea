@@ -142,7 +142,7 @@ class MainWindow(QWidget):
 
     def creation_foret_fenetre(self):
         self.fenetre_forets.show()
-        
+
     def index_changed(self, i): # i is an int
         print(i)
 
@@ -154,13 +154,6 @@ class MainWindow(QWidget):
 
     def slider_position(self, p):
         print("position", p)
-
-    def slider_pressed(self):
-        print("Pressed!")
-
-    def slider_released(self):
-        print("Released")
-    
     
 app = QApplication(sys.argv)
 window = MainWindow()
