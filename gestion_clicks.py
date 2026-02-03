@@ -37,7 +37,8 @@ class MainWindow(QWidget):
         view.setHtml(
             html_path.read_text(encoding="utf8"),
             QUrl.fromLocalFile(str(html_path.parent) + "/")
-)
+        )
+        
         self.bridge = Pont()
         self.channel = QWebChannel()
         self.channel.registerObject("pybridge", self.bridge)

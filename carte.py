@@ -7,6 +7,8 @@ folium.GeoJson("data/forets_vendee.geojson").add_to(carte)
 
 map_name = carte.get_name()
 
+
+# portion de code générée par l'intelligence artificielle
 click_js = f"""
 function bindMapClick() {{
     if (typeof {map_name} !== 'undefined') {{
@@ -22,10 +24,6 @@ function bindMapClick() {{
 bindMapClick();
 """
 
-
-
-carte.get_root().script.add_child(folium.Element(click_js))
-
 qwebchannel_js = """
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 <script>
@@ -35,6 +33,7 @@ new QWebChannel(qt.webChannelTransport, function(channel) {
 </script>
 """
 
+carte.get_root().script.add_child(folium.Element(click_js))
 carte.get_root().html.add_child(folium.Element(qwebchannel_js))
 
 carte.save(pathlib.Path("cartes", "carte.html"))
