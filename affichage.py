@@ -9,8 +9,6 @@ from PyQt5.QtWidgets import (
     QSlider,
     QComboBox
 )
-
-
 from PyQt5 import QtWebEngineWidgets
 from pathlib import Path
 import sys
