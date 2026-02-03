@@ -5,7 +5,9 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
     QLineEdit,
-    QRadioButton
+    QRadioButton,
+    QSlider,
+    QComboBox
 )
 
 
@@ -97,7 +99,24 @@ class MainWindow(QWidget):
         html = Path("cartes", "carte.html").read_text(encoding="utf8")
         view.setHtml(html)
         
-        self.champ = QLineEdit("")
+        #BOX DE SELECTION
+        self.combobox = QComboBox()
+        self.combobox.addItems(["One", "Two", "Three", "VIVA L'ALGERIE"])
+
+        self.combobox.currentIndexChanged.connect( self.index_changed )
+        self.combobox.currentTextChanged.connect( self.text_changed )
+
+        #SLIDE (SCROLL)
+        self.slide = QSlider()
+        self.slide.setMinimum(-30)
+        self.slide.setMaximum(0)
+        self.slide.setSingleStep(1)
+
+        self.slide.valueChanged.connect(self.value_changed)
+        self.slide.sliderMoved.connect(self.slider_position)
+        self.slide.sliderPressed.connect(self.slider_pressed)
+        self.slide.sliderReleased.connect(self.slider_released)
+
 
         ### BOUTON
         bouton_ajouter_foret = QPushButton("Ajouter forêt")
@@ -109,7 +128,8 @@ class MainWindow(QWidget):
         bouton_supprimer_foret.show()
 
         ### GESTION LAYOUT
-        layout_boutons.addWidget(self.champ)
+        layout_boutons.addWidget(self.combobox)
+        layout_boutons.addWidget(self.slide)
         layout_boutons.addWidget(bouton_ajouter_foret)
         layout_boutons.addWidget(bouton_supprimer_foret)
 
@@ -122,6 +142,24 @@ class MainWindow(QWidget):
 
     def creation_foret_fenetre(self):
         self.fenetre_forets.show()
+        
+    def index_changed(self, i): # i is an int
+        print(i)
+
+    def text_changed(self, s): # s is a str
+        print(s)
+
+    def value_changed(self, i):
+        print(i)
+
+    def slider_position(self, p):
+        print("position", p)
+
+    def slider_pressed(self):
+        print("Pressed!")
+
+    def slider_released(self):
+        print("Released")
     
     
 app = QApplication(sys.argv)
