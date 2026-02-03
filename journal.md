@@ -44,6 +44,10 @@
 
 ### Séance n°12 (30/01/2026)
 - interface graphique avec PyQT
+
+### Séance n°13 (03/02/2026)
+- interface graphique PyQT
+- Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
   
 ## Travail hors cours de NSI :
 
