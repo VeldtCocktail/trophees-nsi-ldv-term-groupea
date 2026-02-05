@@ -15,6 +15,7 @@ import sys
 import os
 
 class ForestWindow(QWidget):
+
     def __init__(self, parent = None):
         super().__init__()
         self.parent = parent
@@ -33,8 +34,6 @@ class ForestWindow(QWidget):
 
         self.chasseur_Oui = QRadioButton("OUI")
         self.chasseur_Non = QRadioButton("NON")
-
-
         
         """
         self.text2
@@ -44,8 +43,6 @@ class ForestWindow(QWidget):
         self.text6
         self.text7
         """
-
-
 
         layout.addWidget(self.donnee1)
         layout.addWidget(self.donnee2)
@@ -58,7 +55,6 @@ class ForestWindow(QWidget):
         layout.addWidget(self.chasseur_Oui)
         layout.addWidget(self.chasseur_Non)
 
-
         """
         layout_texte.addWidget(self.text2)
         layout_texte.addWidget(self.text3)
@@ -68,11 +64,9 @@ class ForestWindow(QWidget):
         layout_texte.addWidget(self.text7)
         """
 
-
         layout_principal.addLayout(layout_texte)
         layout_principal.addLayout(layout)
 
-        
         self.setLayout(layout_principal)
 
         self.hide()
@@ -157,6 +151,7 @@ class MainWindow(QWidget):
 
     def slider_released(self):
         print("slider released")
+    
     
 app = QApplication(sys.argv)
 window = MainWindow()
