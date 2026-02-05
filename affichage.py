@@ -83,7 +83,6 @@ class MainWindow(QWidget):
 
         self.fenetre_forets = ForestWindow(self)
         
-
         self.setWindowTitle("Affichage carte des forêts")
         
         layout_principal = QHBoxLayout()
