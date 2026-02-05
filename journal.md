@@ -49,7 +49,10 @@
 - interface graphique PyQT
 - Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
 - Recherche base de données type d'arbre
-  
+
+ ### Séance n°14 (05/02/2026) sans Maden, ni Charlélie 😢
+- Correction d'erreurs pour l'interface PyQT
+
 ## Travail hors cours de NSI :
 
 - 14/01/2026 : Léon : début de réalisation du programme pour l'interaction avec la base de données + finalisation le même jour. La classe BaseDeDonnees permet une interaction généralisée avec une base de données compatible SQLite.
