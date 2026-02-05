@@ -51,7 +51,7 @@
 - Recherche base de données type d'arbre
 
  ### Séance n°14 (05/02/2026) sans Maden, ni Charlélie 😢
-- Correction d'erreurs pour l'interface PyQT
+- interface graphique PyQT
 
 ## Travail hors cours de NSI :
 
