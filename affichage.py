@@ -152,6 +152,12 @@ class MainWindow(QWidget):
     def slider_position(self, p):
         print("position", p)
     
+    def slider_pressed(self):
+        print("slider pressed")
+
+    def slider_released(self):
+        print("slider released")
+    
 app = QApplication(sys.argv)
 window = MainWindow()
 
