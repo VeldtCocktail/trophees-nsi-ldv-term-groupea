@@ -53,7 +53,7 @@
  ### Séance n°14 (05/02/2026) sans Maden, ni Charlélie 😢
 - interface graphique PyQT
 
-### Séance n°15 (06/02/2026) retour de Maden et  de l'autre🥳
+### Séance n°15 (06/02/2026) retour de Maden et de l'autre 🥳
 - interface graphique PyQT
 - Création d'une nouvelle base de données d'espece d'arbre
 
