@@ -13,6 +13,7 @@ from PyQt5 import QtWebEngineWidgets
 from pathlib import Path
 import sys
 import os
+import csv
 
 class ForestWindow(QWidget):
 
@@ -24,12 +25,31 @@ class ForestWindow(QWidget):
         layout = QVBoxLayout()
         layout_texte = QVBoxLayout()
 
+
         self.donnee1 = QLineEdit()
+
         self.donnee2 = QLineEdit("")
-        self.donnee3 = QLineEdit("")
-        self.donnee4 = QLineEdit("")
+
+        self.donnee_type_eau = QComboBox()
+        with open('data/type_eau.csv', 'r') as file:
+            writer = csv.reader(file, delimiter=';')
+            next(writer)  # saute la première ligne du CSV
+            for row in writer:
+                self.row = row[1]
+                self.donnee_type_eau.addItems([self.row])
+
+        self.donnee_champignon = QComboBox()
+        with open('data/base-de-donnees-champignons.csv', 'r') as file:
+            writer = csv.reader(file, delimiter=';')
+            next(writer)  # saute la première ligne du CSV
+            for row in writer:
+                self.row = row[0]
+                self.donnee_champignon.addItems([self.row])
+
         self.donnee5 = QLineEdit("")
+
         self.donnee6 = QLineEdit("")
+
         self.donnee7 = QLineEdit("")
 
         self.chasseur_Oui = QRadioButton("OUI")
@@ -46,8 +66,8 @@ class ForestWindow(QWidget):
 
         layout.addWidget(self.donnee1)
         layout.addWidget(self.donnee2)
-        layout.addWidget(self.donnee3)
-        layout.addWidget(self.donnee4)
+        layout.addWidget(self.donnee_type_eau)
+        layout.addWidget(self.donnee_champignon)
         layout.addWidget(self.donnee5)
         layout.addWidget(self.donnee6)
         layout.addWidget(self.donnee7)
@@ -76,13 +96,10 @@ class MainWindow(QWidget):
         super().__init__()
 
         self.fenetre_forets = ForestWindow(self)
-        
         self.setWindowTitle("Affichage carte des forêts")
         
         layout_principal = QHBoxLayout()
-
         layout_principal.addWidget(self.fenetre_forets)
-
         layout_boutons = QVBoxLayout()
 
         view = QtWebEngineWidgets.QWebEngineView()
@@ -90,37 +107,20 @@ class MainWindow(QWidget):
         html = Path("cartes", "carte.html").read_text(encoding="utf8")
         view.setHtml(html)
         
-        #BOX DE SELECTION
-        self.combobox = QComboBox()
-        self.combobox.addItems(["One", "Two", "Three", "VIVA L'ALGERIE"])
-
-        self.combobox.currentIndexChanged.connect( self.index_changed )
-        self.combobox.currentTextChanged.connect( self.text_changed )
-
-        #SLIDE (SCROLL)
-        self.slide = QSlider()
-        self.slide.setMinimum(-30)
-        self.slide.setMaximum(0)
-        self.slide.setSingleStep(1)
-
-        self.slide.valueChanged.connect(self.value_changed)
-        self.slide.sliderMoved.connect(self.slider_position)
-        self.slide.sliderPressed.connect(self.slider_pressed)
-        self.slide.sliderReleased.connect(self.slider_released)
-
 
         ### BOUTON
+        recherche_foret = QLineEdit("")
+        recherche_foret.show()
+
         bouton_ajouter_foret = QPushButton("Ajouter forêt")
         bouton_ajouter_foret.show()
         bouton_ajouter_foret.clicked.connect(self.creation_foret_fenetre)
-
 
         bouton_supprimer_foret = QPushButton("Supprimer forêt")
         bouton_supprimer_foret.show()
 
         ### GESTION LAYOUT
-        layout_boutons.addWidget(self.combobox)
-        layout_boutons.addWidget(self.slide)
+        layout_boutons.addWidget(recherche_foret)
         layout_boutons.addWidget(bouton_ajouter_foret)
         layout_boutons.addWidget(bouton_supprimer_foret)
 
