@@ -26,8 +26,13 @@ class ForestWindow(QWidget):
         layout_texte = QVBoxLayout()
 
 
-        self.donnee1 = QLineEdit()
-
+        self.donnee_arbre = QComboBox()
+        with open('data/base_de_donnees_arbres.csv', 'r') as file:
+            writer = csv.reader(file, delimiter=';')
+            next(writer)  # saute la première ligne du CSV
+            for row in writer:
+                self.row = row[1]
+                self.donnee_arbre.addItems([self.row])
         self.donnee2 = QLineEdit("")
 
         self.donnee_type_eau = QComboBox()
@@ -64,7 +69,7 @@ class ForestWindow(QWidget):
         self.text7
         """
 
-        layout.addWidget(self.donnee1)
+        layout.addWidget(self.donnee_arbre)
         layout.addWidget(self.donnee2)
         layout.addWidget(self.donnee_type_eau)
         layout.addWidget(self.donnee_champignon)
