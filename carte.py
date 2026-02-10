@@ -12,7 +12,7 @@ def generer_carte(coordonnees_depart, donnees = []):
 
     folium.GeoJson("data/forets_vendee.geojson").add_to(carte)
     for donnees_json in donnees:
-        folium.GeoJson(donnees_json, style_function = fonction_style)
+        folium.GeoJson(donnees_json, style_function = fonction_style).add_to(carte)
 
     map_name = carte.get_name()
 

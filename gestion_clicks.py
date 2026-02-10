@@ -15,44 +15,98 @@ from pathlib import Path
 import sys
 import os
 import overpass
+import requests
+from shapely.geometry import shape, Point, Polygon, MultiPolygon
 from carte import generer_carte
 
 class RequetesOverpass:
     def __init__(self):
-        self.api = overpass.API(timeout = 60)
+        self.compteur = 0
+        self.apis = [
+            "https://overpass-api.de/api/interpreter",
+            "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+            "https://overpass.private.coffee/api/interpreter"
+        ]
 
     def zone_verte(self, coords):
         lat, lon = coords
+        delta = 0.01  # ~1km bounding box
+        min_lat, max_lat = lat - delta, lat + delta
+        min_lon, max_lon = lon - delta, lon + delta
 
-        requete = f"""
+        query = f"""
         [out:json][timeout:25];
         (
-        way["landuse"="forest"](around:0,{lat},{lon});
-        way["natural"="wood"](around:0,{lat},{lon});
-        way["landcover"="trees"](around:0,{lat},{lon});
-        way["natural"="scrub"](around:0,{lat},{lon});
-        way["landuse"="orchard"](around:0,{lat},{lon});
-
-        relation["landuse"="forest"](around:0,{lat},{lon});
-        relation["natural"="wood"](around:0,{lat},{lon});
-        relation["landcover"="trees"](around:0,{lat},{lon});
-        relation["natural"="scrub"](around:0,{lat},{lon});
-        relation["landuse"="orchard"](around:0,{lat},{lon});
+        nwr["landuse"="forest"]({min_lat},{min_lon},{max_lat},{max_lon});
+        nwr["natural"="wood"]({min_lat},{min_lon},{max_lat},{max_lon});
+        nwr["landcover"="trees"]({min_lat},{min_lon},{max_lat},{max_lon});
+        nwr["natural"="scrub"]({min_lat},{min_lon},{max_lat},{max_lon});
+        nwr["landuse"="orchard"]({min_lat},{min_lon},{max_lat},{max_lon});
         );
-        out body;
-        >;
-        out skel qt;
+        out geom;
         """
 
-        reponse = self.api.get(requete, responseformat='json')
+        try:
+            r = requests.post(
+                self.apis[self.compteur % 3],
+                data=query,
+                timeout=30
+            )
+            self.compteur += 1
+            r.raise_for_status()
+            data = r.json()
 
-        return reponse
+            features = []
+
+            for el in data.get("elements", []):
+                geom_list = el.get("geometry")
+                if not geom_list or len(geom_list) < 3:
+                    continue  # skip nodes or broken polygons
+
+                coords_poly = [(p["lon"], p["lat"]) for p in geom_list]
+
+                # Make everything GeoJSON compliant
+                if el.get("type") == "relation":
+                    # MultiPolygon (may still be only one polygon inside)
+                    coords_geojson = [coords_poly]  # list of polygons
+                    geom_type = "MultiPolygon"
+                else:
+                    coords_geojson = [coords_poly]  # list of linear rings
+                    geom_type = "Polygon"
+
+                features.append({
+                    "type": "Feature",
+                    "geometry": {
+                        "type": geom_type,
+                        "coordinates": coords_geojson if geom_type == "MultiPolygon" else coords_geojson
+                    },
+                    "properties": {}
+                })
+
+            if not features:
+                return {"type": "FeatureCollection", "features": []}
+
+            # Pick polygon that contains the click
+            point = Point(lon, lat)
+            containing = [f for f in features if shape(f["geometry"]).contains(point)]
+            if containing:
+                closest = containing[0]
+            else:
+                print('Aucun polygone ne contient le point')
+                return {"type": "FeatureCollection", "features": []}
+
+            return {"type": "FeatureCollection", "features": [closest]}
+
+        except Exception as e:
+            print("Erreur Overpass :", e)
+            return {"type": "FeatureCollection", "features": []}
 
 
 class Pont(QObject):
 
     def __init__(self, parent):
         self.par = parent
+        super().__init__(parent)
 
     @pyqtSlot(float, float)
     def envoyerCoordonnees(self, lat, long):
@@ -114,8 +168,16 @@ class MainWindow(QWidget):
 
     def update_carte(self, coords):
         zone = self.requetes.zone_verte(coords)
+        print(zone["features"])
+
         generer_carte(coords, [zone])
-        self.view.update()
+
+        html_path = Path("cartes", "carte.html").resolve()
+
+        self.view.setHtml(
+            html_path.read_text(encoding="utf8"),
+            QUrl.fromLocalFile(str(html_path.parent) + "/")
+        )
     
     
 app = QApplication(sys.argv)
