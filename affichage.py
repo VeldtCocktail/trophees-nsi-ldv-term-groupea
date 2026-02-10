@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QLineEdit,
     QRadioButton,
-    QSlider,
     QComboBox
 )
 from PyQt5 import QtWebEngineWidgets
