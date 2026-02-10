@@ -6,7 +6,8 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QLineEdit,
     QRadioButton,
-    QComboBox
+    QComboBox,
+    QLabel
 )
 from PyQt5 import QtWebEngineWidgets
 from pathlib import Path
@@ -15,15 +16,12 @@ import os
 import csv
 
 class ForestWindow(QWidget):
-
     def __init__(self, parent = None):
         super().__init__()
         self.parent = parent
 
         layout_principal = QHBoxLayout()
         layout = QVBoxLayout()
-        layout_texte = QVBoxLayout()
-
 
         self.donnee_arbre = QComboBox()
         with open('data/bdd_arbres.csv', 'r') as file:
@@ -41,6 +39,14 @@ class ForestWindow(QWidget):
                 self.row = row[1]
                 self.donnee_type_eau.addItems([self.row])
 
+        self.donnee_animaux = QComboBox()
+        with open('data/bdd_animaux.csv', 'r') as file:
+            writer = csv.reader(file, delimiter=';')
+            next(writer)  # saute la première ligne du CSV
+            for row in writer:
+                self.row = row[1]
+                self.donnee_animaux.addItems([self.row])
+
         self.donnee_champignon = QComboBox()
         with open('data/bdd_toad.csv', 'r') as file:
             writer = csv.reader(file, delimiter=';')
@@ -56,21 +62,27 @@ class ForestWindow(QWidget):
             for row in writer:
                 self.row = row[1]
                 self.donnee_risques.addItems([self.row])
-
+        
+        layout_chasseur = QHBoxLayout()
+        self.txt_chasseur = QLabel("Chasseur :")
         self.chasseur_Oui = QRadioButton("OUI")
         self.chasseur_Non = QRadioButton("NON")
-        
+
+        layout_chasseur.addWidget(self.txt_chasseur)
+        layout_chasseur.addWidget(self.chasseur_Oui)
+        layout_chasseur.addWidget(self.chasseur_Non)
+
         layout.addWidget(self.donnee_arbre)
         layout.addWidget(self.donnee_type_eau)
+        layout.addWidget(self.donnee_animaux)
         layout.addWidget(self.donnee_champignon)
         layout.addWidget(self.donnee_risques)
 
+        layout.addLayout(layout_chasseur)
 
-        layout.addWidget(self.chasseur_Oui)
-        layout.addWidget(self.chasseur_Non)
-
-        layout_principal.addLayout(layout_texte)
         layout_principal.addLayout(layout)
+        layout_principal.addLayout(layout)
+
 
         self.setLayout(layout_principal)
 
