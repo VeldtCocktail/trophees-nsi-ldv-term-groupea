@@ -26,7 +26,7 @@ class ForestWindow(QWidget):
 
 
         self.donnee_arbre = QComboBox()
-        with open('data/base_de_donnees_arbres.csv', 'r') as file:
+        with open('data/bdd_arbres.csv', 'r') as file:
             writer = csv.reader(file, delimiter=';')
             next(writer)  # saute la première ligne du CSV
             for row in writer:
@@ -43,14 +43,20 @@ class ForestWindow(QWidget):
                 self.donnee_type_eau.addItems([self.row])
 
         self.donnee_champignon = QComboBox()
-        with open('data/base-de-donnees-champignons.csv', 'r') as file:
+        with open('data/bdd_champignons.csv', 'r') as file:
             writer = csv.reader(file, delimiter=';')
             next(writer)  # saute la première ligne du CSV
             for row in writer:
                 self.row = row[0]
                 self.donnee_champignon.addItems([self.row])
 
-        self.donnee5 = QLineEdit("")
+        self.donnee_risques = QComboBox()
+        with open('data/bdd_risques.csv', 'r') as file:
+            writer = csv.reader(file, delimiter=';')
+            next(writer)  # saute la première ligne du CSV
+            for row in writer:
+                self.row = row[1]
+                self.donnee_risques.addItems([self.row])
 
         self.donnee6 = QLineEdit("")
 
@@ -72,7 +78,7 @@ class ForestWindow(QWidget):
         layout.addWidget(self.donnee2)
         layout.addWidget(self.donnee_type_eau)
         layout.addWidget(self.donnee_champignon)
-        layout.addWidget(self.donnee5)
+        layout.addWidget(self.donnee_risques)
         layout.addWidget(self.donnee6)
         layout.addWidget(self.donnee7)
 
