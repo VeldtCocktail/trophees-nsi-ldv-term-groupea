@@ -32,7 +32,6 @@ class ForestWindow(QWidget):
             for row in writer:
                 self.row = row[1]
                 self.donnee_arbre.addItems([self.row])
-        self.donnee2 = QLineEdit("")
 
         self.donnee_type_eau = QComboBox()
         with open('data/type_eau.csv', 'r') as file:
@@ -47,7 +46,7 @@ class ForestWindow(QWidget):
             writer = csv.reader(file, delimiter=';')
             next(writer)  # saute la première ligne du CSV
             for row in writer:
-                self.row = row[0]
+                self.row = row[1]
                 self.donnee_champignon.addItems([self.row])
 
         self.donnee_risques = QComboBox()
@@ -58,41 +57,17 @@ class ForestWindow(QWidget):
                 self.row = row[1]
                 self.donnee_risques.addItems([self.row])
 
-        self.donnee6 = QLineEdit("")
-
-        self.donnee7 = QLineEdit("")
-
         self.chasseur_Oui = QRadioButton("OUI")
         self.chasseur_Non = QRadioButton("NON")
         
-        """
-        self.text2
-        self.text3
-        self.text4
-        self.text5
-        self.text6
-        self.text7
-        """
-
         layout.addWidget(self.donnee_arbre)
-        layout.addWidget(self.donnee2)
         layout.addWidget(self.donnee_type_eau)
         layout.addWidget(self.donnee_champignon)
         layout.addWidget(self.donnee_risques)
-        layout.addWidget(self.donnee6)
-        layout.addWidget(self.donnee7)
+
 
         layout.addWidget(self.chasseur_Oui)
         layout.addWidget(self.chasseur_Non)
-
-        """
-        layout_texte.addWidget(self.text2)
-        layout_texte.addWidget(self.text3)
-        layout_texte.addWidget(self.text4)
-        layout_texte.addWidget(self.text5)
-        layout_texte.addWidget(self.text6)
-        layout_texte.addWidget(self.text7)
-        """
 
         layout_principal.addLayout(layout_texte)
         layout_principal.addLayout(layout)
@@ -149,19 +124,6 @@ class MainWindow(QWidget):
 
     def text_changed(self, s): # s is a str
         print(s)
-
-    def value_changed(self, i):
-        print(i)
-
-    def slider_position(self, p):
-        print("position", p)
-    
-    def slider_pressed(self):
-        print("slider pressed")
-
-    def slider_released(self):
-        print("slider released")
-    
     
 app = QApplication(sys.argv)
 window = MainWindow()
