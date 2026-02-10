@@ -43,7 +43,7 @@ class ForestWindow(QWidget):
                 self.donnee_type_eau.addItems([self.row])
 
         self.donnee_champignon = QComboBox()
-        with open('data/bdd_champignons.csv', 'r') as file:
+        with open('data/bdd_toad.csv', 'r') as file:
             writer = csv.reader(file, delimiter=';')
             next(writer)  # saute la première ligne du CSV
             for row in writer:
