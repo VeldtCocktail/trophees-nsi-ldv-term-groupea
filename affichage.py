@@ -11,7 +11,7 @@ import json
 
 
 # FONCTION
-def load_csv_column(chemin, col=1):
+def ChargerDonneesCSV(chemin, col=1):
     data = []
     with open(chemin, newline='', encoding="ISO 8859-3") as f:
         reader = csv.reader(f, delimiter=";")
@@ -45,19 +45,19 @@ class Fenetre_Foret(QGroupBox):
         layout = QVBoxLayout()
 
         self.donnee_arbre = QComboBox()
-        self.donnee_arbre.addItems(load_csv_column("data/bdd_arbres.csv"))
+        self.donnee_arbre.addItems(ChargerDonneesCSV("data/bdd_arbres.csv"))
 
         self.donnee_type_eau = QComboBox()
-        self.donnee_type_eau.addItems(load_csv_column("data/type_eau.csv"))
+        self.donnee_type_eau.addItems(ChargerDonneesCSV("data/type_eau.csv"))
 
         self.donnee_animaux = QComboBox()
-        self.donnee_animaux.addItems(load_csv_column("data/bdd_animaux.csv"))
+        self.donnee_animaux.addItems(ChargerDonneesCSV("data/bdd_animaux.csv"))
 
         self.donnee_champignon = QComboBox()
-        self.donnee_champignon.addItems(load_csv_column("data/bdd_toad.csv"))
+        self.donnee_champignon.addItems(ChargerDonneesCSV("data/bdd_toad.csv"))
 
         self.donnee_risques = QComboBox()
-        self.donnee_risques.addItems(load_csv_column("data/bdd_risques.csv"))
+        self.donnee_risques.addItems(ChargerDonneesCSV("data/bdd_risques.csv"))
 
         layout.addWidget(QLabel("🌳 Type d’arbre"))
         layout.addWidget(self.donnee_arbre)
