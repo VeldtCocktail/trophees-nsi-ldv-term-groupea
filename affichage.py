@@ -91,7 +91,7 @@ class Fenetre_Foret(QGroupBox):
 
 class Fenetre_Supr_Foret(QGroupBox):
     def __init__(self):
-        super().__init__("🌲 Création d’une forêt")
+        super().__init__("🌲 Suppresion forêt")
         self.setFixedWidth(300)
 
         layout = QVBoxLayout()
@@ -128,9 +128,12 @@ class MainWindow(QWidget):
 
         BoutonAjouterForet = QPushButton("➕ Ajouter forêt")
         BoutonAjouterForet.clicked.connect(self.AfficherFenetreForetMain)
+        BoutonAjouterForet.setFixedWidth(300)
+
 
         BoutonSupprimerForet = QPushButton("🗑 Supprimer forêt")
         BoutonSupprimerForet.clicked.connect(self.AfficherFenetreSuprForetMain)
+        BoutonSupprimerForet.setFixedWidth(300)
 
         self.ResultatForet = QListWidget()
         self.ResultatForet.setMaximumHeight(200)
@@ -163,8 +166,10 @@ class MainWindow(QWidget):
 
     def AfficherFenetreForetMain(self):
         self.fenetre_foret_main.setVisible(not self.fenetre_foret_main.isVisible())
+
     def AfficherFenetreSuprForetMain(self):
         self.fenetre_supr_foret_main.setVisible(not self.fenetre_supr_foret_main.isVisible())
+        
 # STYLE SITE
     def apply_style(self):
         self.setStyleSheet("""
