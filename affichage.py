@@ -34,7 +34,14 @@ def ChargerNomForet(json_path):
 
     return names
 
+class Menu_deroullant_arbre(QGroupBox):
+    def __init__(self):
+        self.donnee_arbre = QComboBox()
+        self.donnee_arbre.addItems(ChargerDonneesCSV("data/bdd_arbres.csv"))
+        self.donnee_arbre.itemData.clicked.connect()
 
+    def AppuieTypeArbre(self):
+        print(self.donnee_arbre.itemData())
 
 # FENETRE FORET
 class Fenetre_Foret(QGroupBox):
@@ -44,8 +51,7 @@ class Fenetre_Foret(QGroupBox):
 
         layout = QVBoxLayout()
 
-        self.donnee_arbre = QComboBox()
-        self.donnee_arbre.addItems(ChargerDonneesCSV("data/bdd_arbres.csv"))
+        self.donnee_arbre_main = Menu_deroullant_arbre
 
         self.donnee_type_eau = QComboBox()
         self.donnee_type_eau.addItems(ChargerDonneesCSV("data/type_eau.csv"))
@@ -60,7 +66,7 @@ class Fenetre_Foret(QGroupBox):
         self.donnee_risques.addItems(ChargerDonneesCSV("data/bdd_risques.csv"))
 
         layout.addWidget(QLabel("🌳 Type d’arbre"))
-        layout.addWidget(self.donnee_arbre)
+        layout.addWidget(self.donnee_arbre_main)
 
         layout.addWidget(QLabel("💧 Type d’eau"))
         layout.addWidget(self.donnee_type_eau)
@@ -100,7 +106,7 @@ class MainWindow(QWidget):
 
         self.nom_foret = ChargerNomForet("data/forets_vendee.geojson")
 
-        # fentre forêt
+        # fenetre forêt
         self.fenetre_foret_main = Fenetre_Foret()
         self.fenetre_foret_main.hide()
 
