@@ -34,14 +34,7 @@ def ChargerNomForet(json_path):
 
     return names
 
-class Menu_deroullant_arbre(QGroupBox):
-    def __init__(self):
-        self.donnee_arbre = QComboBox()
-        self.donnee_arbre.addItems(ChargerDonneesCSV("data/bdd_arbres.csv"))
-        self.donnee_arbre.itemData.clicked.connect()
 
-    def AppuieTypeArbre(self):
-        print(self.donnee_arbre.itemData())
 
 # FENETRE FORET
 class Fenetre_Foret(QGroupBox):
@@ -51,7 +44,8 @@ class Fenetre_Foret(QGroupBox):
 
         layout = QVBoxLayout()
 
-        self.donnee_arbre_main = Menu_deroullant_arbre
+        self.donnee_arbre = QComboBox()
+        self.donnee_arbre.addItems(ChargerDonneesCSV("data/bdd_arbres.csv"))
 
         self.donnee_type_eau = QComboBox()
         self.donnee_type_eau.addItems(ChargerDonneesCSV("data/type_eau.csv"))
@@ -65,8 +59,23 @@ class Fenetre_Foret(QGroupBox):
         self.donnee_risques = QComboBox()
         self.donnee_risques.addItems(ChargerDonneesCSV("data/bdd_risques.csv"))
 
-        layout.addWidget(QLabel("🌳 Type d’arbre"))
-        layout.addWidget(self.donnee_arbre_main)
+        layout.addWidget(QLabel("🌳 Type d’arbre que l'on trouve le plus"))
+        layout.addWidget(self.donnee_arbre)
+
+        
+        # Eau
+        layout_eau = QHBoxLayout()
+        self.eau_oui = QRadioButton("Oui")
+        self.eau_non = QRadioButton("Non")
+        self.eau_non.setChecked(True)
+
+        layout_eau.addWidget(QLabel("Eau"))
+        layout_eau.addWidget(self.eau_oui)
+        layout_eau.addWidget(self.eau_non)
+
+        layout.addLayout(layout_eau)
+
+        self.setLayout(layout)
 
         layout.addWidget(QLabel("💧 Type d’eau"))
         layout.addWidget(self.donnee_type_eau)
@@ -80,20 +89,12 @@ class Fenetre_Foret(QGroupBox):
         layout.addWidget(QLabel("⚠️ Risques"))
         layout.addWidget(self.donnee_risques)
 
-        # Chasseur
-        layout_chasseur = QHBoxLayout()
-        self.chasseur_oui = QRadioButton("Oui")
-        self.chasseur_non = QRadioButton("Non")
-        self.chasseur_non.setChecked(True)
+class Fenetre_Supr_Foret(QGroupBox):
+    def __init__(self):
+        super().__init__("🌲 Création d’une forêt")
+        self.setFixedWidth(300)
 
-        layout_chasseur.addWidget(QLabel("🔫 Chasseur"))
-        layout_chasseur.addWidget(self.chasseur_oui)
-        layout_chasseur.addWidget(self.chasseur_non)
-
-        layout.addLayout(layout_chasseur)
-
-        self.setLayout(layout)
-
+        layout = QVBoxLayout()
 
 # MAIN WINDOW
 class MainWindow(QWidget):
@@ -109,6 +110,8 @@ class MainWindow(QWidget):
         # fenetre forêt
         self.fenetre_foret_main = Fenetre_Foret()
         self.fenetre_foret_main.hide()
+        self.fenetre_supr_foret_main = Fenetre_Supr_Foret()
+        self.fenetre_supr_foret_main.hide()
 
         # Carte
         self.view = QtWebEngineWidgets.QWebEngineView()
@@ -127,11 +130,11 @@ class MainWindow(QWidget):
         BoutonAjouterForet.clicked.connect(self.AfficherFenetreForetMain)
 
         BoutonSupprimerForet = QPushButton("🗑 Supprimer forêt")
+        BoutonSupprimerForet.clicked.connect(self.AfficherFenetreSuprForetMain)
 
         self.ResultatForet = QListWidget()
         self.ResultatForet.setMaximumHeight(200)
         self.ResultatForet.setFrameShape(QListWidget.NoFrame)
-        self.ResultatForet.setFixedWidth(300)
 
 
         InterfaceGauche.addWidget(self.recherche)
@@ -142,6 +145,7 @@ class MainWindow(QWidget):
 
         main_layout.addLayout(InterfaceGauche)
         main_layout.addWidget(self.fenetre_foret_main)
+        main_layout.addWidget(self.fenetre_supr_foret_main)
         main_layout.addWidget(self.view)
 
         self.apply_style()
@@ -159,7 +163,8 @@ class MainWindow(QWidget):
 
     def AfficherFenetreForetMain(self):
         self.fenetre_foret_main.setVisible(not self.fenetre_foret_main.isVisible())
-
+    def AfficherFenetreSuprForetMain(self):
+        self.fenetre_supr_foret_main.setVisible(not self.fenetre_supr_foret_main.isVisible())
 # STYLE SITE
     def apply_style(self):
         self.setStyleSheet("""
