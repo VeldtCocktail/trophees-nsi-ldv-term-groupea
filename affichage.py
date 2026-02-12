@@ -125,6 +125,7 @@ class MainWindow(QWidget):
         self.ResultatForet = QListWidget()
         self.ResultatForet.setMaximumHeight(200)
         self.ResultatForet.setFrameShape(QListWidget.NoFrame)
+        self.ResultatForet.setFixedWidth(300)
 
 
         InterfaceGauche.addWidget(self.recherche)
