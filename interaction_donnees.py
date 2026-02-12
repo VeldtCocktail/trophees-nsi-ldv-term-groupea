@@ -7,6 +7,12 @@ class Interaction_bdd:
     Classe permettant l'interaction avec le fichier de base de donnees
     """
     def __init__(self, nom_fichier):
+        """
+        Entrees : nom_fichier: chemin vers le fichier de base de donnees
+        Role : initialise l'interaction avec le fichier de base de donnees
+        Sortie : self.connexion contient la connexion avec la base de donnees
+                 self.curseur contient le curseur pour executer des commandes
+        """
         # Connexion avec la base de donnees, a l'aide de sqlite3
         self.connexion = sqlite3.connect(nom_fichier)
         # Creation du curseur, pour pouvoir executer des commandes
@@ -146,6 +152,11 @@ class Interaction_json:
     Classe d'interaction avec le fichier JSON
     """
     def __init__(self, json_path):
+        """
+        Entrees : json_path: chemin vers le fichier JSON
+        Role : initialise l'interaction avec le fichier JSON
+        Sortie : self.data contient les donnees du fichier JSON
+        """
         self.json_path = json_path
         with open(json_path, 'r', encoding='utf-8') as file_json:
             self.data = json.load(file_json)
@@ -411,8 +422,10 @@ class Interaction_donnees:
 
         target_feature = None
         # Replacement for searching feature without break
-        targeted_features = [feature for feature in self.json_manager.data['features'] 
-                             if feature['properties'].get('id') == id_foret]
+        targeted_features = [
+            feature for feature in self.json_manager.data['features']
+            if feature['properties'].get('id') == id_foret
+        ]
 
         if targeted_features:
             target_feature = targeted_features[0]
