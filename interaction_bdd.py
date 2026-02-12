@@ -151,7 +151,8 @@ class Interaction_json:
 
     def ajouter_foret(self, id_foret, nom, coords):
         """
-        Entrees : id_foret: identifiant de la foret (doit etre le meme que dans la BDD)
+        Entrees : id_foret: identifiant de la foret (doit etre le meme que dans
+                  la BDD)
                   nom: nom de la foret
                   coords: liste de polygones (MultiPolygon coords)
         Role : Ajoute une foret au fichier GeoJSON
@@ -174,10 +175,10 @@ class Interaction_json:
         """
         Entrees : id_feature: identifiant de la feature
                   nom: nom de la feature
-                  geometry_type: type de geometrie (ex: 'Polygon' ou 'MultiPolygon')
+                  geometry_type: type de geometrie (ex: 'Polygon' ou 
+                                 'MultiPolygon')
                   coords: coordonnees de la geometrie
         Role : Cree une nouvelle feature si elle n'existe pas deja
-        Ref: TODO.md
         """
         # On verifie d'abord si la feature existe deja pour eviter les doublons
         for feature in self.data['features']:
@@ -225,13 +226,14 @@ class Interaction_json:
                     # Transformation Polygon -> MultiPolygon
                     anciennes_coords = geometry['coordinates']
                     geometry['type'] = 'MultiPolygon'
-                    geometry['coordinates'] = [anciennes_coords, nouvelles_coords]
-                    
+                    geometry['coordinates'] = [anciennes_coords,
+                                               nouvelles_coords]
+
                 elif geometry['type'] == 'MultiPolygon':
-                    
+
                     # Ajout au MultiPolygon existant
                     geometry['coordinates'].append(nouvelles_coords)
-                    
+
                 else:
                     # Par defaut si type different (ex: Point), on remplace
                     geometry['type'] = 'Polygon'
