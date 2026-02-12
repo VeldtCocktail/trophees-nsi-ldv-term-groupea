@@ -1,58 +1,47 @@
-* PAS UTILISABLE, A CHANGER ABSOLUMENT.
-* LA STRUCTURE DOIT ETRE COHERENTE.
-* MERCI D'ENREGISTRER EN ENCODAGE ISO 8859-3.
-* ^ Ca y est tu es content ? ??
-* types : 1 : riviere
-*         2 : fleuve
-*         3 : lac
-*         4 : canal
-*         5 : affluent
-*         6 : ruisseau
-*         7 : etang
-id_eau;nom;type;
-1;Autize;1;
-2;Auzance;2;
-3;Boulogne;1;
-4;Canal de la jeune Autise;4;
-5;Canal de la vieille Autise;4;
-6;Ciboule;1;
-7;Crème;5;
-8;Falleron;2;
-9;Gai Chatenay;1;
-10;Graon;3;
-11;Gué Gonrand;6;
-12;Guérineau;1;
-13;Guimenière;6;
-14;Issoire;1;
-15;Jaunay;1;
-16;Lay;2;
-17;Lignée;6;
-18;Ligneron;1;
-19;Logne;1;
-20;Loing;1;
-21;Louisiere;7;
-22;Maine;1;
-23;Marillet;1;
-24;Mère;1;
-25;Ognon;1;
-26;Ornay;5;
-27;Ouin;1;
-28;Parc;6;
-29;Petit Lay;1;
-30;Petite Boulogne;1;
-31;Petite Maine;1;
-32;Riaillée;1;
-33;Riot;6;
-34;Rivière du Goulet;1;
-35;Rivière du Roulin;1;
-36;Ruth;6;
-37;Sèvre Nantaise;1;
-38;Sèvre Niortaise;2;
-39;Smagne;1;
-40;Vendèe;1;
-41;Vertonne;1;
-42;Verdenneau;6;
-43;Vie;2;
-44;Vieille Autise;4;
-45;Vouraie;6;
-46;Yon;1;
+id_o;nom;id_eau;;;;;;;
+1;Autize;1;;;;;;;
+2;Auzance;2;;;;;;;
+3;Boulogne;1;;;;;;;
+4;Canal de la jeune Autise;4;;;;;;;
+5;Canal de la vieille Autise;4;;;;;;;
+6;Ciboule;1;;;;;;;
+7;Crûme;5;;;;;;;
+8;Falleron;2;;;;;;id_eau;type
+9;Gai Chatenay;1;;;;;;1;rivière
+10;Graon;3;;;;;;2;fleuve
+11;Gué Gonrand;6;;;;;;3;lac 
+12;Guérineau;1;;;;;;4;canal
+13;Guimenière;6;;;;;;5;affluent
+14;Issoire;1;;;;;;6;ruisseau
+15;Jaunay;1;;;;;;7;Etang
+16;Lay;2;;;;;;;
+17;Lignée;6;;;;;;;
+18;Ligneron;1;;;;;;;
+19;Logne;1;;;;;;;
+20;Loing;1;;;;;;;
+21;Louisiere;7;;;;;;;
+22;Maine;1;;;;;;;
+23;Marillet;1;;;;;;;
+24;Mère;1;;;;;;;
+25;Ognon;1;;;;;;;
+26;Ornay;5;;;;;;;
+27;Ouin;1;;;;;;;
+28;Parc;6;;;;;;;
+29;Petit Lay;1;;;;;;;
+30;Petite Boulogne;1;;;;;;;
+31;Petite Maine;1;;;;;;;
+32;Riaillée;1;;;;;;;
+33;Riot;6;;;;;;;
+34;Rivière du Goulet;1;;;;;;;
+35;Rivière du Roulin;1;;;;;;;
+36;Ruth;6;;;;;;;
+37;Sèvre Nantaise;1;;;;;;;
+38;Sèvre Niortaise;2;;;;;;;
+39;Smagne;1;;;;;;;
+40;Vendée;1;;;;;;;
+41;Vertonne;1;;;;;;;
+42;Verdenneau;6;;;;;;;
+43;Vie;2;;;;;;;
+44;Vieille Autise;4;;;;;;;
+45;Vouraie;6;;;;;;;
+46;Yon;1;;;;;;;
