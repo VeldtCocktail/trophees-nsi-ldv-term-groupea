@@ -8,13 +8,11 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5 import QtWebEngineWidgets
 
-from PyQt5.QtCore import QObject, pyqtSlot
+from PyQt5.QtCore import QObject, QUrl, pyqtSlot
 from PyQt5.QtWebChannel import QWebChannel
-from PyQt5.QtCore import QUrl
 from pathlib import Path
 import sys
 import os
-import overpass
 import requests
 from shapely.geometry import shape, Point, Polygon, MultiPolygon
 from carte import generer_carte
@@ -58,6 +56,7 @@ class RequetesOverpass:
 
             features = []
 
+            print(data)
             for el in data.get("elements", []):
                 geom_list = el.get("geometry")
                 if not geom_list or len(geom_list) < 3:
