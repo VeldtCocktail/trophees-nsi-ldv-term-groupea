@@ -151,8 +151,6 @@ class MainWindow(QWidget):
         main_layout.addWidget(self.fenetre_supr_foret_main)
         main_layout.addWidget(self.view)
 
-        self.apply_style()
-
     def chercher_foret(self, text):
         self.ResultatForet.clear()
         text = text.strip().lower()
@@ -170,43 +168,6 @@ class MainWindow(QWidget):
     def AfficherFenetreSuprForetMain(self):
         self.fenetre_supr_foret_main.setVisible(not self.fenetre_supr_foret_main.isVisible())
         
-# STYLE SITE
-    def apply_style(self):
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #0d3c21;
-                color: #eaeaea;
-                font-size: 13px;
-            }
-            QGroupBox {
-                border: 1px solid #444;
-                border-radius: 8px;
-                margin-top: 10px;
-                padding: 10px;
-            }
-            QGroupBox:title {
-                subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 5px;
-            }
-            QComboBox, QLineEdit {
-                background-color: #2b2b2b;
-                border: 1px solid #555;
-                border-radius: 5px;
-                padding: 5px;
-            }
-            QPushButton {
-                background-color: #3a7afe;
-                border: none;
-                border-radius: 6px;
-                padding: 8px;
-            }
-            QPushButton:hover {
-                background-color: #5a94ff;
-            }
-        """)
-
-
 # LANCER
 app = QApplication(sys.argv)
 window = MainWindow()
