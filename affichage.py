@@ -94,7 +94,7 @@ class Fenetre_Supr_Foret(QGroupBox):
         super().__init__("🌲 Suppresion forêt")
         self.setFixedWidth(300)
 
-        layout = QVBoxLayout()
+        layout = QVBoxLayout(self)
 
 # MAIN WINDOW
 class MainWindow(QWidget):
@@ -138,6 +138,8 @@ class MainWindow(QWidget):
         self.ResultatForet = QListWidget()
         self.ResultatForet.setMaximumHeight(200)
         self.ResultatForet.setFrameShape(QListWidget.NoFrame)
+        self.ResultatForet.setFixedWidth(300)
+
 
 
         InterfaceGauche.addWidget(self.recherche)
@@ -163,9 +165,11 @@ class MainWindow(QWidget):
                 self.ResultatForet.addItem(nom)
 
     def AfficherFenetreForetMain(self):
+        self.fenetre_supr_foret_main.hide()
         self.fenetre_foret_main.setVisible(not self.fenetre_foret_main.isVisible())
 
     def AfficherFenetreSuprForetMain(self):
+        self.fenetre_foret_main.hide()
         self.fenetre_supr_foret_main.setVisible(not self.fenetre_supr_foret_main.isVisible())
         
 # LANCER
