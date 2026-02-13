@@ -33,7 +33,7 @@ class RequetesOverpass:
         min_lon, max_lon = lon - delta, lon + delta
 
         query = f"""
-        [out:json][timeout:25];
+        [out:json][timeout:55];
         (
         nwr["landuse"="forest"]({min_lat},{min_lon},{max_lat},{max_lon});
         nwr["natural"="wood"]({min_lat},{min_lon},{max_lat},{max_lon});
@@ -42,30 +42,34 @@ class RequetesOverpass:
         nwr["landuse"="orchard"]({min_lat},{min_lon},{max_lat},{max_lon});
         );
         out geom;
+        >;
+        out skel qt;
         """
+        
+        self.compteur += 1
 
         try:
-            r = requests.post(
+            requete = requests.post(
                 self.apis[self.compteur % 3],
                 data=query,
-                timeout=30
+                timeout=60
             )
-            self.compteur += 1
-            r.raise_for_status()
-            data = r.json()
+            requete.raise_for_status()
+            data = requete.json()
 
             features = []
+            print('Données :')
+            print(data, end = '\n')
 
-            print(data)
-            for el in data.get("elements", []):
-                geom_list = el.get("geometry")
-                if not geom_list or len(geom_list) < 3:
-                    continue  # skip nodes or broken polygons
+            for elt in data.get("elements", []):
+                bounds_dict = elt["bounds"]
+                print('Bordures :', bounds_dict)
+                geom_list = elt.get("geometry")
 
                 coords_poly = [(p["lon"], p["lat"]) for p in geom_list]
 
                 # Make everything GeoJSON compliant
-                if el.get("type") == "relation":
+                if elt.get("type") == "relation":
                     # MultiPolygon (may still be only one polygon inside)
                     coords_geojson = [coords_poly]  # list of polygons
                     geom_type = "MultiPolygon"
@@ -75,6 +79,7 @@ class RequetesOverpass:
 
                 features.append({
                     "type": "Feature",
+                    "bounds": bounds_dict,
                     "geometry": {
                         "type": geom_type,
                         "coordinates": coords_geojson if geom_type == "MultiPolygon" else coords_geojson
@@ -85,19 +90,27 @@ class RequetesOverpass:
             if not features:
                 return {"type": "FeatureCollection", "features": []}
 
+            print('Features :', features)
             # Pick polygon that contains the click
-            point = Point(lon, lat)
-            containing = [f for f in features if shape(f["geometry"]).contains(point)]
+            pt = Point(lon, lat)
+
+            containing = []
+            for f in features:
+                coords = f["geometry"]["coordinates"][0]
+                poly = Polygon(coords)
+                if poly.contains(pt):
+                    containing.append(f)
+
             if containing:
                 closest = containing[0]
             else:
-                print('Aucun polygone ne contient le point')
                 return {"type": "FeatureCollection", "features": []}
+
 
             return {"type": "FeatureCollection", "features": [closest]}
 
         except Exception as e:
-            print("Erreur Overpass :", e)
+            print("Erreur :", e)
             return {"type": "FeatureCollection", "features": []}
 
 
