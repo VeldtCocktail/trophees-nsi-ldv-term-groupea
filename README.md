@@ -21,29 +21,36 @@ Développé dans le cadre du cours de NSI (Numérique et Sciences Informatiques)
 ```
 racine/
 ├── data/                           # Données du projet
-│   ├── forets_vendee.geojson      # Contours géographiques des forêts
 │   ├── bdd.db                      # Base de données SQLite principale
 │   ├── bdd_vide.db                 # Template de base de données
-│   ├── base-de-donnees-champignons.csv
-│   ├── base_de_donnees_des_risques.csv
-│   └── eau.csv
+│   ├── forets_vendee.geojson       # Contours géographiques des forêts
+│   ├── bdd_animaux.csv             # Liste des animaux par forêt
+│   ├── bdd_arbres.csv              # Liste des types d'arbres
+│   ├── bdd_risques.csv             # Liste des risques associés
+│   ├── bdd_toad.csv                # Liste des champignons
+│   ├── eau.csv                     # Données sur les points d'eau
+│   ├── type_eau.csv                # Types de points d'eau
+│   └── style.qss                   # Feuille de style pour PyQt5
 ├── cartes/                         # Cartes HTML générées
-│   └── carte.html
+│   └── carte.html                  # Carte interactive générée par Folium
 ├── outils_git/                     # Outils d'automatisation Git
 │   ├── commit.sh                   # Script de commit automatisé (Linux/Mac)
 │   ├── commit.bat                  # Script de commit automatisé (Windows)
 │   ├── git-update.sh               # Script de mise à jour (Linux/Mac)
 │   └── git-update.bat              # Script de mise à jour (Windows)
-├── looping/                        # Diagrammes et modèles
-├── docs/                           # Documentation
-├── main.py                         # Script principal (fait absolument rien, merci Maden)
-├── carte.py                        # Génération de la carte HTML
-├── affichage.py                    # Interface PyQt5 avec gestion des forêts
-├── gestion_clicks.py               # Gestion des clics sur la carte (QWebChannel)
-├── interaction_bdd.py              # Classe pour interagir avec la base de données
-├── journal.md                      # Journal de bord du projet
-├── requirements.txt                # Dépendances Python
-└── README.md                       # Ce fichier
+├── looping/                        # Diagrammes et modèles conceptuels
+├── docs/                           # Documentation complémentaire
+├── main.py                         # Petit script de test pour l'affichage Folium
+├── carte.py                        # Backend de génération de la carte Folium
+├── affichage.py                    # Interface PyQt5 principale intégrant la carte
+├── gestion_clicks.py               # Module de capture des clics via QWebChannel
+├── interaction_donnees.py          # Gestion unifiée SQLite + GeoJSON
+├── presentation.md                 # Document de présentation du projet
+├── journal.md                      # Journal de bord du développement
+├── requirements.txt                # Dépendances du projet
+├── TODO.md                         # Tâches en cours ou à venir
+├── pep8verif_cpp                   # Outil de vérification de conformité PEP8
+└── README.md                       # Documentation que vous lisez actuellement
 ```
 
 ## Technologies Utilisées
@@ -99,24 +106,31 @@ python carte.py
 ```
 Génère le fichier `carte.html` sans l'afficher.
 
-## Base de Données
+## Gestion des Données
 
-La classe `BaseDeDonnees` dans `interaction_bdd.py` permet d'interagir avec la base de données SQLite. Elle a été refactorisée pour offrir une interaction généralisée et robuste avec n'importe quelle base de données compatible SQLite.
+Le fichier `interaction_donnees.py` contient les classes nécessaires pour gérer les données du projet de manière synchronisée.
 
-### Méthodes disponibles
+### Classes principales
 
-- `ajouter_ligne(table, valeurs)` : Ajouter une entrée
-- `supprimer_ligne(table, identification)` : Supprimer une entrée
-- `modifier_ligne(table, modif)` : Modifier une entrée
-- `rechercher_ligne(table, identification)` : Rechercher des lignes
-- `rechercher_valeur(table, identification, colonne_recherchee)` : Rechercher des valeurs spécifiques
+- **BaseDeDonnees** : Gère les opérations CRUD (Create, Read, Update, Delete) sur la base SQLite.
+- **Interaction_JSON** : Gère la lecture et la modification du fichier GeoJSON (ajout/suppression de zones géographiques).
+- **Interaction_Donnees** : Classe coordinatrice qui synchronise les changements entre la base SQLite et le fichier GeoJSON.
+
+### Méthodes de la coordinatrice
+
+- `ajouter_foret(valeurs_bdd, coords_json)` : Ajoute une forêt partout.
+- `supprimer_foret(id_foret)` : Supprime une forêt partout.
+- `rechercher_foret(critere)` : Recherche des forêts dans la BDD.
+- `ajouter_polygone_a_foret(id_foret, coords)` : Ajoute une zone géographique.
+- `retirer_polygone_a_foret(id_foret, index)` : Retire une zone géographique.
 
 ### Exemple d'utilisation
 ```python
-from interaction_bdd import BaseDeDonnees
+from interaction_donnees import Interaction_Donnees
 
-bdd = BaseDeDonnees("data/bdd.db")
-bdd.ajouter_ligne("FORET", (1, "Forêt de Mervent", 5000, 10000, 1, 2, 3, 4))
+inter = Interaction_Donnees("data/bdd.db", "data/forets_vendee.geojson")
+# Ajout d'une forêt dans la BDD et le GeoJSON simultanément
+inter.ajouter_foret([1, "Forêt de Mervent", 5000, 10000, 1, 2, 3, 4], [[[-1.5, 46.5], ...]])
 ```
 
 ## Outils Git (Automatisation)
