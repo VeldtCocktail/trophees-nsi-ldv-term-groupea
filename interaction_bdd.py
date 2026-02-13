@@ -1,7 +1,7 @@
 import sqlite3
 import json
 
-class BaseDeDonnees:
+class Interaction_BDD:
     """
     Classe permettant l'interaction avec le fichier de base de donnees
     """
@@ -140,7 +140,7 @@ class BaseDeDonnees:
         return self.curseur.fetchall()
 
 
-class Interaction_json:
+class Interaction_JSON:
     """
     Classe d'interaction avec le fichier JSON
     """
@@ -182,12 +182,20 @@ class Interaction_json:
         Role : Cree une nouvelle feature si elle n'existe pas deja
         """
         # On verifie d'abord si la feature existe deja pour eviter les doublons
-        for feature in self.data['features']:
-
-            if feature['properties'].get('id') == id_feature:
-
-                return False
+        trouve = False
+        features = self.data['features']
+        nb_features = len(features)
+        i = 0
         
+        while i < nb_features and not trouve:
+            feature = features[i]
+            if feature['properties'].get('id') == id_feature:
+                trouve = True
+            i += 1
+        
+        if trouve:
+            return False
+            
         nouvelle_feature = {
             "type": "Feature",
             "properties": {
@@ -203,6 +211,7 @@ class Interaction_json:
         self.sauvegarder()
         return True
 
+
     def ajouter_a_feature(self, id_feature, nouvelles_coords):
         """
         Entrees : id_feature: identifiant de la feature a modifier
@@ -211,10 +220,15 @@ class Interaction_json:
                Si c'est un Polygon, il devient un MultiPolygon.
                Si c'est deja un MultiPolygon, on ajoute les coordonnees
         """
-        for feature in self.data['features']:
-
+        trouve = False
+        features = self.data['features']
+        nb_features = len(features)
+        i = 0
+        
+        while i < nb_features and not trouve:
+            feature = features[i]
             if feature['properties'].get('id') == id_feature:
-
+                trouve = True
                 geometry = feature.get('geometry')
 
                 if not geometry:
@@ -243,10 +257,10 @@ class Interaction_json:
                     geometry['coordinates'] = nouvelles_coords
                 
                 self.sauvegarder()
+            i += 1
 
-                return True
+        return trouve
 
-        return False
 
 
     def supprimer_foret(self, id_foret):
@@ -269,6 +283,145 @@ class Interaction_json:
             json.dump(self.data, f, ensure_ascii=False, indent=2)
 
 
-# Avant de recommencer quelconque test sur la bdd, penser a reset la/les
-# table(s) affectee(s) avant, afin d'eviter des bugs causes non pas par le code
-# mais par l'utilisateur, merci - @Onions/Le G.O.A.T. du gambling 🎰
+class Interaction_Donnees:
+    """
+    Classe de coordination entre la base de donnees SQL et le fichier JSON
+    """
+    def __init__(self, db_path, json_path):
+        """
+        Entrees : db_path: str chemin vers le fichier .db
+                  json_path: str chemin vers le fichier .geojson
+        Role : Initialise les deux interfaces d'interaction
+        """
+        self.bdd = Interaction_BDD(db_path)
+        self.json = Interaction_JSON(json_path)
+
+    def ajouter_foret(self, id_foret, nom, coords_json, valeurs_sql):
+        """
+        Entrees : id_foret: int identifiant unique
+                  nom: str nom de la foret
+                  coords_json: list coordonnees MultiPolygon pour le GeoJSON
+                  valeurs_sql: list toutes les valeurs pour la table SQL
+        Role : Ajoute une foret dans les deux supports de stockage
+        Sortie : True si reussi
+        """
+        # Ajout dans SQL
+        self.bdd.ajouter_ligne("FORET", valeurs_sql)
+        # Ajout dans JSON
+        self.json.ajouter_foret(id_foret, nom, coords_json)
+        
+        return True
+
+    def supprimer_foret(self, id_foret):
+        """
+        Entrees : id_foret: int identifiant de la foret
+        Role : Supprime la foret des deux supports
+        Sortie : True si reussi
+        """
+        # Suppression SQL
+        self.bdd.supprimer_ligne("FORET", ("id_foret", id_foret))
+        # Suppression JSON
+        self.json.supprimer_foret(id_foret)
+
+        return True
+
+    def rechercher_foret(self, id_foret):
+        """
+        Entrees : id_foret: int identifiant
+        Role : Recherche les informations dans les deux supports
+        Sortie : dict contenant les infos SQL et la geometrie JSON
+        """
+        res_sql = self.bdd.rechercher_ligne("FORET", (("id_foret", id_foret),))
+        feat_json = None
+        
+        trouve = False
+        features = self.json.data['features']
+        nb_features = len(features)
+        i = 0
+        
+        while i < nb_features and not trouve:
+
+            feature = features[i]
+
+            if feature['properties'].get('id') == id_foret:
+
+                feat_json = feature
+                trouve = True
+
+            i += 1
+        
+        return {
+            "sql": res_sql,
+            "json": feat_json
+        }
+
+
+    def modifier_foret_nom(self, id_foret, nouveau_nom):
+        """
+        Entrees : id_foret: int identifiant
+                  nouveau_nom: str nouveau nom
+        Role : Modifie le nom dans SQL et JSON
+        """
+        # Modif SQL
+        self.bdd.modifier_ligne("FORET", (("id_foret", id_foret), "nom",
+                                         nouveau_nom))
+        # Modif JSON
+        trouve = False
+        features = self.json.data['features']
+        nb_features = len(features)
+        i = 0
+        
+        while i < nb_features and not trouve:
+
+            feature = features[i]
+
+            if feature['properties'].get('id') == id_foret:
+
+                feature['properties']['nom'] = nouveau_nom
+                trouve = True
+
+            i += 1
+            
+        self.json.sauvegarder()
+        return True
+
+
+    def rechercher_par_critere(self, table, identification):
+        """
+        Entrees : table: str nom de la table
+                  identification: tuple(tuple(colonne, valeur)) critere
+        Role : Recherche dans SQL et renvoie aussi les infos JSON si c'est
+               une foret
+        Sortie : liste de dicts contenant les donnees SQL et JSON
+        """
+        resultats_sql = self.bdd.rechercher_ligne(table, identification)
+        resultats_complets = []
+        
+        features = self.json.data['features']
+        nb_features = len(features)
+        
+        for ligne in resultats_sql:
+            # On suppose que l'id est en premiere colonne (idx 0) pour FORET
+            id_foret = ligne[0]
+            info_json = None
+            
+            trouve = False
+            j = 0
+            while j < nb_features and not trouve:
+
+                feature = features[j]
+                if feature['properties'].get('id') == id_foret:
+
+                    info_json = feature
+                    trouve = True
+                    
+                j += 1
+            
+            resultats_complets.append({
+                "sql": ligne,
+                "json": info_json
+            })
+            
+        return resultats_complets
+
+
