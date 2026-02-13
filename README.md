@@ -48,8 +48,6 @@ racine/
 ├── presentation.md                 # Document de présentation du projet
 ├── journal.md                      # Journal de bord du développement
 ├── requirements.txt                # Dépendances du projet
-├── TODO.md                         # Tâches en cours ou à venir
-├── pep8verif_cpp                   # Outil de vérification de conformité PEP8
 └── README.md                       # Documentation que vous lisez actuellement
 ```
 
