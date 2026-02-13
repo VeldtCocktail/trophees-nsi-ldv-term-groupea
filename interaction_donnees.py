@@ -163,6 +163,27 @@ class Interaction_JSON:
         with open(json_path, 'r', encoding='utf-8') as file_json:
             self.data = json.load(file_json)
 
+    def rechercher_feature(self, id_feature):
+        """
+        Entrees : id_feature: identifiant de la feature a rechercher
+        Role : Recherche une feature dans le GeoJSON par son ID
+        Sortie : La feature si trouvee, None sinon
+        """
+        features = self.data.get('features', [])
+        nb_features = len(features)
+        trouve = False
+        idx = 0
+        feature_trouvee = None
+        
+        while idx < nb_features and not trouve:
+            feature = features[idx]
+            if feature['properties'].get('id') == id_feature:
+                trouve = True
+                feature_trouvee = feature
+            idx += 1
+            
+        return feature_trouvee
+
     def ajouter_foret(self, id_foret, nom, coords):
         """
         Entrees : id_foret: identifiant de la foret (doit etre le meme que dans
@@ -271,7 +292,7 @@ class Interaction_JSON:
                     geometry['coordinates'] = nouvelles_coords
                 
                 self.sauvegarder()
-            i += 1
+            idx += 1
 
         return trouve
 
@@ -292,7 +313,7 @@ class Interaction_JSON:
                 features.pop(idx)
                 trouve = True
                 self.sauvegarder()
-            i += 1
+            idx += 1
         return trouve
 
     def retirer_de_feature(self, id_feature, index_polygone):
@@ -392,7 +413,8 @@ class Interaction_Donnees:
     def rechercher_foret(self, critere):
         """
         Entrees : critere: tuple (colonne, valeur) pour la recherche
-        Role : Recherche des forets dans la BDD correspondant au critere
+        Role : Recherche des forets dans la BDD correspondant au critere.
+               Si on cherche par nom, cela permet de retrouver l'id GeoJSON.
         Sortie : liste des resultats (lignes de la table FORET)
         """
         return self.bdd.rechercher_ligne("FORET", critere)
@@ -412,6 +434,45 @@ class Interaction_Donnees:
         Role : Retire une zone (polygone) d'une foret dans le JSON
         """
         return self.json.retirer_de_feature(id_foret, index_polygone)
+
+    def rechercher_feature(self, id_foret):
+        """
+        Entrees : id_foret: identifiant de la foret
+        Role : Recherche la feature correspondante dans le GeoJSON
+        Sortie : La feature si trouvee, None sinon
+        """
+        return self.json.rechercher_feature(id_foret)
+
+    def synchroniser_depuis_json(self):
+        """
+        Role : Parcourt le GeoJSON et ajoute à la BDD les forêts manquantes.
+               C'est utile si le fichier GeoJSON contient plus de données 
+               que la BDD
+        Sortie : Modifie la BDD en y ajoutant les lignes manquantes
+        """
+        # On récupère toutes les features du GeoJSON
+        features = self.json.data.get('features', [])
+        
+        for feature in features:
+            # On extrait l'identifiant et le nom depuis les propriétés
+            props = feature.get('properties', {})
+            id_geojson = props.get('id')
+            # Si pas d'ID, on saute cette feature pour éviter les erreurs
+            if not id_geojson:
+                continue
+                
+            nom = props.get('name', 'Forêt inconnue')
+            
+            # On vérifie si la forêt existe déjà dans la BDD (recherche par ID)
+            existe = self.bdd.rechercher_ligne("FORET", ("id_foret", id_geojson))
+            
+            # Si elle n'existe pas, on l'ajoute avec des valeurs par défaut
+            if not existe:
+                # Structure de la table FORET :
+                # id_foret, nom, nb_visi_par_an, superficie, implan_naturelle,
+                # id_eau, id_espece, id_risque
+                valeurs = [id_geojson, nom, 0, 0.0, 0, 0, 0, 0]
+                self.bdd.ajouter_ligne("FORET", valeurs)
 
     def fermer(self):
         """
