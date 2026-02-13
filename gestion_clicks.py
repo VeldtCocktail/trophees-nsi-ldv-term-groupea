@@ -42,8 +42,6 @@ class RequetesOverpass:
         nwr["landuse"="orchard"]({min_lat},{min_lon},{max_lat},{max_lon});
         );
         out geom;
-        >;
-        out skel qt;
         """
         
         self.compteur += 1
@@ -62,30 +60,46 @@ class RequetesOverpass:
             print(data, end = '\n')
 
             for elt in data.get("elements", []):
-                bounds_dict = elt["bounds"]
-                print('Bordures :', bounds_dict)
-                geom_list = elt.get("geometry")
+                if elt["type"] == "way":
+                    geom_list = elt.get("geometry")
+                    if not geom_list or len(geom_list) < 3:
+                        continue
 
-                coords_poly = [(p["lon"], p["lat"]) for p in geom_list]
+                    coords_poly = [(p["lon"], p["lat"]) for p in geom_list]
 
-                # Make everything GeoJSON compliant
-                if elt.get("type") == "relation":
-                    # MultiPolygon (may still be only one polygon inside)
-                    coords_geojson = [coords_poly]  # list of polygons
-                    geom_type = "MultiPolygon"
-                else:
-                    coords_geojson = [coords_poly]  # list of linear rings
-                    geom_type = "Polygon"
+                    features.append({
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [coords_poly]
+                        },
+                        "properties": {}
+                    })
 
-                features.append({
-                    "type": "Feature",
-                    "bounds": bounds_dict,
-                    "geometry": {
-                        "type": geom_type,
-                        "coordinates": coords_geojson if geom_type == "MultiPolygon" else coords_geojson
-                    },
-                    "properties": {}
-                })
+                elif elt["type"] == "relation":
+                    members = elt.get("members", [])
+                    polygons = []
+
+                    for m in members:
+                        if m.get("role") != "outer":
+                            continue
+
+                        geom_list = m.get("geometry")
+                        if not geom_list or len(geom_list) < 3:
+                            continue
+
+                        coords_poly = [(p["lon"], p["lat"]) for p in geom_list]
+                        polygons.append([coords_poly])  # chaque polygon doit être [[coords]]
+
+                    if polygons:
+                        features.append({
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "MultiPolygon",
+                                "coordinates": polygons
+                            },
+                            "properties": {}
+                        })
 
             if not features:
                 return {"type": "FeatureCollection", "features": []}
@@ -96,9 +110,9 @@ class RequetesOverpass:
 
             containing = []
             for f in features:
-                coords = f["geometry"]["coordinates"][0]
-                poly = Polygon(coords)
-                if poly.contains(pt):
+                geom = shape(f["geometry"])
+
+                if geom.contains(pt):
                     containing.append(f)
 
             if containing:
