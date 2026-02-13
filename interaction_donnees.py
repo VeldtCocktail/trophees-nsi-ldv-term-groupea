@@ -18,6 +18,12 @@ class BaseDeDonnees:
         # Creation du curseur, pour pouvoir executer des commandes
         self.curseur = self.connexion.cursor()
 
+    def fermer(self):
+        """
+        Role : ferme la connexion avec la base de donnees
+        """
+        self.connexion.close()
+
     def ajouter_ligne(self, table, valeurs):
         """
         Entrees : self:instance de BaseDeDonnees
@@ -102,8 +108,6 @@ class BaseDeDonnees:
                critere
         Sortie : liste des lignes trouvees
         """
-        # Variable pour l'identification de la/des colonnes a rechercher
-        identification = identification[0]
         # D'abord, dans quelle colonne on verifie
         colonne = identification[0]
         # Et a quelle valeur ce doit etre egal
@@ -130,8 +134,6 @@ class BaseDeDonnees:
                critere
         Sortie : liste des valeurs trouvees
         """
-        # Variable pour l'identification de la/des colonnes a rechercher
-        identification = identification[0]
         # D'abord, dans quelle colonne on verifie
         colonne = identification[0]
         # Et a quelle valeur ce doit etre egal
@@ -273,26 +275,146 @@ class Interaction_JSON:
 
         return trouve
 
-
-
-    def supprimer_foret(self, id_foret):
+    def supprimer_feature(self, id_feature):
         """
-        Entree : id_foret:int identifiant de la foret a supprimer
-        Role : Supprime une foret du fichier GeoJSON
+        Entrees : id_feature: identifiant de la feature a supprimer
+        Role : Supprime une feature du fichier GeoJSON
+        Sortie : True si supprimee, False sinon
         """
-        self.data['features'] = [
-            feature for feature in self.data['features'] 
-            if feature['properties'].get('id') != id_foret
-        ]
-        self.sauvegarder()
+        trouve = False
+        features = self.data['features']
+        nb_features = len(features)
+        i = 0
+        
+        while i < nb_features and not trouve:
+            feature = features[i]
+            if feature['properties'].get('id') == id_feature:
+                features.pop(i)
+                trouve = True
+                self.sauvegarder()
+            i += 1
+        return trouve
+
+    def retirer_de_feature(self, id_feature, index_polygone):
+        """
+        Entrees : id_feature: identifiant de la feature a modifier
+                  index_polygone: index du polygone a retirer dans la liste
+        Role : Retire un polygone d'une feature. S'il ne reste qu'un polygone,
+               on retransforme le MultiPolygon en Polygon.
+        Sortie : True si retire, False sinon
+        """
+        trouve = False
+        features = self.data['features']
+        nb_features = len(features)
+        i = 0
+        
+        while i < nb_features and not trouve:
+            feature = features[i]
+            if feature['properties'].get('id') == id_feature:
+                trouve = True
+                geometry = feature.get('geometry')
+                
+                if geometry and geometry['type'] == 'MultiPolygon':
+                    coords = geometry['coordinates']
+                    if 0 <= index_polygone < len(coords):
+                        coords.pop(index_polygone)
+                        
+                        # Si il n'en reste qu'un, on repasse en Polygon
+                        if len(coords) == 1:
+                            geometry['type'] = 'Polygon'
+                            geometry['coordinates'] = coords[0]
+                        elif len(coords) == 0:
+                            # Plus de geometrie
+                            feature['geometry'] = None
+                        
+                        self.sauvegarder()
+                    else:
+                        trouve = False # Index invalide
+                elif geometry and geometry['type'] == 'Polygon' and index_polygone == 0:
+                    feature['geometry'] = None
+                    self.sauvegarder()
+                else:
+                    trouve = False # Pas de polygone a cet index ou pas le bon type
+            i += 1
+        return trouve
 
     def sauvegarder(self):
         """
-        Role : Ecrit les modifications dans le fichier JSON
+        Role : Sauvegarde les donnees actuelles dans le fichier JSON
         """
         with open(self.json_path, 'w', encoding='utf-8') as file_json:
+            json.dump(self.data, file_json, indent=4)
 
-            json.dump(self.data, file_json, ensure_ascii=False, indent=2)
+
+class Interaction_Donnees:
+    """
+    Classe de coordination entre la BDD SQLite et le fichier GeoJSON
+    """
+    def __init__(self, bdd_path, json_path):
+        """
+        Entrees : bdd_path: chemin vers la base de donnees
+                  json_path: chemin vers le fichier GeoJSON
+        Role : initialise les deux types d'interaction
+        """
+        self.bdd = BaseDeDonnees(bdd_path)
+        self.json = Interaction_JSON(json_path)
+
+    def ajouter_foret(self, valeurs_bdd, coords_json):
+        """
+        Entrees : valeurs_bdd: liste des valeurs pour la table FORET
+                           (id_foret, nom, nb_visi, superficie, ...)
+                  coords_json: coordonnees initiales (Polygon) pour le GeoJSON
+        Role : Ajoute une foret dans la BDD et dans le GeoJSON
+        """
+        # Ajout dans la BDD
+        # On suppose que valeurs_bdd est une liste complete correspondant au schema
+        self.bdd.ajouter_ligne("FORET", valeurs_bdd)
+        
+        # Ajout dans le JSON
+        id_foret = valeurs_bdd[0]
+        nom_foret = valeurs_bdd[1]
+        self.json.creer_feature(id_foret, nom_foret, "Polygon", coords_json)
+
+    def supprimer_foret(self, id_foret):
+        """
+        Entrees : id_foret: identifiant de la foret a supprimer
+        Role : Supprime une foret de la BDD et du fichier GeoJSON
+        """
+        # Suppression BDD
+        self.bdd.supprimer_ligne("FORET", ("id_foret", id_foret))
+        
+        # Suppression JSON
+        self.json.supprimer_feature(id_foret)
+
+    def rechercher_foret(self, critere):
+        """
+        Entrees : critere: tuple (colonne, valeur) pour la recherche
+        Role : Recherche des forets dans la BDD correspondant au critere
+        Sortie : liste des resultats (lignes de la table FORET)
+        """
+        return self.bdd.rechercher_ligne("FORET", critere)
+
+    def ajouter_polygone_a_foret(self, id_foret, nouvelles_coords):
+        """
+        Entrees : id_foret: identifiant de la foret
+                  nouvelles_coords: coordonnees du nouveau polygone
+        Role : Ajoute une zone (polygone) a une foret existante dans le JSON
+        """
+        return self.json.ajouter_a_feature(id_foret, nouvelles_coords)
+
+    def retirer_polygone_a_foret(self, id_foret, index_polygone):
+        """
+        Entrees : id_foret: identifiant de la foret
+                  index_polygone: index du polygone a retirer
+        Role : Retire une zone (polygone) d'une foret dans le JSON
+        """
+        return self.json.retirer_de_feature(id_foret, index_polygone)
+
+    def fermer(self):
+        """
+        Role : ferme les interactions (connexion BDD)
+        """
+        self.bdd.fermer()
 
 
 # Avant de recommencer quelconque test sur la bdd, penser a reset la/les
