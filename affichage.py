@@ -39,7 +39,7 @@ def ChargerNomForet(json_path):
 # FENETRE FORET
 class Fenetre_Foret(QGroupBox):
     def __init__(self):
-        super().__init__("🌲 Création d’une forêt")
+        super().__init__("Création d’une forêt")
         self.setFixedWidth(300)
 
         layout = QVBoxLayout()
@@ -59,7 +59,7 @@ class Fenetre_Foret(QGroupBox):
         self.donnee_risques = QComboBox()
         self.donnee_risques.addItems(ChargerDonneesCSV("data/bdd_risques.csv"))
 
-        layout.addWidget(QLabel("🌳 Type d’arbre que l'on trouve le plus"))
+        layout.addWidget(QLabel("Type d’arbre que l'on trouve le plus"))
         layout.addWidget(self.donnee_arbre)
 
         
@@ -77,21 +77,21 @@ class Fenetre_Foret(QGroupBox):
 
         self.setLayout(layout)
 
-        layout.addWidget(QLabel("💧 Type d’eau"))
+        layout.addWidget(QLabel("Type d’eau"))
         layout.addWidget(self.donnee_type_eau)
 
-        layout.addWidget(QLabel("🐾 Animaux"))
+        layout.addWidget(QLabel("Animaux"))
         layout.addWidget(self.donnee_animaux)
 
-        layout.addWidget(QLabel("🍄 Champignons"))
+        layout.addWidget(QLabel("Champignons"))
         layout.addWidget(self.donnee_champignon)
 
-        layout.addWidget(QLabel("⚠️ Risques"))
+        layout.addWidget(QLabel("Risques"))
         layout.addWidget(self.donnee_risques)
 
 class Fenetre_Supr_Foret(QGroupBox):
     def __init__(self):
-        super().__init__("🌲 Suppresion forêt")
+        super().__init__("Suppresion forêt")
         self.setFixedWidth(300)
 
         layout = QVBoxLayout(self)
@@ -122,16 +122,16 @@ class MainWindow(QWidget):
         InterfaceGauche = QVBoxLayout()
 
         self.recherche = QLineEdit()
-        self.recherche.setPlaceholderText("🔍 Rechercher une forêt")        
+        self.recherche.setPlaceholderText("Rechercher une forêt")        
         self.recherche.textChanged.connect(self.chercher_foret)
         self.recherche.setFixedWidth(300)
 
-        BoutonAjouterForet = QPushButton("➕ Ajouter forêt")
+        BoutonAjouterForet = QPushButton("Ajouter forêt")
         BoutonAjouterForet.clicked.connect(self.AfficherFenetreForetMain)
         BoutonAjouterForet.setFixedWidth(300)
 
 
-        BoutonSupprimerForet = QPushButton("🗑 Supprimer forêt")
+        BoutonSupprimerForet = QPushButton("Supprimer forêt")
         BoutonSupprimerForet.clicked.connect(self.AfficherFenetreSuprForetMain)
         BoutonSupprimerForet.setFixedWidth(300)
 
