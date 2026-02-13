@@ -199,13 +199,13 @@ class Interaction_JSON:
         trouve = False
         features = self.data['features']
         nb_features = len(features)
-        i = 0
+        idx = 0
         
-        while i < nb_features and not trouve:
-            feature = features[i]
+        while idx < nb_features and not trouve:
+            feature = features[idx]
             if feature['properties'].get('id') == id_feature:
                 trouve = True
-            i += 1
+            idx += 1
         
         if trouve:
             return False
@@ -237,10 +237,10 @@ class Interaction_JSON:
         trouve = False
         features = self.data['features']
         nb_features = len(features)
-        i = 0
+        idx = 0
         
-        while i < nb_features and not trouve:
-            feature = features[i]
+        while idx < nb_features and not trouve:
+            feature = features[idx]
             if feature['properties'].get('id') == id_feature:
                 trouve = True
                 geometry = feature.get('geometry')
@@ -284,12 +284,12 @@ class Interaction_JSON:
         trouve = False
         features = self.data['features']
         nb_features = len(features)
-        i = 0
+        idx = 0
         
-        while i < nb_features and not trouve:
-            feature = features[i]
+        while idx < nb_features and not trouve:
+            feature = features[idx]
             if feature['properties'].get('id') == id_feature:
-                features.pop(i)
+                features.pop(idx)
                 trouve = True
                 self.sauvegarder()
             i += 1
@@ -306,10 +306,10 @@ class Interaction_JSON:
         trouve = False
         features = self.data['features']
         nb_features = len(features)
-        i = 0
+        idx = 0
         
-        while i < nb_features and not trouve:
-            feature = features[i]
+        while idx < nb_features and not trouve:
+            feature = features[idx]
             if feature['properties'].get('id') == id_feature:
                 trouve = True
                 geometry = feature.get('geometry')
@@ -330,12 +330,14 @@ class Interaction_JSON:
                         self.sauvegarder()
                     else:
                         trouve = False # Index invalide
-                elif geometry and geometry['type'] == 'Polygon' and index_polygone == 0:
+                elif geometry and (geometry['type'] == 'Polygon' 
+                                   and index_polygone == 0):
                     feature['geometry'] = None
                     self.sauvegarder()
                 else:
-                    trouve = False # Pas de polygone a cet index ou pas le bon type
-            i += 1
+                    trouve = False # Pas de polygone a cet index ou pas le bon
+                                   #type
+            idx += 1
         return trouve
 
     def sauvegarder(self):
@@ -367,7 +369,8 @@ class Interaction_Donnees:
         Role : Ajoute une foret dans la BDD et dans le GeoJSON
         """
         # Ajout dans la BDD
-        # On suppose que valeurs_bdd est une liste complete correspondant au schema
+        # On suppose que valeurs_bdd est une liste complete correspondant au 
+        #schema
         self.bdd.ajouter_ligne("FORET", valeurs_bdd)
         
         # Ajout dans le JSON
