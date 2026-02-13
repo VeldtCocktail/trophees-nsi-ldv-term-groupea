@@ -148,6 +148,17 @@ class BaseDeDonnees:
         # Et on l'execute
         return self.curseur.fetchall()
 
+    def recuperer_tout(self, table):
+        """
+        Entrees : self:instance de BaseDeDonnees
+                  table:str nom de la table
+        Role : recuperer toutes les lignes d'une table
+        Sortie : liste de toutes les lignes de la table
+        """
+        requete = f"SELECT * FROM {table}"
+        self.curseur.execute(requete)
+        return self.curseur.fetchall()
+
 
 class Interaction_JSON:
     """
@@ -443,7 +454,7 @@ class Interaction_Donnees:
         """
         return self.json.rechercher_feature(id_foret)
 
-    def synchroniser_depuis_json(self):
+    def synchro_depuis_json(self):
         """
         Role : Parcourt le GeoJSON et ajoute à la BDD les forêts manquantes.
                C'est utile si le fichier GeoJSON contient plus de données 
@@ -473,6 +484,29 @@ class Interaction_Donnees:
                 # id_eau, id_espece, id_risque
                 valeurs = [id_geojson, nom, 0, 0.0, 0, 0, 0, 0]
                 self.bdd.ajouter_ligne("FORET", valeurs)
+
+    def synchro_depuis_bdd(self):
+        """
+        Role : Parcourt la BDD et ajoute au GeoJSON les forêts manquantes.
+               C'est utile si la BDD contient plus de données que le 
+               fichier GeoJSON
+        Sortie : Modifie le GeoJSON en y ajoutant les features manquantes
+        """
+        # On récupère toutes les forêts de la BDD
+        forets = self.bdd.recuperer_tout("FORET")
+        
+        for foret in forets:
+            # Structure de la table FORET : id_foret, nom, ...
+            id_bdd = foret[0]
+            nom = foret[1]
+            
+            # On vérifie si la forêt existe déjà dans le GeoJSON
+            existe = self.json.rechercher_feature(id_bdd)
+            
+            # Si elle n'existe pas, on l'ajoute avec une géométrie vide
+            if not existe:
+                # On utilise un MultiPolygon vide par défaut
+                self.json.creer_feature(id_bdd, nom, "MultiPolygon", [])
 
     def fermer(self):
         """
