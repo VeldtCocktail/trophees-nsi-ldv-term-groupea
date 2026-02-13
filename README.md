@@ -175,7 +175,7 @@ Démonstrateur de la communication JavaScript ↔ Python :
 
 Projet réalisé par des élèves de NSI :
 - Mathéo PASQUIER (T08)(#absoluteMeyzop)
-- Charlélie PINEAU (T02)![NAAAN](data/obamium.jpg)
+- Charlélie PINEAU (T02)#CP ![NAAAN](data/obamium.jpg)
 - Léon RAIFAUD (T02)(🥡)
 - Maden USSEREAU (T03)(#legoat) 
 
