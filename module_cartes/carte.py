@@ -1,5 +1,6 @@
 import folium
 import pathlib
+from PyQt5.QtCore import QObject, pyqtSlot
 
 def generer_carte(coordonnees_depart, donnees = []):
     fonction_style = lambda x: {
@@ -46,5 +47,13 @@ def generer_carte(coordonnees_depart, donnees = []):
 
     carte.save(pathlib.Path("cartes", "carte.html"))
 
+class Pont(QObject):
 
-generer_carte((46.3930189, -1.480289))
+    def __init__(self, parent):
+        self.par = parent
+        super().__init__(parent)
+
+    @pyqtSlot(float, float)
+    def envoyerCoordonnees(self, lat, long):
+        print(f'Click enregistré en : {lat}, {long}')
+        self.par.update_carte((lat, long))

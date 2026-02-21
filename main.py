@@ -1,7 +1,3 @@
-import folium
+from module_cartes import *
 
-carte = folium.Map(location=(46.3930189, -1.480289), zoom_start=12)
-
-folium.GeoJson("data/forets_vendee.geojson").add_to(carte)
-
-carte.show_in_browser()
+carte.generer_carte((46.3930189, -1.480289))
