@@ -2,14 +2,14 @@ import folium
 import pathlib
 from PyQt5.QtCore import QObject, pyqtSlot
 
-def generer_carte(coordonnees_depart, donnees = []):
+def generer_carte(coordonnees_depart, zoom = 12, donnees = []):
     fonction_style = lambda x: {
         "fillColor": (
             "#0000ff"
         )
     }
 
-    carte = folium.Map(location = coordonnees_depart, zoom_start = 12)
+    carte = folium.Map(location = coordonnees_depart, zoom_start = zoom)
 
     folium.GeoJson("data/forets_vendee.geojson").add_to(carte)
     for donnees_json in donnees:
@@ -23,7 +23,12 @@ def generer_carte(coordonnees_depart, donnees = []):
         if (typeof {map_name} !== 'undefined') {{
             {map_name}.on('click', function(e) {{
                 if (window.pybridge) {{
-                    pybridge.envoyerCoordonnees(e.latlng.lat, e.latlng.lng);
+                    var zoomLevel = {map_name}.getZoom();
+                    pybridge.envoyerCoordonnees(
+                    e.latlng.lat,
+                    e.latlng.lng,
+                    zoomLevel
+                );
                 }}
             }});
         }} else {{
@@ -41,6 +46,7 @@ def generer_carte(coordonnees_depart, donnees = []):
     });
     </script>
     """
+    # fin de cette portion
 
     carte.get_root().script.add_child(folium.Element(click_js))
     carte.get_root().html.add_child(folium.Element(qwebchannel_js))
@@ -53,7 +59,7 @@ class Pont(QObject):
         self.par = parent
         super().__init__(parent)
 
-    @pyqtSlot(float, float)
-    def envoyerCoordonnees(self, lat, long):
-        print(f'Click enregistré en : {lat}, {long}')
-        self.par.update_carte((lat, long))
+    @pyqtSlot(float, float, int)
+    def envoyerCoordonnees(self, lat, long, zoom):
+        print(f'Click enregistré en : {lat}, {long} | Zoom : {zoom}')
+        self.par.update_carte((lat, long), zoom)

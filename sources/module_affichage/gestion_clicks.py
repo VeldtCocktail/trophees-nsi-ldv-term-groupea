@@ -30,13 +30,16 @@ class MainWindow(QWidget):
 
         self.view = QtWebEngineWidgets.QWebEngineView()
         # besoin d'être connecté à Internet pour que la carte folium marche
-        html_path = Path("cartes", "carte.html").resolve()
+        chemin_html = os.path.abspath(os.sep.join(['cartes', 'carte.html']))
+        obj_path = Path(chemin_html).resolve()
+
+        self.view.page().profile().clearHttpCache()
 
         self.view.setHtml(
-            html_path.read_text(encoding="utf8"),
-            QUrl.fromLocalFile(str(html_path.parent) + "/")
+            obj_path.read_text(encoding='utf-8'),
+            QUrl.fromLocalFile(str(obj_path.parent) + '/')
         )
-        
+
         self.bridge = carte.Pont(self)
         self.channel = QWebChannel()
         self.channel.registerObject("pybridge", self.bridge)
@@ -69,11 +72,11 @@ class MainWindow(QWidget):
         texte = self.champ.text()
         print(texte)
 
-    def update_carte(self, coords):
+    def update_carte(self, coords, zoom):
         zone = self.requetes.zone_verte(coords)
         print(zone["features"])
 
-        carte.generer_carte(coords, [zone])
+        carte.generer_carte(coords, zoom, [zone])
 
         html_path = Path("cartes", "carte.html").resolve()
 
@@ -83,8 +86,3 @@ class MainWindow(QWidget):
         )
     
     
-app = QApplication(sys.argv)
-window = MainWindow()
-
-
-app.exec()
