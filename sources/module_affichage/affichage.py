@@ -6,60 +6,43 @@ from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtCore import Qt
 from pathlib import Path
 import sys
-import csv
-import json
 
-
-# FONCTION
-def ChargerDonneesCSV(chemin, col=1):
-    data = []
-    with open(chemin, newline='', encoding="ISO 8859-3") as f:
-        reader = csv.reader(f, delimiter=";")
-        next(reader, None)
-        for row in reader:
-            if len(row) > col:
-                data.append(row[col])
-    return data
-
-def ChargerNomForet(json_path):
-    with open(json_path, encoding="utf-8") as f:
-        data = json.load(f)
-
-    names = []
-    for feature in data.get("features", []):
-        props = feature.get("properties", {})
-        name = props.get("name")
-        if name:
-            names.append(name)
-
-    return names
-
-
+from module_bdd import interaction_donnees as indo
 
 # FENETRE FORET
 class Fenetre_Foret(QGroupBox):
     def __init__(self):
-        super().__init__("Création d’une forêt")
+        super().__init__("Création d'une forêt")
         self.setFixedWidth(300)
 
         layout = QVBoxLayout()
 
         self.donnee_arbre = QComboBox()
-        self.donnee_arbre.addItems(ChargerDonneesCSV("data/bdd_arbres.csv"))
+        self.donnee_arbre.addItems(
+            indo.ChargerDonneesCSV(["data", "bdd_arbres.csv"])
+        )
 
         self.donnee_type_eau = QComboBox()
-        self.donnee_type_eau.addItems(ChargerDonneesCSV("data/type_eau.csv"))
+        self.donnee_type_eau.addItems(
+            indo.ChargerDonneesCSV(["data", "type_eau.csv"])
+        )
 
         self.donnee_animaux = QComboBox()
-        self.donnee_animaux.addItems(ChargerDonneesCSV("data/bdd_animaux.csv"))
+        self.donnee_animaux.addItems(
+            indo.ChargerDonneesCSV(["data", "bdd_animaux.csv"])
+        )
 
         self.donnee_champignon = QComboBox()
-        self.donnee_champignon.addItems(ChargerDonneesCSV("data/bdd_toad.csv"))
+        self.donnee_champignon.addItems(
+            indo.ChargerDonneesCSV(["data", "bdd_toad.csv"])
+        )
 
         self.donnee_risques = QComboBox()
-        self.donnee_risques.addItems(ChargerDonneesCSV("data/bdd_risques.csv"))
+        self.donnee_risques.addItems(
+            indo.ChargerDonneesCSV(["data", "bdd_risques.csv"])
+        )
 
-        layout.addWidget(QLabel("Type d’arbre que l'on trouve le plus"))
+        layout.addWidget(QLabel("Type d'arbre que l'on trouve le plus"))
         layout.addWidget(self.donnee_arbre)
 
         
@@ -77,7 +60,7 @@ class Fenetre_Foret(QGroupBox):
 
         self.setLayout(layout)
 
-        layout.addWidget(QLabel("Type d’eau"))
+        layout.addWidget(QLabel("Type d'eau"))
         layout.addWidget(self.donnee_type_eau)
 
         layout.addWidget(QLabel("Animaux"))
@@ -105,7 +88,9 @@ class MainWindow(QWidget):
 
         main_layout = QHBoxLayout(self)
 
-        self.nom_foret = ChargerNomForet("data/forets_vendee.geojson")
+        self.nom_foret = indo.ChargerNomForet(
+            ['data', 'forets_vendee.geojson']
+        )
 
         # fenetre forêt
         self.fenetre_foret_main = Fenetre_Foret()
@@ -172,8 +157,3 @@ class MainWindow(QWidget):
         self.fenetre_foret_main.hide()
         self.fenetre_supr_foret_main.setVisible(not self.fenetre_supr_foret_main.isVisible())
         
-# LANCER
-app = QApplication(sys.argv)
-window = MainWindow()
-window.show()
-sys.exit(app.exec())

@@ -1,5 +1,6 @@
 import sqlite3
 import json
+import csv
 import os
 
 class BaseDeDonnees:
@@ -160,7 +161,7 @@ class BaseDeDonnees:
         return self.curseur.fetchall()
 
 
-class Interaction_JSON:
+class InteractionJSON:
     """
     Classe d'interaction avec le fichier JSON
     """
@@ -380,7 +381,7 @@ class Interaction_JSON:
             json.dump(self.data, file_json, indent=4)
 
 
-class Interaction_Donnees:
+class InteractionDonnees:
     """
     Classe de coordination entre la BDD SQLite et le fichier GeoJSON
     """
@@ -391,7 +392,7 @@ class Interaction_Donnees:
         Role : initialise les deux types d'interaction
         """
         self.bdd = BaseDeDonnees(bdd_path)
-        self.json = Interaction_JSON(json_path)
+        self.json = InteractionJSON(json_path)
 
     def ajouter_foret(self, valeurs_bdd, coords_json):
         """
@@ -513,6 +514,34 @@ class Interaction_Donnees:
         Role : ferme les interactions (connexion BDD)
         """
         self.bdd.fermer()
+
+
+def ChargerDonneesCSV(liste, col=1):
+    data = []
+    chemin = os.sep.join(liste)
+    with open(chemin, newline='', encoding="ISO 8859-3") as f:
+        reader = csv.reader(f, delimiter=";")
+        next(reader, None)
+        for row in reader:
+            if len(row) > col:
+                data.append(row[col])
+
+    return data
+
+def ChargerNomForet(liste):
+    json_path = os.sep.join(liste)
+
+    with open(json_path, encoding="utf-8") as f:
+        data = json.load(f)
+
+    names = []
+    for feature in data.get("features", []):
+        props = feature.get("properties", {})
+        name = props.get("name")
+        if name:
+            names.append(name)
+
+    return names
 
 
 # Avant de recommencer quelconque test sur la bdd, penser a reset la/les
