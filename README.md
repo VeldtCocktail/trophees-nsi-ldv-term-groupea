@@ -185,12 +185,16 @@ Démonstrateur de la communication JavaScript ↔ Python :
 
 ## Équipe
 
-Projet réalisé par des élèves de NSI :
+Projet réalisé par des élèves de NSI du lycée Léonard de Vinci de Montaigu :
 - Mathéo PASQUIER (T08)(#absoluteMeyzop)
-- Charlélie PINEAU (T02)#CP ![NAAAN](data/obamium.jpg)
+- Charlélie PINEAU (T02)#CP
 - Léon RAIFAUD (T02)(🥡)
 - Maden USSEREAU (T03)(#legoat) 
 
 ## Journal de Bord
 
 Consultez le fichier [`journal.md`](journal.md) pour suivre l'évolution du projet séance par séance.
+
+## Mention Spéciale
+
+"Mais c'est qui Mark Down ?"
