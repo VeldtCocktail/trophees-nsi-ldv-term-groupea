@@ -74,3 +74,5 @@
 ## Travail hors cours de NSI :
 
 - 14/01/2026 : Léon : début de réalisation du programme pour l'interaction avec la base de données + finalisation le même jour. La classe BaseDeDonnees permet une interaction généralisée avec une base de données compatible SQLite.
+
+- 21/02/2026 : Maden (1h30) : Réorganisation du code en modules
