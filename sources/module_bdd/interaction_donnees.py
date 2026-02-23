@@ -397,7 +397,8 @@ class InteractionDonnees:
     def ajouter_foret(self, valeurs_bdd, coords_json):
         """
         Entrees : valeurs_bdd: liste des valeurs pour la table FORET
-                           (id_foret, nom, nb_visi, superficie, ...)
+                           (id_foret, id_feature, nom, nb_visi, 
+                           superficie, ...)
                   coords_json: coordonnees initiales (Polygon) pour le GeoJSON
         Role : Ajoute une foret dans la BDD et dans le GeoJSON
         """
@@ -407,9 +408,9 @@ class InteractionDonnees:
         self.bdd.ajouter_ligne("FORET", valeurs_bdd)
         
         # Ajout dans le JSON
-        id_foret = valeurs_bdd[0]
-        nom_foret = valeurs_bdd[1]
-        self.json.creer_feature(id_foret, nom_foret, "Polygon", coords_json)
+        id_feature = valeurs_bdd[1]
+        nom_foret = valeurs_bdd[2]
+        self.json.creer_feature(id_feature, nom_foret, "Polygon", coords_json)
 
     def supprimer_foret(self, id_foret):
         """
@@ -447,67 +448,80 @@ class InteractionDonnees:
         """
         return self.json.retirer_de_feature(id_foret, index_polygone)
 
-    def rechercher_feature(self, id_foret):
+    def rechercher_feature(self, id_feature):
         """
-        Entrees : id_foret: identifiant de la foret
+        Entrees : id_feature: identifiant literal de la feature
         Role : Recherche la feature correspondante dans le GeoJSON
         Sortie : La feature si trouvee, None sinon
         """
-        return self.json.rechercher_feature(id_foret)
+        return self.json.rechercher_feature(id_feature)
 
     def synchro_depuis_json(self):
         """
-        Role : Parcourt le GeoJSON et ajoute à la BDD les forêts manquantes.
-               C'est utile si le fichier GeoJSON contient plus de données 
+        Role : Parcourt le GeoJSON et ajoute a la BDD les forets manquantes.
+               C'est utile si le fichier GeoJSON contient plus de donnees 
                que la BDD
         Sortie : Modifie la BDD en y ajoutant les lignes manquantes
         """
-        # On récupère toutes les features du GeoJSON
+        # On recupere toutes les features du GeoJSON
         features = self.json.data.get('features', [])
         
         for feature in features:
-            # On extrait l'identifiant et le nom depuis les propriétés
+            # On extrait l'identifiant et le nom depuis les proprietes
             props = feature.get('properties', {})
             id_geojson = props.get('id')
-            # Si pas d'ID, on saute cette feature pour éviter les erreurs
+            # Si pas d'ID, on saute cette feature pour eviter les erreurs
             if not id_geojson:
                 continue
                 
-            nom = props.get('name', 'Forêt inconnue')
+            nom = props.get('name', 'Foret inconnue')
+
+            # On verifie si la foret existe deja dans la BDD (recherche par 
+            #id_feature)
+            existe = self.bdd.rechercher_ligne("FORET", ("id_feature", 
+            id_geojson))
             
-            # On vérifie si la forêt existe déjà dans la BDD (recherche par ID)
-            existe = self.bdd.rechercher_ligne("FORET", ("id_foret", id_geojson))
-            
-            # Si elle n'existe pas, on l'ajoute avec des valeurs par défaut
+            # Si elle n'existe pas, on l'ajoute avec des valeurs par defaut
             if not existe:
+                # Calcul d'un nouvel id_foret (numerique)
+                forets_actuelles = self.bdd.recuperer_tout("FORET")
+                if not forets_actuelles:
+                    nouvel_id = 1
+                else:
+                    # On prend le max des id_foret et on ajoute 1
+                    nouvel_id = max(f[0] for f in forets_actuelles) + 1
+
                 # Structure de la table FORET :
-                # id_foret, nom, nb_visi_par_an, superficie, implan_naturelle,
-                # id_eau, id_espece, id_risque
-                valeurs = [id_geojson, nom, 0, 0.0, 0, 0, 0, 0]
+                # id_foret, id_feature, nom, nb_visi_par_an, superficie, 
+                #implan_naturelle
+                valeurs = [nouvel_id, id_geojson, nom, 0, 0.0, 0]
                 self.bdd.ajouter_ligne("FORET", valeurs)
 
     def synchro_depuis_bdd(self):
         """
-        Role : Parcourt la BDD et ajoute au GeoJSON les forêts manquantes.
-               C'est utile si la BDD contient plus de données que le 
+        Role : Parcourt la BDD et ajoute au GeoJSON les forets manquantes.
+               C'est utile si la BDD contient plus de donnees que le 
                fichier GeoJSON
         Sortie : Modifie le GeoJSON en y ajoutant les features manquantes
         """
-        # On récupère toutes les forêts de la BDD
+        # On recupere toutes les forets de la BDD
         forets = self.bdd.recuperer_tout("FORET")
         
         for foret in forets:
-            # Structure de la table FORET : id_foret, nom, ...
-            id_bdd = foret[0]
-            nom = foret[1]
+            # Structure de la table FORET : id_foret, id_feature, nom, ...
+            id_feature = foret[1]
+            nom = foret[2]
             
-            # On vérifie si la forêt existe déjà dans le GeoJSON
-            existe = self.json.rechercher_feature(id_bdd)
+            if not id_feature:
+                continue
+
+            # On verifie si la foret existe deja dans le GeoJSON
+            existe = self.json.rechercher_feature(id_feature)
             
-            # Si elle n'existe pas, on l'ajoute avec une géométrie vide
+            # Si elle n'existe pas, on l'ajoute avec une geometrie vide
             if not existe:
-                # On utilise un MultiPolygon vide par défaut
-                self.json.creer_feature(id_bdd, nom, "MultiPolygon", [])
+                # On utilise un MultiPolygon vide par defaut
+                self.json.creer_feature(id_feature, nom, "MultiPolygon", [])
 
     def fermer(self):
         """
