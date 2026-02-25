@@ -6,8 +6,7 @@ class RequetesOverpass:
         self.compteur = 0
         self.apis = [
             "https://overpass-api.de/api/interpreter",
-            "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
-            "https://overpass.private.coffee/api/interpreter"
+            "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
         ]
 
     def zone_verte(self, coords):
@@ -32,7 +31,7 @@ class RequetesOverpass:
 
         try:
             requete = requests.post(
-                self.apis[self.compteur % 3],
+                self.apis[self.compteur % len(self.apis)],
                 data=query,
                 timeout=60
             )

@@ -35,10 +35,7 @@ class MainWindow(QWidget):
 
         self.view.page().profile().clearHttpCache()
 
-        self.view.setHtml(
-            obj_path.read_text(encoding='utf-8'),
-            QUrl.fromLocalFile(str(obj_path.parent) + '/')
-        )
+        self.view.load(QUrl.fromLocalFile(str(obj_path)))
 
         self.bridge = carte.Pont(self)
         self.channel = QWebChannel()
@@ -80,9 +77,6 @@ class MainWindow(QWidget):
 
         html_path = Path("cartes", "carte.html").resolve()
 
-        self.view.setHtml(
-            html_path.read_text(encoding="utf8"),
-            QUrl.fromLocalFile(str(html_path.parent) + "/")
-        )
+        self.view.load(QUrl.fromLocalFile(str(html_path)))
     
     
