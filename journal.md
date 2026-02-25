@@ -61,7 +61,7 @@
 
 ### Séance n°16 (10/02/2026)
  - interface graphique PyQT
- - interaction BBD (faire un sorte qu'on puisse ajouter un polygone dans une forêt
+ - interaction BBD (faire un sorte qu'on puisse ajouter un polygone dans une forêt)
  - Base de données champignon et animaux
  - Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
 
