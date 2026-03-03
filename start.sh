@@ -12,4 +12,8 @@ sudo apt install \
     libxcb-xkb1 \
     libxkbcommon-x11-0 \
     libegl1
-QT_QPA_PLATFORM=xcb QT_DEBUG_PLUGINS=1 python3 sources/main.py
+
+QT_QPA_PLATFORM=xcb \
+QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox" \
+QT_DEBUG_PLUGINS=1 \
+python3 sources/main.py 2>&1 | tail -n 15
