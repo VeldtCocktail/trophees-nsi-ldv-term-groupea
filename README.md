@@ -198,3 +198,23 @@ Consultez le fichier [`journal.md`](journal.md) pour suivre l'évolution du proj
 ## Mention Spéciale
 
 "Mais c'est qui Mark Down ?"
+
+## Explication du lancement
+
+Note : pour une isolation des imports de librairies externes, on utilisera un environnement virtuel pour la suite du guide. On peut en initialiser un avec ```python3 -m venv .venv``` sur systèmes d'explotiation Linux et Windows, avec Python 3 d'installé. Pour installer les librairies nécessaires, on fera :
+Sur Linux : 
+```bash
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Sur Linux (type Debian/Ubuntu, avec apt)
+D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```:
+```bash
+chmod u+x start.sh
+```
+Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
+```bash
+./start.sh
+```
+Note : en lançant ```start.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet nécessaire de garantir l'installation de certains paquets via ```apt```
