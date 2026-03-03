@@ -70,10 +70,16 @@
 - interaction BBD (faire un sorte qu'on puisse ajouter un polygone dans une forêt
 - Base de données champignon et animaux
 - Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
+
+### Séance n°18 (03/03/2026)
+- Interface graphique
+- interaction BBD (faire un sorte qu'on puisse ajouter un polygone dans une forêt
+- Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
    
 ## Travail hors cours de NSI :
 
 - 14/01/2026 : Léon : début de réalisation du programme pour l'interaction avec la base de données + finalisation le même jour. La classe BaseDeDonnees permet une interaction généralisée avec une base de données compatible SQLite.
 
 - 21/02/2026 : Maden (1h30) : Réorganisation du code en modules
+
 - 21/02/2026 : Maden (1h) : Conservation du facteur de zoom lors de la mise à jour de la carte
