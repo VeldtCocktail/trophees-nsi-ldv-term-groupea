@@ -26,6 +26,8 @@ class Fenetre_Foret(QGroupBox):
         self.donnee_type_eau.addItems(
             indo.ChargerDonneesCSV(["data", "type_eau.csv"])
         )
+        self.donnee_type_eau.hide()
+
 
         self.donnee_animaux = QComboBox()
         self.donnee_animaux.addItems(
@@ -51,6 +53,8 @@ class Fenetre_Foret(QGroupBox):
         self.eau_oui = QRadioButton("Oui")
         self.eau_non = QRadioButton("Non")
         self.eau_non.setChecked(True)
+        self.eau_oui.clicked.connect(self.affichage_type_eau)
+
 
         layout_eau.addWidget(QLabel("Eau"))
         layout_eau.addWidget(self.eau_oui)
@@ -71,6 +75,13 @@ class Fenetre_Foret(QGroupBox):
 
         layout.addWidget(QLabel("Risques"))
         layout.addWidget(self.donnee_risques)
+
+    def affichage_type_eau(self):
+        if self.eau_oui.isChecked():
+            self.donnee_type_eau.show()
+        else:
+            self.donnee_type_eau.hide()
+
 
 class Fenetre_Supr_Foret(QGroupBox):
     def __init__(self):
