@@ -54,7 +54,7 @@
 - interface graphique PyQT
 - Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
 
-### Séance n°15 (06/02/2026) retour de Maden et de l'autre 🥳
+### Séance n°15 (06/02/2026) retour de Maden et de Charlélie 🥳
 - interface graphique PyQT
 - Création d'une nouvelle base de données d'espece d'arbre
 - Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
@@ -83,3 +83,4 @@
 - 21/02/2026 : Maden (1h30) : Réorganisation du code en modules
 
 - 21/02/2026 : Maden (1h) : Conservation du facteur de zoom lors de la mise à jour de la carte
+
