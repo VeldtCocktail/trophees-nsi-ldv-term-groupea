@@ -13,7 +13,7 @@ from pathlib import Path
 import sys
 import os
 
-from module_cartes import *
+from module_cartes import carte
 from module_overpass import *
 
 
@@ -28,12 +28,13 @@ class MainWindow(QWidget):
         layout_principal = QHBoxLayout()
         layout_boutons = QVBoxLayout()
 
+        
+        carte.generer_carte((46.3930189, -1.480289))
+
         self.view = QtWebEngineWidgets.QWebEngineView()
         # besoin d'être connecté à Internet pour que la carte folium marche
         chemin_html = os.path.abspath(os.sep.join(['cartes', 'carte.html']))
         obj_path = Path(chemin_html).resolve()
-
-        self.view.page().profile().clearHttpCache()
 
         self.view.load(QUrl.fromLocalFile(str(obj_path)))
 
