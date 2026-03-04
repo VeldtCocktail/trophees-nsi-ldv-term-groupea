@@ -1,3 +1,5 @@
+# MATHEO MERCI DE REVOIR TON CODE POUR RESPECTER LA PEP 8 -> Noms des variables
+
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout,
     QLineEdit, QRadioButton, QComboBox, QLabel, QGroupBox, QListWidget
