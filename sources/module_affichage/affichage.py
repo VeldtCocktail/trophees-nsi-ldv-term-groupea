@@ -12,12 +12,21 @@ import sys
 from module_bdd import interaction_donnees as indo
 
 # FENETRE FORET
-class Fenetre_Foret(QGroupBox):
+class FenetreForet(QGroupBox):
     def __init__(self):
         super().__init__("Création d'une forêt")
+
+        self.sel = False
+        self.init_interface()
+        
+    def init_interface(self):
         self.setFixedWidth(300)
 
         layout = QVBoxLayout()
+
+        self.selectionner = QPushButton()
+        self.selectionner.setText('Sélection')
+        self.selectionner.clicked.connect(self.selection)
 
         self.donnee_arbre = QComboBox()
         self.donnee_arbre.addItems(
@@ -46,6 +55,8 @@ class Fenetre_Foret(QGroupBox):
             indo.ChargerDonneesCSV(["data", "bdd_risques.csv"])
         )
 
+        layout.addWidget(self.selectionner)
+
         layout.addWidget(QLabel("Type d'arbre que l'on trouve le plus"))
         layout.addWidget(self.donnee_arbre)
 
@@ -57,14 +68,11 @@ class Fenetre_Foret(QGroupBox):
         self.eau_non.setChecked(True)
         self.eau_oui.clicked.connect(self.affichage_type_eau)
 
-
         layout_eau.addWidget(QLabel("Eau"))
         layout_eau.addWidget(self.eau_oui)
         layout_eau.addWidget(self.eau_non)
 
         layout.addLayout(layout_eau)
-
-        self.setLayout(layout)
 
         layout.addWidget(QLabel("Type d'eau"))
         layout.addWidget(self.donnee_type_eau)
@@ -77,6 +85,12 @@ class Fenetre_Foret(QGroupBox):
 
         layout.addWidget(QLabel("Risques"))
         layout.addWidget(self.donnee_risques)
+
+        self.setLayout(layout)
+
+    def selection(self):
+        self.sel = not self.sel
+        print('Sélection : ' + str(self.sel))
 
     def affichage_type_eau(self):
         if self.eau_oui.isChecked():
@@ -106,7 +120,7 @@ class MainWindow(QWidget):
         )
 
         # fenetre forêt
-        self.fenetre_foret_main = Fenetre_Foret()
+        self.fenetre_foret_main = FenetreForet()
         self.fenetre_foret_main.hide()
         self.fenetre_supr_foret_main = Fenetre_Supr_Foret()
         self.fenetre_supr_foret_main.hide()
