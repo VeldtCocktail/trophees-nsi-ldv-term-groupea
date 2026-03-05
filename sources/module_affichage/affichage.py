@@ -1,5 +1,3 @@
-# MATHEO MERCI DE REVOIR TON CODE POUR RESPECTER LA PEP 8 -> Noms des variables
-
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout,
     QLineEdit, QRadioButton, QComboBox, QLabel, QGroupBox, QListWidget
@@ -17,9 +15,9 @@ class Fenetre_foret(QGroupBox):
         super().__init__("Création d'une forêt")
 
         self.sel = False
-        self.init_interface()
+        self.init_interface_fenetre_foret()
         
-    def init_interface(self):
+    def init_interface_fenetre_foret(self):
         self.setFixedWidth(300)
 
         layout = QVBoxLayout()
@@ -110,6 +108,9 @@ class Fenetre_supr_foret(QGroupBox):
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.init_interface_main()
+
+    def init_interface_main(self):
         self.setWindowTitle("Carte des forêts")
         self.resize(1200, 700)
 
@@ -183,4 +184,3 @@ class MainWindow(QWidget):
     def afficher_fenetre_supr_foret_main(self):
         self.fenetre_foret_main.hide()
         self.fenetre_supr_foret_main.setVisible(not self.fenetre_supr_foret_main.isVisible())
-        
