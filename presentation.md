@@ -31,10 +31,12 @@ Lors de notre 6ième séance, le 13 Janvier 2026, nous avons alors crée un grou
 
 Dans un autre temps qui est révolue depuis beaucoup trop longtemps, dans les alentours du 15 Janvier 2026, nous avaons continuer à chercher les bases de données que nous voulions. Nous avons également continuer à travailler sur la recherche des localisations de nos forêts. Nous avons également chercher à enregistrer la carte avec folium en html. 
 
+Le 16 Janvier 2026, nous avons sur l'affichage de la carte avec PyQt5 
 
 ## 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
 
 ## 5 - Ouverture
+
 
 
 
