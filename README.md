@@ -182,10 +182,6 @@ Projet réalisé par des élèves de NSI du lycée Léonard de Vinci de Montaigu
 
 Consultez le fichier [`journal.md`](journal.md) pour suivre l'évolution du projet séance par séance.
 
-## Mention Spéciale
-
-"Mais c'est qui Mark Down ?"
-
 ## Explication du lancement
 
 Note : pour une isolation des imports de librairies externes, on utilisera un environnement virtuel pour la suite du guide. On peut en initialiser un avec ```python3 -m venv .venv``` sur systèmes d'explotiation Linux et Windows, avec Python 3 d'installé. Pour installer les librairies nécessaires, on fera :
@@ -225,3 +221,7 @@ Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
 ./start.sh --distro-type "arch"
 ```
 Note : en lançant ```start.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet nécessaire de garantir l'installation de certains paquets via ```pacman```
+
+## Mention Spéciale
+
+"Mais c'est qui Mark Down ?"
