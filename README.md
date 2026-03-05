@@ -215,6 +215,26 @@ chmod u+x start.sh
 ```
 Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
 ```bash
-./start.sh
+./start.sh --distro-type "debian"
 ```
 Note : en lançant ```start.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet nécessaire de garantir l'installation de certains paquets via ```apt```
+### Sur Linux (type Fedora/Red Hat, avec dnf)
+D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```:
+```bash
+chmod u+x start.sh
+```
+Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
+```bash
+./start.sh --distro-type "fedora"
+```
+Note : en lançant ```start.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet nécessaire de garantir l'installation de certains paquets via ```dnf```
+### Sur Linux (type Arch, avec pacman)
+D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```:
+```bash
+chmod u+x start.sh
+```
+Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
+```bash
+./start.sh --distro-type "arch"
+```
+Note : en lançant ```start.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet nécessaire de garantir l'installation de certains paquets via ```pacman```
