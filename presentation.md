@@ -25,10 +25,12 @@ Lors de notre séance du 8 janvier 2026, il nous fallait trouver un endroit où 
 
 Le 9 janvier 2026, nous devions récupérer les forêts se trouvant sur la carte avec leur localisation. Durant cette séance, nous avons également commencé à faire des recherches sur les bases de données que nous devions trouver, notamment celles concernant les champignons trouvables en forêt.
 
+Lors de notre 5 ième séance, le 13 Janvier 2026, nous avons alors crée un groupe sur github permettant de nous envoyer tout les documents sur lequels chacun avait travailler. 
 
 ## 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
 
 ## 5 - Ouverture
+
 
 
 
