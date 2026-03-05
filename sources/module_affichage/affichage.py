@@ -64,7 +64,9 @@ class Fenetre_foret(QGroupBox):
         self.eau_oui = QRadioButton("Oui")
         self.eau_non = QRadioButton("Non")
         self.eau_non.setChecked(True)
-        self.eau_oui.clicked.connect(self.affichage_type_eau)
+        self.eau_oui.clicked.connect(self.affichage_type_eau)            
+        self.eau_non.clicked.connect(self.affichage_type_eau)
+
 
         layout_eau.addWidget(QLabel("Eau"))
         layout_eau.addWidget(self.eau_oui)
@@ -72,7 +74,9 @@ class Fenetre_foret(QGroupBox):
 
         layout.addLayout(layout_eau)
 
-        layout.addWidget(QLabel("Type d'eau"))
+        self.texte_type_eau = QLabel("Type d'eau")
+        self.texte_type_eau.hide()
+        layout.addWidget(self.texte_type_eau)
         layout.addWidget(self.donnee_type_eau)
 
         layout.addWidget(QLabel("Animaux"))
@@ -93,8 +97,10 @@ class Fenetre_foret(QGroupBox):
     def affichage_type_eau(self):
         if self.eau_oui.isChecked():
             self.donnee_type_eau.show()
+            self.texte_type_eau.show()
         else:
             self.donnee_type_eau.hide()
+            self.texte_type_eau.hide()
 
 
 class Fenetre_supr_foret(QGroupBox):
@@ -179,8 +185,8 @@ class MainWindow(QWidget):
 
     def afficher_fenetre_foret_main(self):
         self.fenetre_supr_foret_main.hide()
-        self.fenetre_foret_main.setVisible(not self.fenetre_foret_main.isVisible())
+        self.fenetre_foret_main.show()
 
     def afficher_fenetre_supr_foret_main(self):
         self.fenetre_foret_main.hide()
-        self.fenetre_supr_foret_main.setVisible(not self.fenetre_supr_foret_main.isVisible())
+        self.fenetre_supr_foret_main.show()
