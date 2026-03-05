@@ -12,7 +12,7 @@ import sys
 from module_bdd import interaction_donnees as indo
 
 # FENETRE FORET
-class FenetreForet(QGroupBox):
+class Fenetre_foret(QGroupBox):
     def __init__(self):
         super().__init__("Création d'une forêt")
 
@@ -99,7 +99,7 @@ class FenetreForet(QGroupBox):
             self.donnee_type_eau.hide()
 
 
-class Fenetre_Supr_Foret(QGroupBox):
+class Fenetre_supr_foret(QGroupBox):
     def __init__(self):
         super().__init__("Suppresion forêt")
         self.setFixedWidth(300)
@@ -120,9 +120,9 @@ class MainWindow(QWidget):
         )
 
         # fenetre forêt
-        self.fenetre_foret_main = FenetreForet()
+        self.fenetre_foret_main = Fenetre_foret()
         self.fenetre_foret_main.hide()
-        self.fenetre_supr_foret_main = Fenetre_Supr_Foret()
+        self.fenetre_supr_foret_main = Fenetre_supr_foret()
         self.fenetre_supr_foret_main.hide()
 
         # Carte
@@ -131,42 +131,42 @@ class MainWindow(QWidget):
         self.view.setHtml(html)
 
         # Barre gauche
-        InterfaceGauche = QVBoxLayout()
+        interface_gauche = QVBoxLayout()
 
         self.recherche = QLineEdit()
         self.recherche.setPlaceholderText("Rechercher une forêt")        
         self.recherche.textChanged.connect(self.chercher_foret)
         self.recherche.setFixedWidth(300)
 
-        BoutonAjouterForet = QPushButton("Ajouter forêt")
-        BoutonAjouterForet.clicked.connect(self.AfficherFenetreForetMain)
-        BoutonAjouterForet.setFixedWidth(300)
+        bouton_ajouter_foret = QPushButton("Ajouter forêt")
+        bouton_ajouter_foret.clicked.connect(self.afficher_fenetre_foret_main)
+        bouton_ajouter_foret.setFixedWidth(300)
 
 
-        BoutonSupprimerForet = QPushButton("Supprimer forêt")
-        BoutonSupprimerForet.clicked.connect(self.AfficherFenetreSuprForetMain)
-        BoutonSupprimerForet.setFixedWidth(300)
+        bouton_supprimer_foret = QPushButton("Supprimer forêt")
+        bouton_supprimer_foret.clicked.connect(self.afficher_fenetre_supr_foret_main)
+        bouton_supprimer_foret.setFixedWidth(300)
 
-        self.ResultatForet = QListWidget()
-        self.ResultatForet.setMaximumHeight(200)
-        self.ResultatForet.setFrameShape(QListWidget.NoFrame)
-        self.ResultatForet.setFixedWidth(300)
+        self.resultat_foret = QListWidget()
+        self.resultat_foret.setMaximumHeight(200)
+        self.resultat_foret.setFrameShape(QListWidget.NoFrame)
+        self.resultat_foret.setFixedWidth(300)
 
 
 
-        InterfaceGauche.addWidget(self.recherche)
-        InterfaceGauche.addWidget(self.ResultatForet)
-        InterfaceGauche.addStretch()
-        InterfaceGauche.addWidget(BoutonAjouterForet)
-        InterfaceGauche.addWidget(BoutonSupprimerForet)
+        interface_gauche.addWidget(self.recherche)
+        interface_gauche.addWidget(self.resultat_foret)
+        interface_gauche.addStretch()
+        interface_gauche.addWidget(bouton_ajouter_foret)
+        interface_gauche.addWidget(bouton_supprimer_foret)
 
-        main_layout.addLayout(InterfaceGauche)
+        main_layout.addLayout(interface_gauche)
         main_layout.addWidget(self.fenetre_foret_main)
         main_layout.addWidget(self.fenetre_supr_foret_main)
         main_layout.addWidget(self.view)
 
     def chercher_foret(self, text):
-        self.ResultatForet.clear()
+        self.resultat_foret.clear()
         text = text.strip().lower()
 
         if not text:
@@ -174,13 +174,13 @@ class MainWindow(QWidget):
 
         for nom in self.nom_foret:
             if text in nom.lower():
-                self.ResultatForet.addItem(nom)
+                self.resultat_foret.addItem(nom)
 
-    def AfficherFenetreForetMain(self):
+    def afficher_fenetre_foret_main(self):
         self.fenetre_supr_foret_main.hide()
         self.fenetre_foret_main.setVisible(not self.fenetre_foret_main.isVisible())
 
-    def AfficherFenetreSuprForetMain(self):
+    def afficher_fenetre_supr_foret_main(self):
         self.fenetre_foret_main.hide()
         self.fenetre_supr_foret_main.setVisible(not self.fenetre_supr_foret_main.isVisible())
         
