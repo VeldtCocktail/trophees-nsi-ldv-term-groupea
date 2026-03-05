@@ -465,11 +465,12 @@ class InteractionDonnees:
         """
         # On recupere toutes les features du GeoJSON
         features = self.json.data.get('features', [])
+        print(features)
         
         for feature in features:
             # On extrait l'identifiant et le nom depuis les proprietes
             props = feature.get('properties', {})
-            id_geojson = props.get('id')
+            id_geojson = props.get('@id')
             # Si pas d'ID, on saute cette feature pour eviter les erreurs
             if not id_geojson:
                 continue
@@ -480,9 +481,10 @@ class InteractionDonnees:
             #id_feature)
             existe = self.bdd.rechercher_ligne("FORET", ("id_feature", 
             id_geojson))
+            print('Existe : ', existe)
             
             # Si elle n'existe pas, on l'ajoute avec des valeurs par defaut
-            if not existe:
+            if existe == []:
                 # Calcul d'un nouvel id_foret (numerique)
                 forets_actuelles = self.bdd.recuperer_tout("FORET")
                 if not forets_actuelles:
@@ -495,6 +497,7 @@ class InteractionDonnees:
                 # id_foret, id_feature, nom, nb_visi_par_an, superficie, 
                 #implan_naturelle
                 valeurs = [nouvel_id, id_geojson, nom, 0, 0.0, 0]
+                print("Ajout de la ligne", valeurs)
                 self.bdd.ajouter_ligne("FORET", valeurs)
 
     def synchro_depuis_bdd(self):
