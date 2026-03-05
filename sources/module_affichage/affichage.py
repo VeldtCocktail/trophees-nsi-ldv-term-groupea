@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout,
-    QLineEdit, QRadioButton, QComboBox, QLabel, QGroupBox, QListWidget
+    QLineEdit, QRadioButton, QComboBox, QLabel, QGroupBox, QListWidget,
+    QListWidgetItem
 )
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtCore import Qt
@@ -25,6 +26,16 @@ class Fenetre_foret(QGroupBox):
         self.selectionner = QPushButton()
         self.selectionner.setText('Sélection')
         self.selectionner.clicked.connect(self.selection)
+
+        self.list_arbres = QListWidget()
+        arbre_1 = QListWidgetItem()
+        arbre_1.setText('Arbre 1')
+
+        self.list_arbres.addItem(arbre_1)
+
+        self.list_arbres.clicked.connect(self.click_arbre)
+
+        layout.addWidget(self.list_arbres)
 
         self.donnee_arbre = QComboBox()
         self.donnee_arbre.addItems(
@@ -89,6 +100,10 @@ class Fenetre_foret(QGroupBox):
         layout.addWidget(self.donnee_risques)
 
         self.setLayout(layout)
+
+    def click_arbre(self):
+        arbre = self.list_arbres.currentItem()
+        print(arbre.text())
 
     def selection(self):
         self.sel = not self.sel
