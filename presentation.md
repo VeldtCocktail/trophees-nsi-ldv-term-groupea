@@ -26,7 +26,7 @@ Lors de notre séance du 8 janvier 2026, il nous fallait trouver un endroit où 
 Le 9 janvier 2026, nous devions récupérer les forêts se trouvant sur la carte avec leur localisation. Durant cette séance, nous avons également commencé à faire des recherches sur les bases de données que nous devions trouver, notamment celles concernant les champignons trouvables en forêt.
 
 Lors de notre 6ième séance, le 13 Janvier 2026, nous avons alors crée un groupe sur github permettant de nous envoyer tout les documents sur lequels chacun avait travailler. Nous avons également dû refaire un looping car le premier fichier looping que nous avions fais était moyennement organisé, donc nous avons refais un fichier nous permettant d'avoir un schéma plus organiser et plus clair à comprendre pour nous. Nous avons également commencé à travailler sur l'architecture de donné. 
-Je t'emmerde Léon sur les fautes 🪼! 
+*Je t'emmerde Léon sur les fautes 🪼!*
 \*avec un excellent accent british\* Mais c'est qui Mark Down ?
 
 Dans un autre temps qui est révolue depuis beaucoup trop longtemps, dans les alentours du 15 Janvier 2026, nous avaons continuer à chercher les bases de données que nous voulions. Nous avons également continuer à travailler sur la recherche des localisations de nos forêts. Nous avons également chercher à enregistrer la carte avec folium en html. 
@@ -35,6 +35,7 @@ Dans un autre temps qui est révolue depuis beaucoup trop longtemps, dans les al
 ## 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
 
 ## 5 - Ouverture
+
 
 
 
