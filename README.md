@@ -20,35 +20,22 @@ Développé dans le cadre du cours de NSI (Numérique et Sciences Informatiques)
 
 ```
 racine/
-├── data/                           # Données du projet
-│   ├── bdd.db                      # Base de données SQLite principale
-│   ├── bdd_vide.db                 # Template de base de données
-│   ├── forets_vendee.geojson       # Contours géographiques des forêts
-│   ├── bdd_animaux.csv             # Liste des animaux par forêt
-│   ├── bdd_arbres.csv              # Liste des types d'arbres
-│   ├── bdd_risques.csv             # Liste des risques associés
-│   ├── bdd_toad.csv                # Liste des champignons
-│   ├── eau.csv                     # Données sur les points d'eau
-│   ├── type_eau.csv                # Types de points d'eau
-│   └── style.qss                   # Feuille de style pour PyQt5
+├── data/                           # Données du projet (GeoJSON, SQLite, styles)
+├── sources/                        # Code source Python
+│   ├── main.py                     # Script de test/lancement
+│   ├── module_affichage/           # Interface PyQt5 et gestion des vues
+│   ├── module_bdd/                 # Gestion SQLite et GeoJSON
+│   ├── module_cartes/              # Génération de cartes Folium
+│   └── module_overpass/            # Interaction avec l'API Overpass (OSM)
 ├── cartes/                         # Cartes HTML générées
-│   └── carte.html                  # Carte interactive générée par Folium
-├── outils_git/                     # Outils d'automatisation Git
-│   ├── commit.sh                   # Script de commit automatisé (Linux/Mac)
-│   ├── commit.bat                  # Script de commit automatisé (Windows)
-│   ├── git-update.sh               # Script de mise à jour (Linux/Mac)
-│   └── git-update.bat              # Script de mise à jour (Windows)
+├── outils_git/                     # Scripts d'automatisation Git
 ├── looping/                        # Diagrammes et modèles conceptuels
-├── docs/                           # Documentation complémentaire
-├── main.py                         # Petit script de test pour l'affichage Folium
-├── carte.py                        # Backend de génération de la carte Folium
-├── affichage.py                    # Interface PyQt5 principale intégrant la carte
-├── gestion_clicks.py               # Module de capture des clics via QWebChannel
-├── interaction_donnees.py          # Gestion unifiée SQLite + GeoJSON
-├── presentation.md                 # Document de présentation du projet
+├── docs/                           # Documentation technique
 ├── journal.md                      # Journal de bord du développement
-├── requirements.txt                # Dépendances du projet
-└── README.md                       # Documentation que vous lisez actuellement
+├── presentation.md                 # Présentation du projet
+├── requirements.txt                # Dépendances Python
+├── start.sh                        # Script de lancement (Linux)
+└── README.md                       # Documentation principale
 ```
 
 ## Technologies Utilisées
@@ -82,31 +69,31 @@ racine/
 
 ### Afficher la carte dans le navigateur
 ```bash
-python main.py
+python sources/main.py
 ```
 Cette commande génère et ouvre la carte des forêts directement dans votre navigateur web.
 
 ### Afficher la carte avec interface de gestion
 ```bash
-python affichage.py
+python sources/module_affichage/affichage.py
 ```
 Cette commande affiche la carte dans une fenêtre d'application graphique avec des boutons pour ajouter et supprimer des forêts.
 
 ### Tester la gestion des clics sur la carte
 ```bash
-python gestion_clicks.py
+python sources/module_affichage/gestion_clicks.py
 ```
 Cette commande affiche la carte avec capture des coordonnées GPS lors des clics (affichées dans la console).
 
 ### Générer uniquement le fichier HTML
 ```bash
-python carte.py
+python sources/module_cartes/carte.py
 ```
 Génère le fichier `carte.html` sans l'afficher.
 
 ## Gestion des Données
 
-Le fichier `interaction_donnees.py` contient les classes nécessaires pour gérer les données du projet de manière synchronisée.
+Le fichier `sources/module_bdd/interaction_donnees.py` contient les classes nécessaires pour gérer les données du projet de manière synchronisée.
 
 ### Classes principales
 
@@ -124,7 +111,7 @@ Le fichier `interaction_donnees.py` contient les classes nécessaires pour gére
 
 ### Exemple d'utilisation
 ```python
-from interaction_donnees import Interaction_Donnees
+from sources.module_bdd.interaction_donnees import Interaction_Donnees
 
 inter = Interaction_Donnees("data/bdd.db", "data/forets_vendee.geojson")
 # Ajout d'une forêt dans la BDD et le GeoJSON simultanément
@@ -167,7 +154,7 @@ Ces scripts récupèrent les dernières modifications depuis le dépôt distant.
 
 ## Interface Graphique
 
-### Fenêtre principale (`affichage.py`)
+### Fenêtre principale (`sources/module_affichage/affichage.py`)
 
 L'interface graphique PyQt5 comprend :
 - Une carte interactive Folium intégrée via QtWebEngine
@@ -176,7 +163,7 @@ L'interface graphique PyQt5 comprend :
   - 7 champs de saisie pour les informations de la forêt
   - Des boutons radio pour indiquer la présence de chasseurs
 
-### Gestion des clics (`gestion_clicks.py`)
+### Gestion des clics (`sources/module_affichage/gestion_clicks.py`)
 
 Démonstrateur de la communication JavaScript ↔ Python :
 - Utilise `QWebChannel` pour créer un pont entre le JavaScript de la carte Folium et Python
@@ -215,6 +202,26 @@ chmod u+x start.sh
 ```
 Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
 ```bash
-./start.sh
+./start.sh --distro-type "debian"
 ```
 Note : en lançant ```start.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet nécessaire de garantir l'installation de certains paquets via ```apt```
+### Sur Linux (type Fedora/Red Hat, avec dnf)
+D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```:
+```bash
+chmod u+x start.sh
+```
+Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
+```bash
+./start.sh --distro-type "fedora"
+```
+Note : en lançant ```start.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet nécessaire de garantir l'installation de certains paquets via ```dnf```
+### Sur Linux (type Arch, avec pacman)
+D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```:
+```bash
+chmod u+x start.sh
+```
+Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
+```bash
+./start.sh --distro-type "arch"
+```
+Note : en lançant ```start.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet nécessaire de garantir l'installation de certains paquets via ```pacman```

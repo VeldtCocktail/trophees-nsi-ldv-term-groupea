@@ -74,6 +74,14 @@
 ### Séance n°18 (03/03/2026)
 - Interface graphique (Mathéo)
 - Maden + Léon : fonctionnement sur Ubuntu/Debian ENFIN réussi !
+- Journal et compte rendu (Charlélie)
+
+### Séance n°19 (05/03/2026)
+- Interface graphique (Mathéo)
+- Maden + Léon :
+- Journal et compte rendu (Charlélie)
+
+
    
 ## Travail hors cours de NSI :
 
@@ -82,4 +90,5 @@
 - 21/02/2026 : Maden (1h30) : Réorganisation du code en modules
 
 - 21/02/2026 : Maden (1h) : Conservation du facteur de zoom lors de la mise à jour de la carte
+
 
