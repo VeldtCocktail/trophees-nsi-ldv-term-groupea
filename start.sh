@@ -39,4 +39,4 @@ sudo ${PKG_MANAGER[$DISTRO_TYPE]} ${PKG_LIST[$DISTRO_TYPE]}
 QT_QPA_PLATFORM=xcb \
 QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox" \
 QT_DEBUG_PLUGINS=1 \
-python3 sources/main.py 2>&1 | tail -n 15
+python3 sources/main.py
