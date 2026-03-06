@@ -28,20 +28,22 @@ class Fenetre_foret(QGroupBox):
         self.selectionner.setText('Sélection')
         self.selectionner.clicked.connect(self.selection)
 
-        self.resultat_arbres = QListWidget()
-        self.type_arbre = QLineEdit()
-        self.type_arbre.setPlaceholderText("Rechercher un arbre")        
-        self.type_arbre.textChanged.connect(self.selection_arbre)
-        self.type_arbre.setFixedWidth(300)
-
-        layout.addWidget(self.type_arbre)
-        layout.addWidget(self.resultat_arbres)
 
         self.liste_arbres = indo.charger_donnees_csv(
             ['data', 'bdd_arbres.csv']
         )
 
-        
+        self.resultat_arbres = QListWidget()
+        self.type_arbre = QLineEdit()
+        self.type_arbre.setPlaceholderText("Rechercher un arbre")        
+        self.type_arbre.textChanged.connect(self.selection_arbre)
+        self.arbre_choisis = QListWidget()
+        self.resultat_arbres.itemClicked.connect(self.click_arbre)
+
+        layout.addWidget(self.type_arbre)
+        layout.addWidget(self.resultat_arbres)
+        layout.addWidget(self.arbre_choisis)
+
 
         self.donnee_type_eau = QComboBox()
         self.donnee_type_eau.addItems(
@@ -111,8 +113,11 @@ class Fenetre_foret(QGroupBox):
                 self.resultat_arbres.addItem(nom)
 
     def click_arbre(self):
-        arbre = self.list_widget.currentItem()
+        arbre = self.resultat_arbres.currentItem()
         print(arbre.text())
+        self.arbre_choisis.addItem(arbre)
+        self.arbre_choisis.update()
+        print(self.arbre_choisis.items())
 
     def selection(self):
         self.sel = not self.sel
@@ -170,21 +175,16 @@ class MainWindow(QWidget):
         self.recherche = QLineEdit()
         self.recherche.setPlaceholderText("Rechercher une forêt")        
         self.recherche.textChanged.connect(self.chercher_foret)
-        self.recherche.setFixedWidth(300)
 
         bouton_ajouter_foret = QPushButton("Ajouter forêt")
         bouton_ajouter_foret.clicked.connect(self.afficher_fenetre_foret_main)
-        bouton_ajouter_foret.setFixedWidth(300)
 
 
         bouton_supprimer_foret = QPushButton("Supprimer forêt")
         bouton_supprimer_foret.clicked.connect(self.afficher_fenetre_supr_foret_main)
-        bouton_supprimer_foret.setFixedWidth(300)
 
         self.resultat_foret = QListWidget()
-        self.resultat_foret.setMaximumHeight(200)
         self.resultat_foret.setFrameShape(QListWidget.NoFrame)
-        self.resultat_foret.setFixedWidth(300)
 
 
 
