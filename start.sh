@@ -33,7 +33,7 @@ fi
 
 # Installation des paquets
 echo "Installation des paquets pour $DISTRO_TYPE..."
-sudo ${PKG_MANAGER[$DISTRO_TYPE]} ${PKG_LIST[$DISTRO_TYPE]}
+sudo "${PKG_MANAGER[$DISTRO_TYPE]}" "${PKG_LIST[$DISTRO_TYPE]}"
 
 # Lancement du python avec les variables environnement
 QT_QPA_PLATFORM=xcb \
