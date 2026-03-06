@@ -1,3 +1,7 @@
+# TODO
+#  A partir du nom d'une foret, on recupere le "centre" de son polygone
+#  shapely.geometry ca doit pouvoir suffire
+
 import sqlite3
 import json
 import csv
