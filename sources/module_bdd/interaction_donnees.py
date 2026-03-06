@@ -385,7 +385,7 @@ class InteractionDonnees:
     """
     Classe de coordination entre la BDD SQLite et le fichier GeoJSON
     """
-    def __init__(self, bdd_path, json_path):
+    def __init__(self, bdd_path, json_path, debug = False):
         """
         Entrees : bdd_path: chemin vers la base de donnees
                   json_path: chemin vers le fichier GeoJSON
@@ -393,6 +393,7 @@ class InteractionDonnees:
         """
         self.bdd = BaseDeDonnees(bdd_path)
         self.json = InteractionJSON(json_path)
+        self.debug = debug
 
     def ajouter_foret(self, valeurs_bdd, coords_json):
         """
@@ -465,7 +466,7 @@ class InteractionDonnees:
         """
         # On recupere toutes les features du GeoJSON
         features = self.json.data.get('features', [])
-        print(features)
+        if self.debug: print(features)
         
         for feature in features:
             # On extrait l'identifiant et le nom depuis les proprietes
@@ -481,7 +482,7 @@ class InteractionDonnees:
             #id_feature)
             existe = self.bdd.rechercher_ligne("FORET", ("id_feature", 
             id_geojson))
-            print('Existe : ', existe)
+            if self.debug: print('Existe : ', existe)
             
             # Si elle n'existe pas, on l'ajoute avec des valeurs par defaut
             if existe == []:
@@ -497,7 +498,7 @@ class InteractionDonnees:
                 # id_foret, id_feature, nom, nb_visi_par_an, superficie, 
                 #implan_naturelle
                 valeurs = [nouvel_id, id_geojson, nom, 0, 0.0, 0]
-                print("Ajout de la ligne", valeurs)
+                if self.debug: print("Ajout de la ligne", valeurs)
                 self.bdd.ajouter_ligne("FORET", valeurs)
 
     def synchro_depuis_bdd(self):
