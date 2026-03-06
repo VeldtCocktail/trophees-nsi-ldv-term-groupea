@@ -31,12 +31,16 @@ Lors de notre 6ième séance, le 13 Janvier 2026, nous avons alors crée un grou
 
 Dans un autre temps qui est révolue depuis beaucoup trop longtemps, dans les alentours du 15 Janvier 2026, nous avaons continuer à chercher les bases de données que nous voulions. Nous avons également continuer à travailler sur la recherche des localisations de nos forêts. Nous avons également chercher à enregistrer la carte avec folium en html. 
 
-Le 16 Janvier 2026, nous avons sur l'affichage de la carte avec PyQt5 
+Lors de notre 8eme séance, le 16 Janvier 2026, nous avons dû nous occuper de l'affichage de la carte avec PyQt5.
+
+De notre séance 9 à notre séance ... (à définir quand l'interface graphique sera fini), du 23 Janvier 2026 au ... (à définir quand l'interface graphique sera fini). Cela nous a pris pas mal de temps car nous avions de nombreuse idées. Déjà dans un premier temps, nous voulions crée une barre de recherche pour pouvoir accéder à toutes les forêts disponibles. Nous avons dans un premier temps, fais en sorte que lorsqu'on tape le nom d'une forêt dans la barre de recherche, on puisse trouver le nom de la forêt dans la liste que nous avions. Par la suite il nous fallait également fais en sorte de crée des fenêtre pour pouvoir faire en sorte de crée ou supprimer une forêt (dans le cas où on aurait pas réussi à avoir toute les forêts et si on arrive pas). 
+Dans la fenêtre de création de forêt, nous avons alors fais en sorte d'utiliser nos base de données que nous avions crée ou trouver pour permettre de rajouter des infos sur les forêts. Dans un premier temps nous avions fait en sorte d'avoir une "bande défillante" avec tous les types d'arbres trouvable en forêts et d'en selectionner. Par la suite nous voulions savoir si cette forêts avais un cour d'eau. Alors nous avons mis un "choix oui non" (à changer car je ne connais pas le vrai nom) et si oui est ce que son nom ce trouve dans notre base de données. Si la forêt avais des animaux, l'utilisateur doit pouvoir en ajouter à l'aide d'une autre "bande défillante" pour pouvoir choisir des animaux trouvable dans cette forêt, de même pour les champignons qui sont assez nombreux. Egalement il nous fallait egalement prevenir l'utilisateur si la forêtys est exposé à de nombreux risuqe ou non. Alors nous avons fais comme pour les animaux et les champignons pour le moment.
+/oioioioioioioioioioioioio/
+
 
 ## 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
 
 ## 5 - Ouverture
-
 
 
 
