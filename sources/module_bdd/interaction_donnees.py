@@ -485,7 +485,7 @@ class InteractionDonnees:
             if self.debug: print('Existe : ', existe)
             
             # Si elle n'existe pas, on l'ajoute avec des valeurs par defaut
-            if existe == []:
+            if not existe:
                 # Calcul d'un nouvel id_foret (numerique)
                 forets_actuelles = self.bdd.recuperer_tout("FORET")
                 if not forets_actuelles:
@@ -534,7 +534,7 @@ class InteractionDonnees:
         self.bdd.fermer()
 
 
-def ChargerDonneesCSV(liste, col=1):
+def charger_donnees_csv(liste, col=1):
     data = []
     chemin = os.sep.join(liste)
     with open(chemin, newline='', encoding="ISO 8859-3") as f:
@@ -546,7 +546,7 @@ def ChargerDonneesCSV(liste, col=1):
 
     return data
 
-def ChargerNomForet(liste):
+def charger_nom_foret(liste):
     json_path = os.sep.join(liste)
 
     with open(json_path, encoding="utf-8") as f:
