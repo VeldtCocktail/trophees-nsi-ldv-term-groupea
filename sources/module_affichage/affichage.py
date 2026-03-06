@@ -7,6 +7,7 @@ from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtCore import Qt
 from pathlib import Path
 import sys
+import os
 
 from module_bdd import interaction_donnees as indo
 
@@ -28,14 +29,12 @@ class Fenetre_foret(QGroupBox):
         self.selectionner.clicked.connect(self.selection)
 
         self.list_arbres = QListWidget()
-        arbre_1 = QListWidgetItem()
-        arbre_1.setText('Arbre 1')
+        self.type_arbre = QLineEdit()
+        self.type_arbre.setPlaceholderText("Rechercher une forêt")        
+        self.type_arbre.textChanged.connect(self.selection_arbre)
+        self.type_arbre.setFixedWidth(300)
 
-        self.list_arbres.addItem(arbre_1)
-
-        self.list_arbres.clicked.connect(self.click_arbre)
-
-        layout.addWidget(self.list_arbres)
+        layout.addWidget(self.type_arbre)
 
         self.donnee_arbre = QComboBox()
         self.donnee_arbre.addItems(
@@ -101,6 +100,17 @@ class Fenetre_foret(QGroupBox):
 
         self.setLayout(layout)
 
+    def selection_arbre(self, text):
+        self.resultat_foret.clear()
+        text = text.strip().lower()
+
+        if not text:
+            return
+
+        for nom in self.nom_foret:
+            if text in nom.lower():
+                self.resultat_foret.addItem(nom)
+
     def click_arbre(self):
         arbre = self.list_arbres.currentItem()
         print(arbre.text())
@@ -130,6 +140,9 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.init_interface_main()
+
+        with open(os.sep.join(['data', 'style.qss'])) as fichier:
+            self.setStyleSheet(fichier.read())
 
     def init_interface_main(self):
         self.setWindowTitle("Carte des forêts")
