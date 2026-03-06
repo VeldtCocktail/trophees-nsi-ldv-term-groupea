@@ -77,8 +77,8 @@
 - Journal et compte rendu (Charlélie)
 
 ### Séance n°19 (05/03/2026)
-- Interface graphique (Mathéo)
-- Maden + Léon :
+- Maden + Mathéo : Poursuite de l'interface graphique -> réflexion sur l'enregistrement des arbres d'une forêt
+- Léon : mise à jour du README, prise en charge des autre distibutions Linux
 - Journal et compte rendu (Charlélie)
 
 
