@@ -28,45 +28,44 @@ class Fenetre_foret(QGroupBox):
         self.selectionner.setText('Sélection')
         self.selectionner.clicked.connect(self.selection)
 
-        self.list_arbres = QListWidget()
+        self.resultat_arbres = QListWidget()
         self.type_arbre = QLineEdit()
-        self.type_arbre.setPlaceholderText("Rechercher une forêt")        
+        self.type_arbre.setPlaceholderText("Rechercher un arbre")        
         self.type_arbre.textChanged.connect(self.selection_arbre)
         self.type_arbre.setFixedWidth(300)
 
         layout.addWidget(self.type_arbre)
+        layout.addWidget(self.resultat_arbres)
 
-        self.donnee_arbre = QComboBox()
-        self.donnee_arbre.addItems(
-            indo.ChargerDonneesCSV(["data", "bdd_arbres.csv"])
+        self.liste_arbres = indo.charger_donnees_csv(
+            ['data', 'bdd_arbres.csv']
         )
+
+        
 
         self.donnee_type_eau = QComboBox()
         self.donnee_type_eau.addItems(
-            indo.ChargerDonneesCSV(["data", "type_eau.csv"])
+            indo.charger_donnees_csv(["data", "type_eau.csv"])
         )
         self.donnee_type_eau.hide()
 
 
         self.donnee_animaux = QComboBox()
         self.donnee_animaux.addItems(
-            indo.ChargerDonneesCSV(["data", "bdd_animaux.csv"])
+            indo.charger_donnees_csv(["data", "bdd_animaux.csv"])
         )
 
         self.donnee_champignon = QComboBox()
         self.donnee_champignon.addItems(
-            indo.ChargerDonneesCSV(["data", "bdd_toad.csv"])
+            indo.charger_donnees_csv(["data", "bdd_toad.csv"])
         )
 
         self.donnee_risques = QComboBox()
         self.donnee_risques.addItems(
-            indo.ChargerDonneesCSV(["data", "bdd_risques.csv"])
+            indo.charger_donnees_csv(["data", "bdd_risques.csv"])
         )
 
         layout.addWidget(self.selectionner)
-
-        layout.addWidget(QLabel("Type d'arbre que l'on trouve le plus"))
-        layout.addWidget(self.donnee_arbre)
 
         
         # Eau
@@ -101,18 +100,18 @@ class Fenetre_foret(QGroupBox):
         self.setLayout(layout)
 
     def selection_arbre(self, text):
-        self.resultat_foret.clear()
+        self.resultat_arbres.clear()
         text = text.strip().lower()
 
         if not text:
             return
 
-        for nom in self.nom_foret:
+        for nom in self.liste_arbres:
             if text in nom.lower():
-                self.resultat_foret.addItem(nom)
+                self.resultat_arbres.addItem(nom)
 
     def click_arbre(self):
-        arbre = self.list_arbres.currentItem()
+        arbre = self.list_widget.currentItem()
         print(arbre.text())
 
     def selection(self):
@@ -150,7 +149,7 @@ class MainWindow(QWidget):
 
         main_layout = QHBoxLayout(self)
 
-        self.nom_foret = indo.ChargerNomForet(
+        self.nom_foret = indo.charger_nom_foret(
             ['data', 'forets_vendee.geojson']
         )
 
