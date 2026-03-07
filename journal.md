@@ -91,4 +91,4 @@
 
 - 21/02/2026 : Maden (1h) : Conservation du facteur de zoom lors de la mise à jour de la carte
 
-
+- 07/03/2026 : Maden (1h30) : Ajout de commentaires et spécifications, début du style QSS, réorganisation

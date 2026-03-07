@@ -1,26 +1,63 @@
+# Projet : ???
+# Auteurs : Mathéo Pasquier, Maden Ussereau
+
+# importation des bibliothèques nécessaires
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout,
     QLineEdit, QRadioButton, QComboBox, QLabel, QGroupBox, QListWidget,
     QListWidgetItem
 )
 from PyQt5 import QtWebEngineWidgets
-from PyQt5.QtCore import Qt
+from PyQt5.QtWebChannel import QWebChannel
+from PyQt5.QtCore import Qt, QUrl
 from pathlib import Path
 import sys
 import os
 
 from module_bdd import interaction_donnees as indo
+from module_overpass import overpass
+from module_cartes import carte
 
-# FENETRE FORET
-class Fenetre_foret(QGroupBox):
+class GroupeAjoutForet(QGroupBox):
+    """
+    Classe représentant les éléments qui permettent à l'utilisateur
+    d'enregistrer une forêt
+    """
+    
     def __init__(self):
-        super().__init__("Création d'une forêt")
+        """
+        Entrées \\: \n
+            self:GroupeAjoutForet : instance de la classe
 
-        self.sel = False
-        self.init_interface_fenetre_foret()
+        Rôle \\: \n
+            Initialisation de la classe
+
+        Sortie \\: \n
+            None (j’ai vérifié, n’en déplaise à M. Nauleau)
+        """
+        # initialisation de la superclasse QGroupBox
+        super().__init__("Enregistrer une forêt")
+
+        # on initialise le mode de sélection à False
+        self.mode_sel = False
+
+        # on affecte à cette instance l'identifiant groupe-ajout-foret
+        self.setObjectName('groupe-ajout-foret')
+
+        # on appelle la méthode d'initialisation de l'interface
+        self.init_interface()
         
-    def init_interface_fenetre_foret(self):
-        self.setFixedWidth(300)
+    def init_interface(self):
+        """
+        Entrées \\: \n
+            self:GroupeAjoutForet : instance de la classe
+
+        Rôle \\: \n
+            Initialisation de l’interface utilisateur de la classe
+
+        Sortie \\: \n
+            None
+        """
 
         layout = QVBoxLayout()
 
@@ -115,13 +152,14 @@ class Fenetre_foret(QGroupBox):
     def click_arbre(self):
         arbre = self.resultat_arbres.currentItem()
         print(arbre.text())
-        self.arbre_choisis.addItem(arbre)
+        self.arbre_choisis.addItem(arbre.text())
         self.arbre_choisis.update()
-        print(self.arbre_choisis.items())
+        for i in range(self.arbre_choisis.count()):
+            print(self.arbre_choisis.item(i).text())
 
     def selection(self):
-        self.sel = not self.sel
-        print('Sélection : ' + str(self.sel))
+        self.mode_sel = not self.mode_sel
+        print('Sélection : ' + str(self.mode_sel))
 
     def affichage_type_eau(self):
         if self.eau_oui.isChecked():
@@ -141,8 +179,23 @@ class Fenetre_supr_foret(QGroupBox):
 
 # MAIN WINDOW
 class MainWindow(QWidget):
-    def __init__(self):
+    def __init__(self, debug = False):
         super().__init__()
+
+        self.requetes = overpass.RequetesOverpass()
+        self.view = QtWebEngineWidgets.QWebEngineView()
+
+        # Carte
+        chemin_html = os.path.abspath(os.sep.join(['cartes', 'carte.html']))
+        obj_path = Path(chemin_html).resolve()
+
+        self.view.load(QUrl.fromLocalFile(str(obj_path)))
+
+        self.pont = carte.Pont(self)
+        self.channel = QWebChannel()
+        self.channel.registerObject("pybridge", self.pont)
+        self.view.page().setWebChannel(self.channel)
+
         self.init_interface_main()
 
         with open(os.sep.join(['data', 'style.qss'])) as fichier:
@@ -159,15 +212,10 @@ class MainWindow(QWidget):
         )
 
         # fenetre forêt
-        self.fenetre_foret_main = Fenetre_foret()
+        self.fenetre_foret_main = GroupeAjoutForet()
         self.fenetre_foret_main.hide()
         self.fenetre_supr_foret_main = Fenetre_supr_foret()
         self.fenetre_supr_foret_main.hide()
-
-        # Carte
-        self.view = QtWebEngineWidgets.QWebEngineView()
-        html = Path("cartes/carte.html").read_text(encoding="utf-8")
-        self.view.setHtml(html)
 
         # Barre gauche
         interface_gauche = QVBoxLayout()
