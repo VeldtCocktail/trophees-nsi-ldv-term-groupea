@@ -3,31 +3,31 @@
 
 # importation des bibliothèques nécessaires
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout,
-    QLineEdit, QRadioButton, QComboBox, QLabel, QGroupBox, QListWidget,
-    QListWidgetItem
+    QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QListWidget, QGroupBox,
+    QLineEdit, QRadioButton, QComboBox, QLabel,
 )
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtWebChannel import QWebChannel
-from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtCore import QUrl
 from pathlib import Path
-import sys
 import os
 
 from module_bdd import interaction_donnees as indo
 from module_overpass import overpass
 from module_cartes import carte
 
-class GroupeAjoutForet(QGroupBox):
+class GroupeForet(QGroupBox):
     """
     Classe représentant les éléments qui permettent à l'utilisateur
     d'enregistrer une forêt
     """
     
-    def __init__(self):
+    def __init__(self, fenetre, foret = {}):
         """
         Entrées \\: \n
             self:GroupeAjoutForet : instance de la classe
+            fenetre:FenetrePrincipale : instance de la classe FenetrePrincipale
+                qui instancie cette classe
 
         Rôle \\: \n
             Initialisation de la classe
@@ -39,10 +39,24 @@ class GroupeAjoutForet(QGroupBox):
         super().__init__("Enregistrer une forêt")
 
         # on initialise le mode de sélection à False
-        self.mode_sel = False
+        self.mode_sel = self
 
-        # on affecte à cette instance l'identifiant groupe-ajout-foret
-        self.setObjectName('groupe-ajout-foret')
+        self.type_details = "arbres"
+
+        # on affect fenetre à self.fen
+        self.fen = fenetre
+        self.dico_foret = foret
+
+        # on affecte à cette instance l'identifiant groupe-foret
+        self.setObjectName('groupe-foret')
+
+        self.liste_details = {
+            "arbres": indo.charger_donnees_csv(['data', 'bdd_arbres.csv']),
+            "anim": indo.charger_donnees_csv(['data', 'bdd_animaux.csv']),
+            "champis": indo.charger_donnees_csv(['data', 'bdd_toad.csv']),
+            "eau": indo.charger_donnees_csv(['data', 'eau.csv']),
+            "risques": indo.charger_donnees_csv(['data', 'bdd_risques.csv'])
+        }
 
         # on appelle la méthode d'initialisation de l'interface
         self.init_interface()
@@ -58,116 +72,157 @@ class GroupeAjoutForet(QGroupBox):
         Sortie \\: \n
             None
         """
+        # création du layout principal qui contient les éléments de la fenêtre
+        layout_principal = QVBoxLayout()
 
+        # création de la zone qui contient les informations générales de la
+        # forêt si l'utilisateur affiche une forêt déjà existante
+        layout_infos = self.creer_layout_infos()
+
+        # création de la zone qui contient les boutons permettant d'afficher et
+        # de modifier les détails de la forêt (arbres, animaux, etc.)
+        layout_boutons = self.creer_layout_boutons()
+
+        # création de la zone d'affichage et de modification de la
+        # caractéristique sélectionnée (arbres, animaux, etc.)
+        layout_details = self.creer_layout_details()
+
+        # on ajoute ces trois zones au layout principal en spécifiant leur
+        # ratio relatif
+        layout_principal.addLayout(layout_infos, 1)
+        layout_principal.addLayout(layout_boutons, 3)
+        layout_principal.addLayout(layout_details, 3)
+
+        # on définit layout_principal comme le layout du widget correspondant à
+        # la classe
+        self.setLayout(layout_principal)
+
+    def creer_layout_infos(self):
+        """
+        """
         layout = QVBoxLayout()
 
-        self.selectionner = QPushButton()
-        self.selectionner.setText('Sélection')
-        self.selectionner.clicked.connect(self.selection)
+        self.nom_foret = QLineEdit()
+        self.nom_foret.setPlaceholderText("Nom de la forêt")
+
+        self.superficie = QLineEdit()
+        if self.dico_foret != {}:
+            self.superficie.setText(str(self.dico_foret["superficie"]))
+        self.superficie.setPlaceholderText("Superficie")
+
+        self.nb_visit = QLineEdit()
+        self.nb_visit.setPlaceholderText("Visiteurs / an")
+
+        layout.addWidget(self.nom_foret)
+        layout.addWidget(self.superficie)
+        layout.addWidget(self.nb_visit)
+
+        return layout
 
 
-        self.liste_arbres = indo.charger_donnees_csv(
-            ['data', 'bdd_arbres.csv']
-        )
+    def creer_layout_boutons(self):
+        layout = QVBoxLayout()
 
-        self.resultat_arbres = QListWidget()
-        self.type_arbre = QLineEdit()
-        self.type_arbre.setPlaceholderText("Rechercher un arbre")        
-        self.type_arbre.textChanged.connect(self.selection_arbre)
-        self.arbre_choisis = QListWidget()
-        self.resultat_arbres.itemClicked.connect(self.click_arbre)
+        # création d'un bouton pour sélectionner une zone verte
+        self.bouton_sel = QPushButton()
+        # on change le texte du bouton
+        self.bouton_sel.setText('Sélection')
+        # on exécutera self.changer_mode_sel lors d'un clic sur ce bouton
+        self.bouton_sel.clicked.connect(self.changer_mode_sel)
 
-        layout.addWidget(self.type_arbre)
-        layout.addWidget(self.resultat_arbres)
-        layout.addWidget(self.arbre_choisis)
+        # on crée un bouton pour afficher et modifier les arbres de la forêt
+        self.bouton_arbres = QPushButton()
+        self.bouton_arbres.setText("Arbres")
+        self.bouton_arbres.clicked.connect(self.afficher_arbres)
 
+        """
+        # on crée un bouton pour afficher et modifier les cours et étendues
+        # d'eau dans la forêt
+        self.bouton_eau = QPushButton()
+        self.bouton_eau.setText("Rivières et lacs")
+        self.bouton_eau.clicked.connect(self.afficher_eau)
 
-        self.donnee_type_eau = QComboBox()
-        self.donnee_type_eau.addItems(
-            indo.charger_donnees_csv(["data", "type_eau.csv"])
-        )
-        self.donnee_type_eau.hide()
+        # on fait de même pour les animaux, les champignons puis les risques
+        self.bouton_anim = QPushButton()
+        self.bouton_anim.setText("Animaux")
+        self.bouton_anim.clicked.connect(self.afficher_anim)
 
+        self.bouton_champis = QPushButton()
+        self.bouton_champis.setText("Champignons")
+        self.bouton_champis.clicked.connect(self.afficher_champis)
 
-        self.donnee_animaux = QComboBox()
-        self.donnee_animaux.addItems(
-            indo.charger_donnees_csv(["data", "bdd_animaux.csv"])
-        )
-
-        self.donnee_champignon = QComboBox()
-        self.donnee_champignon.addItems(
-            indo.charger_donnees_csv(["data", "bdd_toad.csv"])
-        )
-
-        self.donnee_risques = QComboBox()
-        self.donnee_risques.addItems(
-            indo.charger_donnees_csv(["data", "bdd_risques.csv"])
-        )
-
-        layout.addWidget(self.selectionner)
-
+        self.bouton_risques = QPushButton()
+        self.bouton_risques.setText("Risques")
+        self.bouton_risques.clicked.connect(self.afficher_risques)
+        """
         
-        # Eau
-        layout_eau = QHBoxLayout()
-        self.eau_oui = QRadioButton("Oui")
-        self.eau_non = QRadioButton("Non")
-        self.eau_non.setChecked(True)
-        self.eau_oui.clicked.connect(self.affichage_type_eau)            
-        self.eau_non.clicked.connect(self.affichage_type_eau)
 
+        layout.addWidget(self.bouton_sel)
+        layout.addWidget(self.bouton_arbres)
+        """
+        layout.addWidget(self.bouton_anim)
+        layout.addWidget(self.bouton_champis)
+        layout.addWidget(self.bouton_eau)
+        layout.addWidget(self.bouton_risques)
+        """
 
-        layout_eau.addWidget(QLabel("Eau"))
-        layout_eau.addWidget(self.eau_oui)
-        layout_eau.addWidget(self.eau_non)
+        return layout
 
-        layout.addLayout(layout_eau)
+    def creer_layout_details(self):
+        layout = QVBoxLayout()
 
-        self.texte_type_eau = QLabel("Type d'eau")
-        self.texte_type_eau.hide()
-        layout.addWidget(self.texte_type_eau)
-        layout.addWidget(self.donnee_type_eau)
+        self.zone_recherche = QLineEdit()
+        self.zone_recherche.setPlaceholderText(self.type_details)
+        self.zone_recherche.textChanged.connect(self.recherche_liste)
 
-        layout.addWidget(QLabel("Animaux"))
-        layout.addWidget(self.donnee_animaux)
+        self.resultat_recherche = QListWidget()
+        self.resultat_recherche.itemClicked.connect(self.ajouter_valeur)
 
-        layout.addWidget(QLabel("Champignons"))
-        layout.addWidget(self.donnee_champignon)
+        self.liste_valeurs = QListWidget()
 
-        layout.addWidget(QLabel("Risques"))
-        layout.addWidget(self.donnee_risques)
+        self.afficher_arbres()
 
-        self.setLayout(layout)
+        layout.addWidget(self.zone_recherche)
+        layout.addWidget(self.resultat_recherche)
+        layout.addWidget(self.liste_valeurs)
 
-    def selection_arbre(self, text):
-        self.resultat_arbres.clear()
-        text = text.strip().lower()
+        return layout
 
-        if not text:
-            return
+    def recherche_liste(self):
+        self.resultat_recherche.clear()
+        texte = self.zone_recherche.text().strip().lower()
 
-        for nom in self.liste_arbres:
-            if text in nom.lower():
-                self.resultat_arbres.addItem(nom)
+        if texte and self.type_details in self.liste_details.keys():
+            for elem in self.liste_details[self.type_details]:
+                if texte in elem.lower():
+                    self.resultat_recherche.addItem(elem)
 
-    def click_arbre(self):
-        arbre = self.resultat_arbres.currentItem()
-        print(arbre.text())
-        self.arbre_choisis.addItem(arbre.text())
-        self.arbre_choisis.update()
-        for i in range(self.arbre_choisis.count()):
-            print(self.arbre_choisis.item(i).text())
+    def ajouter_valeur(self):
+        elem = self.resultat_recherche.currentItem()
 
-    def selection(self):
+        if self.fen.debug: print(elem.text())
+
+        self.liste_valeurs.addItem(elem.text())
+        self.liste_valeurs.update()
+
+    def afficher_arbres(self):
+        self.type_details = "arbres"
+        self.zone_recherche.clear()
+        self.zone_recherche.setPlaceholderText(self.type_details)
+        self.recherche_liste()
+
+    def changer_mode_sel(self):
         self.mode_sel = not self.mode_sel
         print('Sélection : ' + str(self.mode_sel))
 
-    def affichage_type_eau(self):
-        if self.eau_oui.isChecked():
-            self.donnee_type_eau.show()
-            self.texte_type_eau.show()
-        else:
-            self.donnee_type_eau.hide()
-            self.texte_type_eau.hide()
+    def mettre_a_jour(self, foret):
+        self.dico_foret = foret
+        self.mode_sel = False
+        self.nom_foret.setText(foret.get("nom", ""))
+        self.superficie.setText(str(foret.get("superficie", "")))
+        self.nb_visit.setText(str(foret.get("nb_visit", "")))
+        self.liste_valeurs.clear()
+        self.afficher_arbres()
 
 
 class Fenetre_supr_foret(QGroupBox):
@@ -183,7 +238,13 @@ class MainWindow(QWidget):
         super().__init__()
 
         self.requetes = overpass.RequetesOverpass()
+        self.inter = indo.InteractionDonnees(
+            os.sep.join(["data", "bdd.db"]),
+            os.sep.join(["data", "forets_vendee.geojson"]),
+            debug
+        )
         self.view = QtWebEngineWidgets.QWebEngineView()
+        self.debug = debug
 
         # Carte
         chemin_html = os.path.abspath(os.sep.join(['cartes', 'carte.html']))
@@ -201,21 +262,23 @@ class MainWindow(QWidget):
         with open(os.sep.join(['data', 'style.qss'])) as fichier:
             self.setStyleSheet(fichier.read())
 
+        self.show()
+
     def init_interface_main(self):
         self.setWindowTitle("Carte des forêts")
         self.resize(1200, 700)
 
         main_layout = QHBoxLayout(self)
 
+        if self.debug: print("Chargement des forêts...")
         self.nom_foret = indo.charger_nom_foret(
             ['data', 'forets_vendee.geojson']
         )
+        if self.debug: print("Forêts chargées !")
 
         # fenetre forêt
-        self.fenetre_foret_main = GroupeAjoutForet()
-        self.fenetre_foret_main.hide()
-        self.fenetre_supr_foret_main = Fenetre_supr_foret()
-        self.fenetre_supr_foret_main.hide()
+        self.groupe_modif_foret = GroupeForet(self)
+        self.groupe_modif_foret.hide()
 
         # Barre gauche
         interface_gauche = QVBoxLayout()
@@ -224,31 +287,22 @@ class MainWindow(QWidget):
         self.recherche.setPlaceholderText("Rechercher une forêt")        
         self.recherche.textChanged.connect(self.chercher_foret)
 
-        bouton_ajouter_foret = QPushButton("Ajouter forêt")
-        bouton_ajouter_foret.clicked.connect(self.afficher_fenetre_foret_main)
+        self.resultats_recherche = QListWidget()
+        self.resultats_recherche.setFrameShape(QListWidget.NoFrame)
 
-
-        bouton_supprimer_foret = QPushButton("Supprimer forêt")
-        bouton_supprimer_foret.clicked.connect(self.afficher_fenetre_supr_foret_main)
-
-        self.resultat_foret = QListWidget()
-        self.resultat_foret.setFrameShape(QListWidget.NoFrame)
-
-
+        bouton_modif_foret = QPushButton("Modifier forêt")
+        bouton_modif_foret.clicked.connect(self.afficher_groupe_foret)
 
         interface_gauche.addWidget(self.recherche)
-        interface_gauche.addWidget(self.resultat_foret)
-        interface_gauche.addStretch()
-        interface_gauche.addWidget(bouton_ajouter_foret)
-        interface_gauche.addWidget(bouton_supprimer_foret)
+        interface_gauche.addWidget(self.resultats_recherche)
+        interface_gauche.addWidget(bouton_modif_foret)
 
         main_layout.addLayout(interface_gauche)
-        main_layout.addWidget(self.fenetre_foret_main)
-        main_layout.addWidget(self.fenetre_supr_foret_main)
+        main_layout.addWidget(self.groupe_modif_foret)
         main_layout.addWidget(self.view)
 
     def chercher_foret(self, text):
-        self.resultat_foret.clear()
+        self.resultats_recherche.clear()
         text = text.strip().lower()
 
         if not text:
@@ -256,12 +310,30 @@ class MainWindow(QWidget):
 
         for nom in self.nom_foret:
             if text in nom.lower():
-                self.resultat_foret.addItem(nom)
+                self.resultats_recherche.addItem(nom)
 
-    def afficher_fenetre_foret_main(self):
-        self.fenetre_supr_foret_main.hide()
-        self.fenetre_foret_main.show()
+    def afficher_groupe_foret(self):
+        if self.groupe_modif_foret.isHidden():
+            if self.resultats_recherche.currentItem():
+                
+                nom = self.resultats_recherche.currentItem().text()
 
-    def afficher_fenetre_supr_foret_main(self):
-        self.fenetre_foret_main.hide()
-        self.fenetre_supr_foret_main.show()
+                foret = self.foret_depuis_nom(nom)
+                self.groupe_modif_foret.mettre_a_jour(foret)
+
+            self.groupe_modif_foret.show()
+        else:
+            self.groupe_modif_foret.hide()
+
+    def foret_depuis_nom(self, nom):
+        liste_infos = self.inter.rechercher_foret(("nom", nom))
+        if self.debug: print(liste_infos)
+
+        dico = {
+            "nom": nom,
+            "superficie": liste_infos[0][4],
+            "nb_visit": liste_infos[0][3]
+        }
+
+        if self.debug: print(dico)
+        return dico

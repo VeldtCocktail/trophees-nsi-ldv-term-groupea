@@ -12,7 +12,7 @@ QGroupBox {
     padding: 10px;
 }
 
-QGroupBox#groupe-ajout-foret {
+QGroupBox#groupe-foret {
     min-width: 300px;
     max-width: 300px;
 }
@@ -37,6 +37,6 @@ QPushButton {
     padding: 8px;
 }
 
-QPushButton::hover {
+QPushButton:hover {
     background-color: #5a94ff;
 }
