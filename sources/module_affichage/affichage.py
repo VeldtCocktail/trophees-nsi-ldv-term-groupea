@@ -4,11 +4,11 @@
 # importation des bibliothèques nécessaires
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QListWidget, QGroupBox,
-    QLineEdit, QRadioButton, QComboBox, QLabel,
+    QLineEdit, QRadioButton, QComboBox, QLabel
 )
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtWebChannel import QWebChannel
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl, Qt
 from pathlib import Path
 import os
 
@@ -74,6 +74,8 @@ class GroupeForet(QGroupBox):
         """
         # création du layout principal qui contient les éléments de la fenêtre
         layout_principal = QVBoxLayout()
+
+        self.setAlignment(Qt.AlignCenter)
 
         # création de la zone qui contient les informations générales de la
         # forêt si l'utilisateur affiche une forêt déjà existante
