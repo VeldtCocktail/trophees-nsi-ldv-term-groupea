@@ -1,5 +1,4 @@
 # Journal - A COMPLETER A CHAQUE COURS
-*Yes daddy 🥰* 
 
 ### Séance n°1 (15/12/2025) 
 - réflexion sur le choix de l’application.
@@ -67,8 +66,8 @@
 
 ### Séance n°17 (12/02/2026)
 - interface graphique PyQT
-- interaction BBD (faire un sorte qu'on puisse ajouter un polygone dans une forêt
-- Base de données champignon et animaux
+- interaction BBD
+- Base de données champignons et animaux
 - clic fonctionnel
 
 ### Séance n°18 (03/03/2026)
@@ -82,7 +81,6 @@
 - Journal et compte rendu (Charlélie)
 
 
-   
 ## Travail hors cours de NSI :
 
 - 14/01/2026 : Léon : début de réalisation du programme pour l'interaction avec la base de données + finalisation le même jour. La classe BaseDeDonnees permet une interaction généralisée avec une base de données compatible SQLite.
@@ -95,3 +93,4 @@
 - 07/03/2026 : Maden (3h) : Poursuite de l'interface graphique -> fenêtre de création/modification de forêt
 
 - 08/03/2026 : Maden (3h) : Chargement, affichage et enregistrement des détails d'une forêt dans la BDD
+#### TODO : Sélection et enregistrement des polygones + chargement, affichage, modif des infos de base des forêts
