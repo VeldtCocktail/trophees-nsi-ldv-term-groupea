@@ -1,3 +1,5 @@
+# temporaire -> fichier de tests du module
+
 import interaction_donnees
 import os
 

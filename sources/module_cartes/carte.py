@@ -1,6 +1,51 @@
+# importation des bibliothèques nécessaires
 import folium
 import pathlib
 from PyQt5.QtCore import QObject, pyqtSlot
+
+
+class Pont(QObject):
+    """
+    Classe qui implémente un pont entre le JavaScript de la carte et l'instance
+    python de la fenêtre principale
+    """
+    
+    def __init__(self, fenetre):
+        """
+        Entrées \\: \n
+            self:Pont : instance de la classe Pont
+            fenetre:FenetrePrincipale : instance de la classe FenetrePrincipale
+
+        Rôle \\: \n
+            Initialisation de la classe
+
+        Sortie \\: \n
+            None
+        """
+        # initialisation de la superclasse QObject
+        super().__init__()
+        # on affecte à self.fen la valeur de fenêtre, l'instance de la classe
+        # principale du programme (classe FenetrePrincipale)
+        self.fen = fenetre
+
+    # décorateur pyqtSlot qui permet de faire le lien avec le JavaScript
+    @pyqtSlot(float, float, int)
+    def envoyerCoordonnees(self, lat, long, zoom):
+        """
+        Entrées \\: \n
+            self:Pont : instance de la classe Pont
+            lat:float : latitude des coordonnées envoyées par le JavaScript
+            long:float : longitude des coordonnées envoyées par le JavaScript
+
+        Rôle \\: \n
+            Initialisation de la classe
+
+        Sortie \\: \n
+            None
+        """
+        print(f'Click enregistré en : {lat}, {long} | Zoom : {zoom}')
+        self.fen.update_carte((lat, long), zoom)
+
 
 def generer_carte(coordonnees_depart, zoom = 12, donnees = []):
     fonction_style = lambda x: {
@@ -52,14 +97,3 @@ def generer_carte(coordonnees_depart, zoom = 12, donnees = []):
     carte.get_root().html.add_child(folium.Element(qwebchannel_js))
 
     carte.save(pathlib.Path("cartes", "carte.html"))
-
-class Pont(QObject):
-
-    def __init__(self, parent):
-        self.par = parent
-        super().__init__(parent)
-
-    @pyqtSlot(float, float, int)
-    def envoyerCoordonnees(self, lat, long, zoom):
-        print(f'Click enregistré en : {lat}, {long} | Zoom : {zoom}')
-        self.par.update_carte((lat, long), zoom)
