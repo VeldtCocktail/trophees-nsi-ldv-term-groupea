@@ -42,6 +42,10 @@ class GroupeForet(QGroupBox):
         self.mode_sel = self
 
         self.type_details = "arbres"
+        if "details" in foret:
+            self.details_temp = foret["details"]
+        else:
+            self.details_temp = {}
 
         # on affect fenetre à self.fen
         self.fen = fenetre
@@ -121,7 +125,6 @@ class GroupeForet(QGroupBox):
 
         return layout
 
-
     def creer_layout_boutons(self):
         layout = QVBoxLayout()
 
@@ -137,7 +140,6 @@ class GroupeForet(QGroupBox):
         self.bouton_arbres.setText("Arbres")
         self.bouton_arbres.clicked.connect(self.afficher_arbres)
 
-        """
         # on crée un bouton pour afficher et modifier les cours et étendues
         # d'eau dans la forêt
         self.bouton_eau = QPushButton()
@@ -156,17 +158,14 @@ class GroupeForet(QGroupBox):
         self.bouton_risques = QPushButton()
         self.bouton_risques.setText("Risques")
         self.bouton_risques.clicked.connect(self.afficher_risques)
-        """
         
 
         layout.addWidget(self.bouton_sel)
         layout.addWidget(self.bouton_arbres)
-        """
         layout.addWidget(self.bouton_anim)
         layout.addWidget(self.bouton_champis)
         layout.addWidget(self.bouton_eau)
         layout.addWidget(self.bouton_risques)
-        """
 
         return layout
 
@@ -194,9 +193,9 @@ class GroupeForet(QGroupBox):
         self.resultat_recherche.clear()
         texte = self.zone_recherche.text().strip().lower()
 
-        if texte and self.type_details in self.liste_details.keys():
+        if self.type_details in self.liste_details.keys():
             for elem in self.liste_details[self.type_details]:
-                if texte in elem.lower():
+                if not texte or texte in elem.lower():
                     self.resultat_recherche.addItem(elem)
 
     def ajouter_valeur(self):
@@ -208,10 +207,53 @@ class GroupeForet(QGroupBox):
         self.liste_valeurs.update()
 
     def afficher_arbres(self):
+        self.enregistrer_details_temp()
         self.type_details = "arbres"
+        self.afficher_details()
+
+    def afficher_eau(self):
+        self.enregistrer_details_temp()
+        self.type_details = "eau"
+        self.afficher_details()
+
+    def afficher_anim(self):
+        self.enregistrer_details_temp()
+        self.type_details = "anim"
+        self.afficher_details()
+
+    def afficher_champis(self):
+        self.enregistrer_details_temp()
+        self.type_details = "champis"
+        self.afficher_details()
+
+    def afficher_risques(self):
+        self.enregistrer_details_temp()
+        self.type_details = "risques"
+        self.afficher_details()
+
+    def afficher_details(self):
         self.zone_recherche.clear()
         self.zone_recherche.setPlaceholderText(self.type_details)
+        self.charger_details_temp()
         self.recherche_liste()
+
+    def enregistrer_details_temp(self):
+        for idx in range(self.liste_valeurs.count()):
+            elem = self.liste_valeurs.item(idx)
+            if self.type_details not in self.details_temp:
+                self.details_temp[self.type_details] = [elem.text()]
+            else:
+                if elem.text() not in self.details_temp[self.type_details]:
+                    self.details_temp[self.type_details].append(elem.text())
+
+        if self.fen.debug: print("Enregistrement :", self.details_temp)
+        self.liste_valeurs.clear()
+
+    def charger_details_temp(self):
+        if self.fen.debug: print("Chargement :", self.details_temp)
+        if self.type_details in self.details_temp:
+            for texte in self.details_temp[self.type_details]:
+                self.liste_valeurs.addItem(texte)
 
     def changer_mode_sel(self):
         self.mode_sel = not self.mode_sel
