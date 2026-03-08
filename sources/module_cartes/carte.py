@@ -17,7 +17,7 @@ class Pont(QObject):
             fenetre:FenetrePrincipale : instance de la classe FenetrePrincipale
 
         Rôle \\: \n
-            Initialisation de la classe
+            Initialisation de la classe Pont
 
         Sortie \\: \n
             None
@@ -30,31 +30,57 @@ class Pont(QObject):
 
     # décorateur pyqtSlot qui permet de faire le lien avec le JavaScript
     @pyqtSlot(float, float, int)
-    def envoyerCoordonnees(self, lat, long, zoom):
+    def envoyerCoordonnees(self, lat, lon, zoom):
         """
         Entrées \\: \n
             self:Pont : instance de la classe Pont
             lat:float : latitude des coordonnées envoyées par le JavaScript
-            long:float : longitude des coordonnées envoyées par le JavaScript
+            lon:float : longitude des coordonnées envoyées par le JavaScript
+            zoom:int : facteur actuel de zoom de la carte
 
         Rôle \\: \n
-            Initialisation de la classe
+            Recevoir les coordonnées envoyées par le JavaScript intégré à la
+            carte lors d’un clic sur celle ci, et transmettre ces coordonnées à
+            la méthode gerer_clic de la fenêtre principale
 
         Sortie \\: \n
             None
         """
-        print(f'Click enregistré en : {lat}, {long} | Zoom : {zoom}')
-        self.fen.update_carte((lat, long), zoom)
+        # si le mode debug de la fenêtre principale est activé
+        if self.fen.debug:
+            # on affiche un message de debug en console
+            print(f'Click enregistré en : {lat}, {lon} | Zoom : {zoom}')
+            
+        # on appelle la méthode gerer_clic de la fenêtre principale en passant
+        # en paramètres les coordonnées du point cliqué et le facteur de zoom
+        self.fen.gerer_clic((lat, lon), zoom)
 
 
-def generer_carte(coordonnees_depart, zoom = 12, donnees = []):
+def generer_carte(coord_depart, zoom = 12, donnees = []):
+    """
+    Entrées \\: \n
+        coord_depart:tuple(int) : latitude et longitude du centre de la carte
+        zoom:int : facteur de zoom de la carte
+        donnes:list[dict[str: any]] : dictionnaire des données temporaires à
+            ajouter sur la carte, de la forme {'type':'FeatureCollection', 
+            'features': list[dict[str: any]]}
+    
+    Rôle \\: \n
+        Générer un fichier carte.html qui contient les polygones du fichier
+        data/forets_vendee.geojson, les données temporaires <donnees> ainsi
+        qu’une fonction JavaScript qui permet de relier la carte à la fenêtre
+        principale du programme Python
+    
+    Sortie \\: \n
+        None
+    """
     fonction_style = lambda x: {
         "fillColor": (
             "#0000ff"
         )
     }
 
-    carte = folium.Map(location = coordonnees_depart, zoom_start = zoom)
+    carte = folium.Map(location = coord_depart, zoom_start = zoom)
 
     folium.GeoJson("data/forets_vendee.geojson").add_to(carte)
     for donnees_json in donnees:

@@ -331,8 +331,8 @@ class Fenetre_supr_foret(QGroupBox):
 
         layout = QVBoxLayout(self)
 
-# MAIN WINDOW
-class MainWindow(QWidget):
+# Classe principale de l'application
+class FenetrePrincipale(QWidget):
     def __init__(self, debug = False):
         super().__init__()
 
@@ -356,14 +356,14 @@ class MainWindow(QWidget):
         self.channel.registerObject("pybridge", self.pont)
         self.view.page().setWebChannel(self.channel)
 
-        self.init_interface_main()
+        self.init_interface()
 
         with open(os.sep.join(['data', 'style.qss'])) as fichier:
             self.setStyleSheet(fichier.read())
 
         self.show()
 
-    def init_interface_main(self):
+    def init_interface(self):
         self.setWindowTitle("Carte des forêts")
         self.resize(1200, 700)
 
@@ -492,3 +492,17 @@ class MainWindow(QWidget):
 
                 if resultat:
                     dico[cle].append(resultat[0][1])
+
+
+    def gerer_clic(self, coord, zoom):
+        lat, lon = coord
+
+        if self.debug:
+            print(f'Click reçu en : {lat}, {lon} | Zoom : {zoom}')
+
+        if self.groupe_modif_foret.mode_sel:
+            if self.debug: print("Clic enregistré et sélection activée :)")
+
+            # TODO
+            # appeler une méthode de self.groupe_modif_foret équivalente à
+            # update_cartes de gestion_clicks.py

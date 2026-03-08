@@ -21,7 +21,7 @@ os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 carte.generer_carte((46.3930189, -1.480289))
 app = QApplication(sys.argv)
 
-window = affichage.MainWindow(debug = True)
+window = affichage.FenetrePrincipale(debug = True)
 window.show()
 
 sys.exit(app.exec())
