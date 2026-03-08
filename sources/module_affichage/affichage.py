@@ -2,6 +2,7 @@
 # Auteurs : Mathéo Pasquier, Maden Ussereau
 
 # importation des bibliothèques nécessaires
+from time import time
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QListWidget, QGroupBox,
     QLineEdit, QRadioButton, QComboBox, QLabel
@@ -15,6 +16,24 @@ import os
 from module_bdd import interaction_donnees as indo
 from module_overpass import overpass
 from module_cartes import carte
+
+
+DICO_TABLES_DETAILS = {
+    "arbres": "FORET_ARBRE",
+    "anim": "FORET_ANIM",
+    "eau": "FORET_EAU",
+    "champis": "FORET_CHAMPI",
+    "risques": "FORET_RISQUE"
+}
+
+DICO_CSV_DETAILS = {
+    "arbres":  "bdd_arbres.csv",
+    "anim":    "bdd_animaux.csv",
+    "champis": "bdd_toad.csv",
+    "eau":     "eau.csv",
+    "risques": "bdd_risques.csv"
+}
+
 
 class GroupeForet(QGroupBox):
     """
@@ -45,6 +64,7 @@ class GroupeForet(QGroupBox):
         if "details" in foret:
             self.details_temp = foret["details"]
         else:
+            foret["details"] = {}
             self.details_temp = {}
 
         # on affect fenetre à self.fen
@@ -112,7 +132,7 @@ class GroupeForet(QGroupBox):
         self.nom_foret.setPlaceholderText("Nom de la forêt")
 
         self.superficie = QLineEdit()
-        if self.dico_foret != {}:
+        if self.dico_foret != {} and "superficie" in self.dico_foret:
             self.superficie.setText(str(self.dico_foret["superficie"]))
         self.superficie.setPlaceholderText("Superficie")
 
@@ -247,9 +267,9 @@ class GroupeForet(QGroupBox):
                     self.details_temp[self.type_details].append(elem.text())
 
         if self.fen.debug: print("Enregistrement :", self.details_temp)
-        self.liste_valeurs.clear()
 
     def charger_details_temp(self):
+        self.liste_valeurs.clear()
         if self.fen.debug: print("Chargement :", self.details_temp)
         if self.type_details in self.details_temp:
             for texte in self.details_temp[self.type_details]:
@@ -258,6 +278,8 @@ class GroupeForet(QGroupBox):
     def changer_mode_sel(self):
         self.mode_sel = not self.mode_sel
         print('Sélection : ' + str(self.mode_sel))
+        self.enregistrer_details_temp()
+        self.enregistrer_foret_bdd(self.dico_foret)
 
     def mettre_a_jour(self, foret):
         self.dico_foret = foret
@@ -265,8 +287,41 @@ class GroupeForet(QGroupBox):
         self.nom_foret.setText(foret.get("nom", ""))
         self.superficie.setText(str(foret.get("superficie", "")))
         self.nb_visit.setText(str(foret.get("nb_visit", "")))
+
+        if "details" in foret:
+            self.details_temp = foret["details"]
+        else:
+            foret["details"] = {}
+            self.details_temp = {}
+
         self.liste_valeurs.clear()
         self.afficher_arbres()
+
+    def enregistrer_foret_bdd(self, foret):
+        if "id" not in foret:
+            foret["id"] = time()
+
+        for type_detail in self.liste_details.keys():
+            self.fen.inter.bdd.supprimer_ligne(
+                DICO_TABLES_DETAILS[type_detail],
+                ("id_foret", foret["id"])
+            )
+
+            if type_detail in self.details_temp:
+                for valeur in self.details_temp[type_detail]:
+                    chemin_csv = os.sep.join(
+                        ["data", DICO_CSV_DETAILS[type_detail]]
+                    )
+                    resultat = indo.rechercher_dans_csv(
+                        chemin_csv, 1, valeur
+                    )
+
+                    if resultat:
+                        id_val = resultat[0][0]
+                        self.fen.inter.bdd.ajouter_ligne(
+                            DICO_TABLES_DETAILS[type_detail],
+                            [foret["id"], id_val]
+                        )
 
 
 class Fenetre_supr_foret(QGroupBox):
@@ -373,11 +428,67 @@ class MainWindow(QWidget):
         liste_infos = self.inter.rechercher_foret(("nom", nom))
         if self.debug: print(liste_infos)
 
+        id_foret = liste_infos[0][0]
+        dico_details = self.rechercher_details_foret(id_foret)
+
         dico = {
+            "id": id_foret,
             "nom": nom,
             "superficie": liste_infos[0][4],
-            "nb_visit": liste_infos[0][3]
+            "nb_visit": liste_infos[0][3],
+            "implan_natur": True if liste_infos[0][5] == 1 else False,
+            "details": dico_details
         }
 
         if self.debug: print(dico)
         return dico
+    
+    def rechercher_details_foret(self, id_foret):
+        dico_details = {}
+
+        liste_id_arbres = self.inter.bdd.rechercher_valeur(
+            "FORET_ARBRE", ("id_foret", id_foret), "id_arbre"
+        )
+        liste_id_anim = self.inter.bdd.rechercher_valeur(
+            "FORET_ANIM", ("id_foret", id_foret), "id_anim"
+        )
+        liste_id_champis = self.inter.bdd.rechercher_valeur(
+            "FORET_CHAMPI", ("id_foret", id_foret), "id_champi"
+        )
+        liste_id_eau = self.inter.bdd.rechercher_valeur(
+            "FORET_EAU", ("id_foret", id_foret), "id_eau"
+        )
+        liste_id_risques = self.inter.bdd.rechercher_valeur(
+            "FORET_RISQUE", ("id_foret", id_foret), "id_risque"
+        )
+        
+        self.ajouter_a_dico(
+            dico_details,
+            [
+                ("arbres", liste_id_arbres, "bdd_arbres.csv"),
+                ("anim", liste_id_anim, "bdd_animaux.csv"),
+                ("champis", liste_id_champis, "bdd_toad.csv"),
+                ("eau", liste_id_eau, "eau.csv"),
+                ("risques", liste_id_risques, "bdd_risques.csv")
+            ]
+        )
+
+        return dico_details
+
+    def ajouter_a_dico(self, dico, liste):
+        for ligne in liste:
+            
+            cle, liste_id, nom_csv = ligne
+
+            chemin_csv = os.sep.join(["data", nom_csv])
+
+            if cle not in dico:
+                dico[cle] = []
+
+
+            for id_tuple in liste_id:
+                id_val = str(id_tuple[0])
+                resultat = indo.rechercher_dans_csv(chemin_csv, 0, id_val)
+
+                if resultat:
+                    dico[cle].append(resultat[0][1])

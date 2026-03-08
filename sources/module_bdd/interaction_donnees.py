@@ -164,6 +164,15 @@ class BaseDeDonnees:
         self.curseur.execute(requete)
         return self.curseur.fetchall()
 
+    def vider_table(self, table):
+        """
+        Entrées : self:instance de BaseDeDonnees
+                  table:str : nom de la table
+        Rôle : Supprimer toutes les lignes d'une table
+        """
+        requete = f"DELETE FROM {table}"
+        self.curseur.execute(requete)
+        self.connexion.commit()
 
 class InteractionJSON:
     """
@@ -550,6 +559,17 @@ def charger_donnees_csv(liste, col=1):
 
     return data
 
+def rechercher_dans_csv(chemin, col, valeur):
+    data = []
+    with open(chemin, newline="", encoding="ISO 8859-3") as fichier:
+        reader = csv.reader(fichier, delimiter=";")
+        next(reader, None)
+        for ligne in reader:
+            if ligne[col] == valeur:
+                data.append(ligne)
+
+    return data
+
 def charger_nom_foret(liste):
     json_path = os.sep.join(liste)
 
@@ -565,7 +585,3 @@ def charger_nom_foret(liste):
 
     return names
 
-
-# Avant de recommencer quelconque test sur la bdd, penser a reset la/les
-# table(s) affectee(s) avant, afin d'eviter des bugs causes non pas par le code
-# mais par l'utilisateur, merci - @Onions/Le G.O.A.T. du gambling 🎰

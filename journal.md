@@ -93,3 +93,5 @@
 
 - 07/03/2026 : Maden (1h30) : Ajout de commentaires et spécifications, début du style QSS, réorganisation
 - 07/03/2026 : Maden (3h) : Poursuite de l'interface graphique -> fenêtre de création/modification de forêt
+
+- 08/03/2026 : Maden (3h) : Chargement, affichage et enregistrement des détails d'une forêt dans la BDD
