@@ -56,14 +56,15 @@ class Pont(QObject):
         self.fen.gerer_clic((lat, lon), zoom)
 
 
-def generer_carte(coord_depart, zoom = 12, donnees = []):
+def generer_carte(coord_depart, zoom = 12, donnees = [], debug = False):
     """
     Entrées \\: \n
         coord_depart:tuple(int) : latitude et longitude du centre de la carte
         zoom:int : facteur de zoom de la carte
-        donnes:list[dict[str: any]] : dictionnaire des données temporaires à
+        donnees:list[dict[str: any]] : dictionnaire des données temporaires à
             ajouter sur la carte, de la forme {'type':'FeatureCollection', 
             'features': list[dict[str: any]]}
+        debug:bool : affichage des messages de debug en console
     
     Rôle \\: \n
         Générer un fichier carte.html qui contient les polygones du fichier
@@ -74,15 +75,13 @@ def generer_carte(coord_depart, zoom = 12, donnees = []):
     Sortie \\: \n
         None
     """
-    fonction_style = lambda x: {
-        "fillColor": (
-            "#0000ff"
-        )
-    }
 
     carte = folium.Map(location = coord_depart, zoom_start = zoom)
 
-    folium.GeoJson("data/forets_vendee.geojson").add_to(carte)
+    folium.GeoJson(
+        "data/forets_vendee.geojson", style_function = fonction_style
+    ).add_to(carte)
+    
     for donnees_json in donnees:
         folium.GeoJson(donnees_json, style_function = fonction_style).add_to(carte)
 
@@ -123,3 +122,12 @@ def generer_carte(coord_depart, zoom = 12, donnees = []):
     carte.get_root().html.add_child(folium.Element(qwebchannel_js))
 
     carte.save(pathlib.Path("cartes", "carte.html"))
+
+def fonction_style(elem):
+    print("Style appliqué à :", elem)
+    return {
+        "fillColor": "#15ff00",
+        "color": "#0000ff00",
+        "weight": 2,
+        "fillOpacity": 0.4
+    }

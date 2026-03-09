@@ -58,7 +58,7 @@ class GroupeForet(QGroupBox):
         super().__init__("Enregistrer une forêt")
 
         # on initialise le mode de sélection à False
-        self.mode_sel = self
+        self.mode_sel = False
 
         self.type_details = "arbres"
         if "details" in foret:
