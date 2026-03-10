@@ -323,14 +323,6 @@ class GroupeForet(QGroupBox):
                             [foret["id"], id_val]
                         )
 
-
-class Fenetre_supr_foret(QGroupBox):
-    def __init__(self):
-        super().__init__("Suppresion forêt")
-        self.setFixedWidth(300)
-
-        layout = QVBoxLayout(self)
-
 # Classe principale de l'application
 class FenetrePrincipale(QWidget):
     def __init__(self, debug = False):
@@ -503,6 +495,6 @@ class FenetrePrincipale(QWidget):
         if self.groupe_modif_foret.mode_sel:
             if self.debug: print("Clic enregistré et sélection activée :)")
 
-            # TODO
+            #TODO
             # appeler une méthode de self.groupe_modif_foret équivalente à
             # update_cartes de gestion_clicks.py
