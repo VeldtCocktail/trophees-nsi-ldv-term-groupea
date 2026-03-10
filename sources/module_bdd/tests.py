@@ -21,3 +21,5 @@ indo.synchro_depuis_json()
 
 for table in ["FORET_ARBRE", "FORET_ANIM", "FORET_CHAMPI", "FORET_EAU", "FORET_RISQUE"]:
     indo.bdd.vider_table(table)
+
+print(indo.recuperer_centre_foret("Forêt de Puits Neuf"))

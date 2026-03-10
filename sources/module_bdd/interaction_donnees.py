@@ -1,11 +1,8 @@
-# TODO
-#  A partir du nom d'une foret, on recupere le "centre" de son polygone
-#  shapely.geometry ca doit pouvoir suffire
-
 import sqlite3
 import json
 import csv
 import os
+from shapely.geometry import shape
 
 class BaseDeDonnees:
     """
@@ -202,7 +199,8 @@ class InteractionJSON:
         
         while idx < nb_features and not trouve:
             feature = features[idx]
-            if feature['properties'].get('id') == id_feature:
+            props = feature.get('properties', {})
+            if props.get('id') == id_feature or props.get('@id') == id_feature:
                 trouve = True
                 feature_trouvee = feature
             idx += 1
@@ -249,7 +247,8 @@ class InteractionJSON:
         
         while idx < nb_features and not trouve:
             feature = features[idx]
-            if feature['properties'].get('id') == id_feature:
+            props = feature.get('properties', {})
+            if props.get('id') == id_feature or props.get('@id') == id_feature:
                 trouve = True
             idx += 1
         
@@ -287,7 +286,8 @@ class InteractionJSON:
         
         while idx < nb_features and not trouve:
             feature = features[idx]
-            if feature['properties'].get('id') == id_feature:
+            props = feature.get('properties', {})
+            if props.get('id') == id_feature or props.get('@id') == id_feature:
                 trouve = True
                 geometry = feature.get('geometry')
 
@@ -334,7 +334,8 @@ class InteractionJSON:
         
         while idx < nb_features and not trouve:
             feature = features[idx]
-            if feature['properties'].get('id') == id_feature:
+            props = feature.get('properties', {})
+            if props.get('id') == id_feature or props.get('@id') == id_feature:
                 features.pop(idx)
                 trouve = True
                 self.sauvegarder()
@@ -356,7 +357,8 @@ class InteractionJSON:
         
         while idx < nb_features and not trouve:
             feature = features[idx]
-            if feature['properties'].get('id') == id_feature:
+            props = feature.get('properties', {})
+            if props.get('id') == id_feature or props.get('@id') == id_feature:
                 trouve = True
                 geometry = feature.get('geometry')
                 
@@ -539,6 +541,32 @@ class InteractionDonnees:
             if not existe:
                 # On utilise un MultiPolygon vide par defaut
                 self.json.creer_feature(id_feature, nom, "MultiPolygon", [])
+
+    def recuperer_centre_foret(self, nom_foret):
+        """
+        Entrees : nom_foret: nom de la foret
+        Role : Retrouve le centre (centroid) de la foret a partir de son nom
+        Sortie : (longitude, latitude) du centre, ou None si non trouve
+        """
+        # 1. Rechercher la foret par son nom dans la BDD pour avoir l'id_feature
+        resultats = self.bdd.rechercher_ligne("FORET", ("nom", nom_foret))
+        if not resultats:
+            return None
+        
+        # Structure de la table FORET : id_foret, id_feature, nom, ...
+        # On prend le premier resultat
+        id_feature = resultats[0][1]
+        
+        # 2. Rechercher la feature dans le GeoJSON
+        feature = self.json.rechercher_feature(id_feature)
+        if not feature or not feature.get('geometry'):
+            return None
+            
+        # 3. Calculer le centre avec shapely
+        geometrie = shape(feature['geometry'])
+        centre = geometrie.centroid
+        
+        return (centre.x, centre.y)
 
     def fermer(self):
         """

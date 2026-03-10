@@ -2,7 +2,9 @@
 
 ## Description
 
-Application de visualisation et de gestion des forêts en Vendée. Ce projet permet d'afficher sur une carte interactive les différentes forêts du département, avec des informations détaillées sur chacune d'entre elles (superficie, biodiversité, champignons, etc.).
+Application de visualisation et de gestion des forêts en Vendée. Ce projet permet d'afficher sur une carte interactive 
+les différentes forêts du département, avec des informations détaillées sur chacune d'entre elles (superficie, 
+biodiversité, champignons, etc.).
 
 Développé dans le cadre du cours de NSI (Numérique et Sciences Informatiques).
 
@@ -10,7 +12,8 @@ Développé dans le cadre du cours de NSI (Numérique et Sciences Informatiques)
 
 - **Carte interactive** : Visualisation géographique des forêts de Vendée grâce à Folium
 - **Interface graphique avancée** : Affichage de la carte dans une fenêtre PyQt5 avec QtWebEngine
-- **Gestion des clics** : Capture et traitement des coordonnées GPS lors des clics sur la carte (communication JavaScript ↔ Python via QWebChannel)
+- **Gestion des clics** : Capture et traitement des coordonnées GPS lors des clics sur la carte (communication 
+JavaScript ↔ Python via QWebChannel)
 - **Interface de gestion des forêts** : Fenêtres dédiées pour ajouter et modifier les informations sur les forêts
 - **Base de données SQLite** : Stockage et gestion des informations sur les forêts
 - **Données géographiques** : Utilisation de fichiers GeoJSON pour les contours des forêts
@@ -77,7 +80,8 @@ Cette commande génère et ouvre la carte des forêts directement dans votre nav
 ```bash
 python sources/module_affichage/affichage.py
 ```
-Cette commande affiche la carte dans une fenêtre d'application graphique avec des boutons pour ajouter et supprimer des forêts.
+Cette commande affiche la carte dans une fenêtre d'application graphique avec des boutons pour ajouter et supprimer des 
+forêts.
 
 ### Tester la gestion des clics sur la carte
 ```bash
@@ -93,13 +97,16 @@ Génère le fichier `carte.html` sans l'afficher.
 
 ## Gestion des Données
 
-Le fichier `sources/module_bdd/interaction_donnees.py` contient les classes nécessaires pour gérer les données du projet de manière synchronisée.
+Le fichier `sources/module_bdd/interaction_donnees.py` contient les classes nécessaires pour gérer les données du 
+projet de manière synchronisée.
 
 ### Classes principales
 
 - **BaseDeDonnees** : Gère les opérations CRUD (Create, Read, Update, Delete) sur la base SQLite.
-- **Interaction_JSON** : Gère la lecture et la modification du fichier GeoJSON (ajout/suppression de zones géographiques).
-- **Interaction_Donnees** : Classe coordinatrice qui synchronise les changements entre la base SQLite et le fichier GeoJSON.
+- **Interaction_JSON** : Gère la lecture et la modification du fichier GeoJSON (ajout/suppression de zones 
+géographiques).
+- **Interaction_Donnees** : Classe coordinatrice qui synchronise les changements entre la base SQLite et le fichier 
+GeoJSON.
 
 ### Méthodes de la coordinatrice
 
@@ -136,7 +143,8 @@ outils_git\commit.bat -f nom_du_fichier "message de commit"
 outils_git\commit.bat -d nom_du_dossier "message de commit"
 ```
 
-Ces scripts ajoutent automatiquement le fichier ou dossier spécifié, créent un commit avec le message fourni, et poussent les changements vers la branche `main`.
+Ces scripts ajoutent automatiquement le fichier ou dossier spécifié, créent un commit avec le message fourni, et 
+poussent les changements vers la branche `main`.
 
 ### Scripts de mise à jour
 
@@ -184,43 +192,62 @@ Consultez le fichier [`journal.md`](journal.md) pour suivre l'évolution du proj
 
 ## Explication du lancement
 
-Note : pour une isolation des imports de librairies externes, on utilisera un environnement virtuel pour la suite du guide. On peut en initialiser un avec ```python3 -m venv .venv``` sur systèmes d'explotiation Linux et Windows, avec Python 3 d'installé. Pour installer les librairies nécessaires, on fera :
+### Sur les distributions Linux les plus populaires :
+Note : pour une isolation des imports de librairies externes, on utilisera un environnement virtuel pour la suite du 
+guide. On peut en initialiser un avec ```python3 -m venv .venv``` sur systèmes d'explotiation Linux et Windows, avec 
+Python 3 d'installé. Pour installer les librairies nécessaires, on fera :
 Sur Linux : 
 ```bash
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
+Afin de permettre un lancement sans accroc, il faut d'abord installer certaines dépendances système. Cela est géré avec 
+```dependences.sh```. Ensuite, ```start.sh``` gère un fonctionnement normal. Il n'est nécessaire d'exécuter
+```dependences.sh``` qu'une seule fois par système, mais il faut utiliser ```start.sh``` à chaque fois que l'utilisateur
+veut utiliser le programme.
 
-### Sur Linux (type Debian/Ubuntu, avec apt)
-D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```:
+### Sur Linux type Debian/Ubuntu, avec apt
+D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```, même chose avec 
+```dependences.sh```:
 ```bash
+chmod u+x dependences.sh
 chmod u+x start.sh
 ```
 Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
 ```bash
-./start.sh --distro-type "debian"
+./dependences.sh --distro-type "debian"
+./start.sh
 ```
-Note : en lançant ```start.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet nécessaire de garantir l'installation de certains paquets via ```apt```
-### Sur Linux (type Fedora/Red Hat, avec dnf)
-D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```:
+Note : en lançant ```dependences.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet 
+nécessaire de garantir l'installation de certains paquets via ```apt```
+### Sur Linux type Fedora/Red Hat, avec dnf
+D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```, même chose avec 
+```dependences.sh```:
 ```bash
+chmod u+x dependences.sh
 chmod u+x start.sh
 ```
 Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
 ```bash
-./start.sh --distro-type "fedora"
+./dependences --distro-type "fedora"
+./start.sh
 ```
-Note : en lançant ```start.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet nécessaire de garantir l'installation de certains paquets via ```dnf```
-### Sur Linux (type Arch, avec pacman)
-D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```:
+Note : en lançant ```dependences.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet 
+nécessaire de garantir l'installation de certains paquets via ```dnf```
+### Sur Linux type Arch, avec pacman
+D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```, même chose avec 
+```dependences.sh```:
 ```bash
+chmod u+x dependences.sh
 chmod u+x start.sh
 ```
 Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
 ```bash
-./start.sh --distro-type "arch"
+./dependences.sh --distro-type "arch"
+./start.sh
 ```
-Note : en lançant ```start.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet nécessaire de garantir l'installation de certains paquets via ```pacman```
+Note : en lançant ```dependences.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet 
+nécessaire de garantir l'installation de certains paquets via ```pacman```
 
 ## Mention Spéciale
 
