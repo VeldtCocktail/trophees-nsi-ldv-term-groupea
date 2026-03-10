@@ -79,7 +79,8 @@
 - Maden + Mathéo : Poursuite de l'interface graphique -> réflexion sur l'enregistrement des arbres d'une forêt
 - Léon : mise à jour du README, prise en charge des autre distibutions Linux
 - Journal et compte rendu (Charlélie)
-
+  
+### Séance n°20 (10/03/2026) sans Maden
 
 ## Travail hors cours de NSI :
 
@@ -93,4 +94,5 @@
 - 07/03/2026 : Maden (3h) : Poursuite de l'interface graphique -> fenêtre de création/modification de forêt
 
 - 08/03/2026 : Maden (3h) : Chargement, affichage et enregistrement des détails d'une forêt dans la BDD
+
 #### TODO : Sélection et enregistrement des polygones + chargement, affichage, modif des infos de base des forêts
