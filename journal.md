@@ -79,8 +79,12 @@
 - Maden + Mathéo : Poursuite de l'interface graphique -> réflexion sur l'enregistrement des arbres d'une forêt
 - Léon : mise à jour du README, prise en charge des autre distibutions Linux
 - Journal et compte rendu (Charlélie)
-
-
+  
+### Séance n°20 (10/03/2026) sans Maden
+- Léon : mise à jour du README, prise en charge des autre distibutions Linux. 
+-  Mathéo : Poursuite de l'interface graphique
+-  Charlélie : Journal et compte rendu
+  
 ## Travail hors cours de NSI :
 
 - 14/01/2026 : Léon : début de réalisation du programme pour l'interaction avec la base de données + finalisation le même jour. La classe BaseDeDonnees permet une interaction généralisée avec une base de données compatible SQLite.
@@ -93,4 +97,6 @@
 - 07/03/2026 : Maden (3h) : Poursuite de l'interface graphique -> fenêtre de création/modification de forêt
 
 - 08/03/2026 : Maden (3h) : Chargement, affichage et enregistrement des détails d'une forêt dans la BDD
+
 #### TODO : Sélection et enregistrement des polygones + chargement, affichage, modif des infos de base des forêts
+
