@@ -171,6 +171,7 @@ class BaseDeDonnees:
         self.curseur.execute(requete)
         self.connexion.commit()
 
+
 class InteractionJSON:
     """
     Classe d'interaction avec le fichier JSON
@@ -269,7 +270,6 @@ class InteractionJSON:
         self.data['features'].append(nouvelle_feature)
         self.sauvegarder()
         return True
-
 
     def ajouter_a_feature(self, id_feature, nouvelles_coords):
         """
@@ -548,7 +548,7 @@ class InteractionDonnees:
         Role : Retrouve le centre (centroid) de la foret a partir de son nom
         Sortie : (longitude, latitude) du centre, ou None si non trouve
         """
-        # 1. Rechercher la foret par son nom dans la BDD pour avoir l'id_feature
+        #1. Rechercher la foret par son nom dans la BDD pour avoir l'id_feature
         resultats = self.bdd.rechercher_ligne("FORET", ("nom", nom_foret))
         if not resultats:
             return None
@@ -557,16 +557,44 @@ class InteractionDonnees:
         # On prend le premier resultat
         id_feature = resultats[0][1]
         
-        # 2. Rechercher la feature dans le GeoJSON
+        #2. Rechercher la feature dans le GeoJSON
         feature = self.json.rechercher_feature(id_feature)
         if not feature or not feature.get('geometry'):
             return None
             
-        # 3. Calculer le centre avec shapely
+        #3. Calculer le centre avec shapely
         geometrie = shape(feature['geometry'])
         centre = geometrie.centroid
         
         return (centre.x, centre.y)
+
+    def calculer_superficie_foret(self, id_entree):
+        """
+        Entrees : id_entree: identifiant de la foret (int pour id_foret ou 
+                  str pour id_feature)
+        Role : Calcule la superficie de la foret a partir de sa geometrie 
+               dans le GeoJSON
+        Sortie : superficie (float) ou None si non trouve
+        """
+        # Determine l'id_feature
+        if isinstance(id_entree, int):
+            # C'est un ID numerique de la BDD, on cherche l'id_feature
+            res = self.bdd.rechercher_ligne("FORET", ("id_foret", id_entree))
+            if not res:
+                return None
+            id_feature = res[0][1]
+        else:
+            # On suppose que c'est l'id_feature directement
+            id_feature = id_entree
+
+        # Recuperation de la feature
+        feature = self.json.rechercher_feature(id_feature)
+        if not feature or not feature.get('geometry'):
+            return None
+
+        # Calcul de la superficie
+        geometrie = shape(feature['geometry'])
+        return geometrie.area
 
     def fermer(self):
         """
