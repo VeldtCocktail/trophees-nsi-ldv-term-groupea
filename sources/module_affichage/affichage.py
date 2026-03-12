@@ -323,6 +323,133 @@ class GroupeForet(QGroupBox):
                             [foret["id"], id_val]
                         )
 
+
+class GroupeRecherche(QGroupBox):
+    def __init__(self, fenetre):
+        super().__init__("Rechercher une forêt")
+        self.fen = fenetre
+
+        if self.fen.debug: print("Chargement des forêts...")
+        self.noms_forets = indo.charger_noms_forets(
+            ['data', 'forets_vendee.geojson']
+        )
+        if self.fen.debug: print("Forêts chargées !")
+
+        self.init_interface()
+
+    def init_interface(self):
+        layout = QVBoxLayout()
+
+        self.recherche = QLineEdit()
+        self.recherche.setPlaceholderText("Rechercher une forêt")        
+        self.recherche.textChanged.connect(self.chercher_foret)
+
+        self.resultats_recherche = QListWidget()
+        self.resultats_recherche.setFrameShape(QListWidget.NoFrame)
+
+        bouton_modif_foret = QPushButton("Modifier forêt")
+        bouton_modif_foret.clicked.connect(self.afficher_groupe_foret)
+
+        layout.addWidget(self.recherche)
+        layout.addWidget(self.resultats_recherche)
+        layout.addWidget(bouton_modif_foret)
+
+        self.setLayout(layout)
+
+    def chercher_foret(self, text):
+        self.resultats_recherche.clear()
+        text = text.strip().lower()
+
+        if not text:
+            return
+
+        for nom in self.noms_forets:
+            if text in nom.lower():
+                self.resultats_recherche.addItem(nom)
+
+    def afficher_groupe_foret(self):
+        if self.fen.groupe_modif_foret.isHidden():
+            if self.resultats_recherche.currentItem():
+                
+                nom = self.resultats_recherche.currentItem().text()
+
+                foret = self.foret_depuis_nom(nom)
+                self.fen.groupe_modif_foret.mettre_a_jour(foret)
+
+            self.fen.groupe_modif_foret.show()
+        else:
+            self.fen.groupe_modif_foret.hide()
+
+    def foret_depuis_nom(self, nom):
+        liste_infos = self.fen.inter.rechercher_foret(("nom", nom))
+        if self.fen.debug: print(liste_infos)
+
+        id_foret = liste_infos[0][0]
+        dico_details = self.rechercher_details_foret(id_foret)
+
+        dico = {
+            "id": id_foret,
+            "nom": nom,
+            "superficie": liste_infos[0][4],
+            "nb_visit": liste_infos[0][3],
+            "implan_natur": True if liste_infos[0][5] == 1 else False,
+            "details": dico_details
+        }
+
+        if self.fen.debug: print(dico)
+        return dico
+    
+    def rechercher_details_foret(self, id_foret):
+        dico_details = {}
+
+        liste_id_arbres = self.fen.inter.bdd.rechercher_valeur(
+            "FORET_ARBRE", ("id_foret", id_foret), "id_arbre"
+        )
+        liste_id_anim = self.fen.inter.bdd.rechercher_valeur(
+            "FORET_ANIM", ("id_foret", id_foret), "id_anim"
+        )
+        liste_id_champis = self.fen.inter.bdd.rechercher_valeur(
+            "FORET_CHAMPI", ("id_foret", id_foret), "id_champi"
+        )
+        liste_id_eau = self.fen.inter.bdd.rechercher_valeur(
+            "FORET_EAU", ("id_foret", id_foret), "id_eau"
+        )
+        liste_id_risques = self.fen.inter.bdd.rechercher_valeur(
+            "FORET_RISQUE", ("id_foret", id_foret), "id_risque"
+        )
+        
+        self.ajouter_a_dico(
+            dico_details,
+            [
+                ("arbres", liste_id_arbres, "bdd_arbres.csv"),
+                ("anim", liste_id_anim, "bdd_animaux.csv"),
+                ("champis", liste_id_champis, "bdd_toad.csv"),
+                ("eau", liste_id_eau, "eau.csv"),
+                ("risques", liste_id_risques, "bdd_risques.csv")
+            ]
+        )
+
+        return dico_details
+
+    def ajouter_a_dico(self, dico, liste):
+        for ligne in liste:
+            
+            cle, liste_id, nom_csv = ligne
+
+            chemin_csv = os.sep.join(["data", nom_csv])
+
+            if cle not in dico:
+                dico[cle] = []
+
+
+            for id_tuple in liste_id:
+                id_val = str(id_tuple[0])
+                resultat = indo.rechercher_dans_csv(chemin_csv, 0, id_val)
+
+                if resultat:
+                    dico[cle].append(resultat[0][1])
+
+
 # Classe principale de l'application
 class FenetrePrincipale(QWidget):
     def __init__(self, debug = False):
@@ -361,130 +488,22 @@ class FenetrePrincipale(QWidget):
 
         main_layout = QHBoxLayout(self)
 
-        if self.debug: print("Chargement des forêts...")
-        self.nom_foret = indo.charger_nom_foret(
-            ['data', 'forets_vendee.geojson']
-        )
-        if self.debug: print("Forêts chargées !")
-
         # fenetre forêt
         self.groupe_modif_foret = GroupeForet(self)
         self.groupe_modif_foret.hide()
 
+        self.groupe_recherche_foret = GroupeRecherche(self)
+        self.groupe_recherche_foret.show()
+
         # Barre gauche
         interface_gauche = QVBoxLayout()
 
-        self.recherche = QLineEdit()
-        self.recherche.setPlaceholderText("Rechercher une forêt")        
-        self.recherche.textChanged.connect(self.chercher_foret)
-
-        self.resultats_recherche = QListWidget()
-        self.resultats_recherche.setFrameShape(QListWidget.NoFrame)
-
-        bouton_modif_foret = QPushButton("Modifier forêt")
-        bouton_modif_foret.clicked.connect(self.afficher_groupe_foret)
-
-        interface_gauche.addWidget(self.recherche)
-        interface_gauche.addWidget(self.resultats_recherche)
-        interface_gauche.addWidget(bouton_modif_foret)
+        #TODO:Boutons "+" et "Recherche"
 
         main_layout.addLayout(interface_gauche)
+        main_layout.addWidget(self.groupe_recherche_foret)
         main_layout.addWidget(self.groupe_modif_foret)
         main_layout.addWidget(self.view)
-
-    def chercher_foret(self, text):
-        self.resultats_recherche.clear()
-        text = text.strip().lower()
-
-        if not text:
-            return
-
-        for nom in self.nom_foret:
-            if text in nom.lower():
-                self.resultats_recherche.addItem(nom)
-
-    def afficher_groupe_foret(self):
-        if self.groupe_modif_foret.isHidden():
-            if self.resultats_recherche.currentItem():
-                
-                nom = self.resultats_recherche.currentItem().text()
-
-                foret = self.foret_depuis_nom(nom)
-                self.groupe_modif_foret.mettre_a_jour(foret)
-
-            self.groupe_modif_foret.show()
-        else:
-            self.groupe_modif_foret.hide()
-
-    def foret_depuis_nom(self, nom):
-        liste_infos = self.inter.rechercher_foret(("nom", nom))
-        if self.debug: print(liste_infos)
-
-        id_foret = liste_infos[0][0]
-        dico_details = self.rechercher_details_foret(id_foret)
-
-        dico = {
-            "id": id_foret,
-            "nom": nom,
-            "superficie": liste_infos[0][4],
-            "nb_visit": liste_infos[0][3],
-            "implan_natur": True if liste_infos[0][5] == 1 else False,
-            "details": dico_details
-        }
-
-        if self.debug: print(dico)
-        return dico
-    
-    def rechercher_details_foret(self, id_foret):
-        dico_details = {}
-
-        liste_id_arbres = self.inter.bdd.rechercher_valeur(
-            "FORET_ARBRE", ("id_foret", id_foret), "id_arbre"
-        )
-        liste_id_anim = self.inter.bdd.rechercher_valeur(
-            "FORET_ANIM", ("id_foret", id_foret), "id_anim"
-        )
-        liste_id_champis = self.inter.bdd.rechercher_valeur(
-            "FORET_CHAMPI", ("id_foret", id_foret), "id_champi"
-        )
-        liste_id_eau = self.inter.bdd.rechercher_valeur(
-            "FORET_EAU", ("id_foret", id_foret), "id_eau"
-        )
-        liste_id_risques = self.inter.bdd.rechercher_valeur(
-            "FORET_RISQUE", ("id_foret", id_foret), "id_risque"
-        )
-        
-        self.ajouter_a_dico(
-            dico_details,
-            [
-                ("arbres", liste_id_arbres, "bdd_arbres.csv"),
-                ("anim", liste_id_anim, "bdd_animaux.csv"),
-                ("champis", liste_id_champis, "bdd_toad.csv"),
-                ("eau", liste_id_eau, "eau.csv"),
-                ("risques", liste_id_risques, "bdd_risques.csv")
-            ]
-        )
-
-        return dico_details
-
-    def ajouter_a_dico(self, dico, liste):
-        for ligne in liste:
-            
-            cle, liste_id, nom_csv = ligne
-
-            chemin_csv = os.sep.join(["data", nom_csv])
-
-            if cle not in dico:
-                dico[cle] = []
-
-
-            for id_tuple in liste_id:
-                id_val = str(id_tuple[0])
-                resultat = indo.rechercher_dans_csv(chemin_csv, 0, id_val)
-
-                if resultat:
-                    dico[cle].append(resultat[0][1])
-
 
     def gerer_clic(self, coord, zoom):
         lat, lon = coord

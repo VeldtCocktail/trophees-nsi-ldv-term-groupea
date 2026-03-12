@@ -598,7 +598,7 @@ def rechercher_dans_csv(chemin, col, valeur):
 
     return data
 
-def charger_nom_foret(liste):
+def charger_noms_forets(liste):
     json_path = os.sep.join(liste)
 
     with open(json_path, encoding="utf-8") as f:

@@ -1,3 +1,4 @@
+# importation des bibliothèques nécessaires
 import sys
 import os
 import signal
