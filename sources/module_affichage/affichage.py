@@ -210,6 +210,9 @@ class GroupeForet(QGroupBox):
 
         return layout
 
+
+# -----------Fonction liée à recherche_liste -----------
+
     def recherche_liste(self):
         self.resultat_recherche.clear()
         texte = self.zone_recherche.text().strip().lower()
@@ -246,6 +249,9 @@ class GroupeForet(QGroupBox):
 
         self.liste_valeurs.removeItemWidget(self.liste_valeurs.currentItem())
         self.liste_valeurs.update()
+
+
+# -----------Fonction affichage des données quand click bouton -----------
 
     def afficher_arbres(self):
         self.enregistrer_details_temp()
