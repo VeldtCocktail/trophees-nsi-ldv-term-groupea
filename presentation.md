@@ -7,7 +7,7 @@ Dans un premier temps, nous ne savions pas vraiment ce que nous voulions faire, 
 
 Notre problématique initiale était de pouvoir récupérer toutes les forêts possibles.
 
-## 2 - Organisation du travail
+# 2 - Organisation du travail
 
 Notre équipe est composée de quatre personnes étant en terminale du Lycée Léonard de Vinci se trouvant à Montaigu:
 
@@ -18,7 +18,7 @@ Notre équipe est composée de quatre personnes étant en terminale du Lycée L�
 
 Le temps que nous avons passé sur le projet appartient à l'ensemble des réels positifs
 
-## 3 - Présentation des étapes du projet
+# 3 - Présentation des étapes du projet
 
 Dans un premier temps, pendant nos séances du 15 et 18 décembre 2025, nous ne savions pas vraiment ce que nous voulions faire, alors nous avons mis plusieurs idées de côté. Après un premier tri, nous avons décidé de faire une simulation de sélection naturelle. C'est seulement après réflexion que nous avons pensé que cela aurait été trop compliqué de réussir à concrétiser cette idée et que, de plus, beaucoup de personnes risquaient d'avoir cette idée également. Alors nous avons regardé de nouveau à travers la longue liste que nous avions faite et nous avons décidé de garder comme idée de projet un site de localisation de forêts 🌲🌳.
 
@@ -41,9 +41,10 @@ Dans la fenêtre de création de forêt, nous avons alors fais en sorte d'utilis
 /oioioioioioioioioioioioio/
 
 
-## 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
+# 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
 
-## 5 - Ouverture
+# 5 - Ouverture
+
 
 
 
