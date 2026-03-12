@@ -15,7 +15,7 @@ Comment allons nous générer une carte ? Comment allons nous stocker les inform
 ## 1 - Présentation de l'équipe
 Notre équipe est composée de quatre personnes:
 
-- USSEREAU Maden, alias **Lambdalight** , élève en Terminale 3, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée, Pays de la Loire, France, Europe, la Planete Terre, Le Systeme Solaire, La Voie lactée, l'Univers, ayant comme spécialité Mathématique et NSI
+- USSEREAU Maden, alias **LambdaLight** , élève en Terminale 3, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée, Pays de la Loire, France, Europe, la Planete Terre, Le Systeme Solaire, La Voie lactée, l'Univers, ayant comme spécialité Mathématique et NSI
 - RAIFAUD Léon, alias **Onions**, élève en Terminale 2, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée, Pays de la Loire, Europe, France, la Planete Terre, Le Systeme Solaire, La Voie lactée, l'Univers, ayant comme spécialité Mathématique et NSI
 - PASQUIER Mathéo, alias **Meyzop**, élève en Terminale 8, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée, Pays de la Loire, France, Europe, la Planete Terre, Le Systeme Solaire, La Voie lactée, l'Univers, ayant comme spécialité Mathématique et NSI
 - PINEAU Charlélie, alias **Point**, élève en Terminale 2, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée, Pays de la Loire, France, Europe, la Planete Terre, Le Systeme Solaire, La Voie lactée, l'Univers, ayant comme spécialité Mathématique et NSI
@@ -54,6 +54,7 @@ Dans la fenêtre de création de forêt, nous avons alors fais en sorte d'utilis
 # 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
 
 # 5 - Ouverture
+
 
 
 
