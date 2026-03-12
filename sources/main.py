@@ -19,7 +19,7 @@ signal.signal(signal.SIGINT, lambda *args: app.quit())
 QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
-carte.generer_carte((46.3930189, -1.480289), debug=True)
+carte.generer_carte((46.3930189, -1.480289), debug = True)
 app = QApplication(sys.argv)
 
 window = affichage.FenetrePrincipale(debug = True)
