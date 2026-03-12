@@ -228,9 +228,11 @@ class GroupeForet(QGroupBox):
         self.liste_valeurs.update()
 
     def supprimer_valeur(self):
-        elem = self.liste_valeurs.currentItem()
+        idx = self.liste_valeurs.currentRow()
 
-        if self.fen.debug: print(elem.text())
+        if idx != -1:
+            elem = self.liste_valeurs.takeItem(idx)
+            if self.fen.debug: print(elem.text())
 
         self.liste_valeurs.removeItemWidget(self.liste_valeurs.currentItem())
         self.liste_valeurs.update()
