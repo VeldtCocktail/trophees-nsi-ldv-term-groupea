@@ -224,8 +224,18 @@ class GroupeForet(QGroupBox):
 
         if self.fen.debug: print(elem.text())
 
-        self.liste_valeurs.addItem(elem.text())
-        self.liste_valeurs.update()
+        trouve = False
+        idx = 0
+        while not trouve and idx < self.liste_valeurs.count():
+            if elem.text() == self.liste_valeurs.item(idx).text():
+                trouve = True
+                if self.fen.debug: print("Déjà présent !")
+
+            idx += 1
+
+        if not trouve:
+            self.liste_valeurs.addItem(elem.text())
+            self.liste_valeurs.update()
 
     def supprimer_valeur(self):
         idx = self.liste_valeurs.currentRow()
