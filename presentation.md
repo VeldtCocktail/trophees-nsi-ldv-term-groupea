@@ -1,21 +1,27 @@
-## 1 - Présentation du projet
+# 1 - Présentation du projet
+
+## 1 - Naissance de l'idée
 
 Dans un premier temps, nous ne savions pas vraiment ce que nous voulions faire, alors nous avons mis plusieurs idées de côté. Après un premier tri, nous avons décidé de faire une simulation de sélection naturelle. C'est seulement après réflexion que nous avons pensé que cela aurait été trop compliqué de réussir à concrétiser cette idée et que, de plus, beaucoup de personnes risquaient d'avoir la même idée également. Alors nous avons regardé de nouveau à travers la longue liste que nous avions faite et nous avons décidé de garder comme idée de projet un site de localisation de forêts 🌲🌳.
 
-Notre problématique initiale était de pouvoir récupérer toutes les forêts possibles.
+## 2 - Problématique Initiale
 
-## 2 - Organisation du travail
+Comment allons nous générer une carte ? Comment allons nous stocker les informations ? Comment faire en sorte de trouver toutes les informations par rapport aux forêts ? Comment se répartir le travail convenablement ? Comment faire si on veux ajouter une fôrets ? Que doit on faire si on recherche une forêt ? Et que doit t-on trouver comme information sur cette forêt ?
 
-Notre équipe est composée de quatre personnes étant en terminale :
+## 3 - Objectifs
 
-- USSEREAU Maden qui s'est occupé de la carte, son affichage, la séléction des forêts.
-- RAIFAUD Léon s'est occupé de la gestion des données nécessaires, via une base de données SQL, ainsi qu'un fichier GeoJSON.
-- PASQUIER Mathéo qui s'est principalement occupé de l'interface graphique.
-- PINEAU Charlélie, qui s'est occupé des base de données, ainsi que l'interface graphique.
+# 2 - Organisation du travail
+
+Notre équipe est composée de quatre personnes étant en terminale du Lycée Léonard de Vinci se trouvant à Montaigu:
+
+- USSEREAU Maden, élève en Terminale 3, ayant comme spécialité Mathématique et NSI, qui s'est occupé de la carte, son affichage, la séléction des forêts.
+- RAIFAUD Léon, élève en Terminale 2, ayant comme spécialité Mathématique et NSI, qui s'est occupé de la gestion des données nécessaires, via une base de données SQL, ainsi qu'un fichier GeoJSON.
+- PASQUIER Mathéo, élève en Terminale 8, ayant comme spécialité Mathématique et NSI, qui s'est principalement occupé de l'interface graphique.
+- PINEAU Charlélie, élève en Terminale 2, ayant comme spécialité Mathématique et NSI, qui s'est occupé des base de données, ainsi que l'interface graphique.
 
 Le temps que nous avons passé sur le projet appartient à l'ensemble des réels positifs
 
-## 3 - Présentation des étapes du projet
+# 3 - Présentation des étapes du projet
 
 Dans un premier temps, pendant nos séances du 15 et 18 décembre 2025, nous ne savions pas vraiment ce que nous voulions faire, alors nous avons mis plusieurs idées de côté. Après un premier tri, nous avons décidé de faire une simulation de sélection naturelle. C'est seulement après réflexion que nous avons pensé que cela aurait été trop compliqué de réussir à concrétiser cette idée et que, de plus, beaucoup de personnes risquaient d'avoir cette idée également. Alors nous avons regardé de nouveau à travers la longue liste que nous avions faite et nous avons décidé de garder comme idée de projet un site de localisation de forêts 🌲🌳.
 
@@ -38,9 +44,13 @@ Dans la fenêtre de création de forêt, nous avons alors fais en sorte d'utilis
 /oioioioioioioioioioioioio/
 
 
-## 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
+# 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
 
-## 5 - Ouverture
+# 5 - Ouverture
+
+
+
+
 
 
 
