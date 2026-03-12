@@ -412,12 +412,20 @@ class GroupeRecherche(QGroupBox):
         if self.fen.debug: print(liste_infos)
 
         id_foret = liste_infos[0][0]
+        superficie = liste_infos[0][4]
+
+        if superficie == 0.0:
+            superficie = self.fen.inter.calculer_superficie_foret(id_foret)
+            self.fen.inter.bdd.modifier_ligne(
+                "FORET", (("id_foret", id_foret), "superficie", superficie)
+            )
+
         dico_details = self.rechercher_details_foret(id_foret)
 
         dico = {
             "id": id_foret,
             "nom": nom,
-            "superficie": liste_infos[0][4],
+            "superficie": superficie,
             "nb_visit": liste_infos[0][3],
             "implan_natur": True if liste_infos[0][5] == 1 else False,
             "details": dico_details
