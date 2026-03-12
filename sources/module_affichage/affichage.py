@@ -200,6 +200,7 @@ class GroupeForet(QGroupBox):
         self.resultat_recherche.itemClicked.connect(self.ajouter_valeur)
 
         self.liste_valeurs = QListWidget()
+        self.liste_valeurs.itemClicked.connect(self.supprimer_valeur)
 
         self.afficher_arbres()
 
@@ -224,6 +225,14 @@ class GroupeForet(QGroupBox):
         if self.fen.debug: print(elem.text())
 
         self.liste_valeurs.addItem(elem.text())
+        self.liste_valeurs.update()
+
+    def supprimer_valeur(self):
+        elem = self.liste_valeurs.currentItem()
+
+        if self.fen.debug: print(elem.text())
+
+        self.liste_valeurs.removeItemWidget(self.liste_valeurs.currentItem())
         self.liste_valeurs.update()
 
     def afficher_arbres(self):
