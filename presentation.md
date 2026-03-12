@@ -12,14 +12,21 @@ Comment allons nous générer une carte ? Comment allons nous stocker les inform
 
 # 2 - Organisation du travail
 
-Notre équipe est composée de quatre personnes étant en terminale du Lycée Léonard de Vinci se trouvant à Montaigu:
+## 1 - Présentation de l'équipe
+Notre équipe est composée de quatre personnes:
 
-- USSEREAU Maden, élève en Terminale 3, ayant comme spécialité Mathématique et NSI, qui s'est occupé de la carte, son affichage, la séléction des forêts.
-- RAIFAUD Léon, élève en Terminale 2, ayant comme spécialité Mathématique et NSI, qui s'est occupé de la gestion des données nécessaires, via une base de données SQL, ainsi qu'un fichier GeoJSON.
-- PASQUIER Mathéo, élève en Terminale 8, ayant comme spécialité Mathématique et NSI, qui s'est principalement occupé de l'interface graphique.
-- PINEAU Charlélie, élève en Terminale 2, ayant comme spécialité Mathématique et NSI, qui s'est occupé des base de données, ainsi que l'interface graphique.
+- USSEREAU Maden, alias Lambdalight, élève en Terminale 3, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée, Pays de la Loire, France, Europe, la Planete Terre, Le Systeme Solaire, La Voie lactée, l'Univers, ayant comme spécialité Mathématique et NSI
+- RAIFAUD Léon, alias Onions, élève en Terminale 2, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée, Pays de la Loire, Europe, France, la Planete Terre, Le Systeme Solaire, La Voie lactée, l'Univers, ayant comme spécialité Mathématique et NSI,
+- PASQUIER Mathéo, alias Meyzop, élève en Terminale 8, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée, Pays de la Loire, France, Europe, la Planete Terre, Le Systeme Solaire, La Voie lactée, l'Univers, ayant comme spécialité Mathématique et NSI
+- PINEAU Charlélie, alias point, élève en Terminale 2, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée, Pays de la Loire, France, Europe, la Planete Terre, Le Systeme Solaire, La Voie lactée, l'Univers, ayant comme spécialité Mathématique et NSI
 
-Le temps que nous avons passé sur le projet appartient à l'ensemble des réels positifs
+## 2 - Organisation du travail
+
+, qui s'est occupé de la carte, son affichage, la séléction des forêts.
+qui s'est occupé de la gestion des données nécessaires, via une base de données SQL, ainsi qu'un fichier GeoJSON.
+, qui s'est principalement occupé de l'interface graphique.
+, qui s'est occupé des base de données, ainsi que l'interface graphique.
+
 
 # 3 - Présentation des étapes du projet
 
@@ -47,6 +54,7 @@ Dans la fenêtre de création de forêt, nous avons alors fais en sorte d'utilis
 # 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
 
 # 5 - Ouverture
+
 
 
 
