@@ -1,6 +1,6 @@
-## 1 - Présentation du projet
+# 1 - Présentation du projet
 
-# 1  - Naissance de l'idée
+## 1  - Naissance de l'idée
 
 
 Dans un premier temps, nous ne savions pas vraiment ce que nous voulions faire, alors nous avons mis plusieurs idées de côté. Après un premier tri, nous avons décidé de faire une simulation de sélection naturelle. C'est seulement après réflexion que nous avons pensé que cela aurait été trop compliqué de réussir à concrétiser cette idée et que, de plus, beaucoup de personnes risquaient d'avoir la même idée également. Alors nous avons regardé de nouveau à travers la longue liste que nous avions faite et nous avons décidé de garder comme idée de projet un site de localisation de forêts 🌲🌳.
@@ -44,6 +44,7 @@ Dans la fenêtre de création de forêt, nous avons alors fais en sorte d'utilis
 ## 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
 
 ## 5 - Ouverture
+
 
 
 
