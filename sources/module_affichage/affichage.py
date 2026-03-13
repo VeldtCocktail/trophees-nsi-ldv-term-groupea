@@ -296,7 +296,7 @@ class GroupeForet(QGroupBox):
 
         if self.fen.debug: print("Détails temp :", self.details_temp)
 
-        self.details_temp[self.type_detail] = []
+        self.details_temp[self.type_details] = []
 
         for idx in range(self.liste_valeurs.count()):
             elem = self.liste_valeurs.item(idx)
@@ -327,6 +327,8 @@ class GroupeForet(QGroupBox):
         self.superficie.setText(str(foret.get("superficie", "")))
         self.nb_visit.setText(str(foret.get("nb_visit", "")))
 
+        if self.fen.debug: print("Update :", foret)
+
         if "details" in foret:
             self.details_temp = foret["details"]
         else:
@@ -334,7 +336,9 @@ class GroupeForet(QGroupBox):
             self.details_temp = {}
 
         self.liste_valeurs.clear()
-        self.afficher_arbres()
+        
+        self.type_details = "arbres"
+        self.afficher_details()
 
     def enregistrer_foret_bdd(self):
         
@@ -346,8 +350,18 @@ class GroupeForet(QGroupBox):
         self.enregistrer_details_temp()
         foret = self.dico_foret
 
+        foret["superficie"] = float(self.superficie.text())
+        foret["nb_visit"] = float(self.nb_visit.text())
+
         if "id" not in foret:
-            foret["id"] = time()
+            foret["id"] = round(time() * 10 ** 5)
+
+        self.fen.inter.bdd.modifier_ligne(
+            "FORET",
+            (("id_foret", foret["id"]), "superficie", foret["superficie"])
+        )
+
+        if self.fen.debug: print("Forêt enregistrée dans la BDD :", foret)
 
         for type_detail in self.liste_details.keys():
             self.fen.inter.bdd.supprimer_ligne(
@@ -416,7 +430,6 @@ class GroupeRecherche(QGroupBox):
                 self.resultats_recherche.addItem(nom)
 
     def afficher_groupe_foret(self):
-        self.fen.groupe_modif_foret.enregistrer_details_temp()
 
         if self.fen.groupe_modif_foret.isHidden():
             if self.resultats_recherche.currentItem():
