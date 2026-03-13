@@ -600,7 +600,7 @@ class InteractionDonnees:
         geometrie = shape(feature['geometry'])
         centre = geometrie.centroid
 
-        return (centre.x, centre.y)
+        return centre.x, centre.y
 
     def calculer_superficie_foret(self, id_entree):
         """
@@ -715,5 +715,6 @@ def charger_noms_forets(liste):
         name = props.get("name")
         if name:
             names.append(name)
+
 
     return names
