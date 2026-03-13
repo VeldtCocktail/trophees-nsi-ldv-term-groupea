@@ -178,6 +178,10 @@ class GroupeForet(QGroupBox):
         self.bouton_risques = QPushButton()
         self.bouton_risques.setText("Risques")
         self.bouton_risques.clicked.connect(self.afficher_risques)
+
+        self.bouton_enregistrer = QPushButton()
+        self.bouton_enregistrer.setText("Enregistrer")
+        self.bouton_enregistrer.clicked.connect(self.enregistrer_foret_bdd)
         
 
         layout.addWidget(self.bouton_sel)
@@ -186,6 +190,7 @@ class GroupeForet(QGroupBox):
         layout.addWidget(self.bouton_champis)
         layout.addWidget(self.bouton_eau)
         layout.addWidget(self.bouton_risques)
+        layout.addWidget(self.bouton_enregistrer)
 
         return layout
 
@@ -306,7 +311,6 @@ class GroupeForet(QGroupBox):
         self.mode_sel = not self.mode_sel
         print('Sélection : ' + str(self.mode_sel))
         self.enregistrer_details_temp()
-        self.enregistrer_foret_bdd(self.dico_foret)
 
     def mettre_a_jour(self, foret):
         self.dico_foret = foret
@@ -324,7 +328,10 @@ class GroupeForet(QGroupBox):
         self.liste_valeurs.clear()
         self.afficher_arbres()
 
-    def enregistrer_foret_bdd(self, foret):
+    def enregistrer_foret_bdd(self):
+        self.enregistrer_details_temp()
+        foret = self.dico_foret
+
         if "id" not in foret:
             foret["id"] = time()
 
@@ -395,6 +402,8 @@ class GroupeRecherche(QGroupBox):
                 self.resultats_recherche.addItem(nom)
 
     def afficher_groupe_foret(self):
+        self.fen.groupe_modif_foret.enregistrer_details_temp()
+
         if self.fen.groupe_modif_foret.isHidden():
             if self.resultats_recherche.currentItem():
                 
