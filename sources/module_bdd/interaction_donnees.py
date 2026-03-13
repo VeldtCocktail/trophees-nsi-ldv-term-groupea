@@ -178,6 +178,7 @@ class BaseDeDonnees:
         self.curseur.execute(requete)
         self.connexion.commit()
 
+
 class InteractionJSON:
     """
     Classe d'interaction avec le fichier JSON
@@ -409,6 +410,7 @@ class InteractionJSON:
         with open(self.json_path, 'w', encoding='utf-8') as file_json:
             json.dump(self.data, file_json, indent=4)
 
+
 class InteractionDonnees:
     """
     Classe de coordination entre la BDD SQLite et le fichier GeoJSON
@@ -634,6 +636,7 @@ class InteractionDonnees:
         Role \\: ferme les interactions (connexion BDD)
         """
         self.bdd.fermer()
+
 
 def charger_donnees_csv(liste, col=1):
     """
