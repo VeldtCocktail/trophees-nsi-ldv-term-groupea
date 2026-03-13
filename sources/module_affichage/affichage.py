@@ -251,8 +251,8 @@ class GroupeForet(QGroupBox):
         if idx != -1:
             elem = self.liste_valeurs.takeItem(idx)
             if self.fen.debug: print(elem.text())
-            list(self.details_temp[self.type_details]).remove(elem.text())
 
+        self.enregistrer_details_temp()
         self.liste_valeurs.removeItemWidget(self.liste_valeurs.currentItem())
         self.liste_valeurs.update()
 
@@ -296,6 +296,7 @@ class GroupeForet(QGroupBox):
             if self.type_details not in self.details_temp:
                 self.details_temp[self.type_details] = [elem.text()]
             else:
+                list(self.details_temp[self.type_details]).clear()
                 if elem.text() not in self.details_temp[self.type_details]:
                     self.details_temp[self.type_details].append(elem.text())
 
