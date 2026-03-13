@@ -1,4 +1,4 @@
-# temporaire -> fichier de tests du module
+# temporaire → fichier de tests du module
 
 import interaction_donnees
 import os
@@ -23,3 +23,4 @@ for table in ["FORET_ARBRE", "FORET_ANIM", "FORET_CHAMPI", "FORET_EAU", "FORET_R
     indo.bdd.vider_table(table)
 
 print(indo.recuperer_centre_foret("Forêt de Puits Neuf"))
+print(indo.calculer_superficie_foret(10))

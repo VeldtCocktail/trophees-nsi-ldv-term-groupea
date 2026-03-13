@@ -2,6 +2,7 @@ import sqlite3
 import json
 import csv
 import os
+import math
 from shapely.geometry import shape
 
 class BaseDeDonnees:
@@ -599,7 +600,7 @@ class InteractionDonnees:
         geometrie = shape(feature['geometry'])
         centre = geometrie.centroid
 
-        return (centre.x, centre.y)
+        return centre.x, centre.y
 
     def calculer_superficie_foret(self, id_entree):
         """
@@ -629,7 +630,27 @@ class InteractionDonnees:
 
         # Calcul de la superficie
         geometrie = shape(feature['geometry'])
-        return geometrie.area
+        # La geometrie est en degres (WGS84)
+        # On calcule l'aire en degres carres
+        aire_deg2 = geometrie.area
+
+        # Conversion en hectares (approximation pour la France/Vendee)
+        # 1 degre de latitude ~= 111132 m
+        # 1 degre de longitude ~= 111132 * cos(latitude) m
+        # On utilise le centre de la geometrie pour la latitude
+        centre = geometrie.centroid
+        lat_rad = math.radians(centre.y)
+
+        m_per_deg_lat = 111132
+        m_per_deg_lon = 111132 * math.cos(lat_rad)
+
+        # Superficie en m2 = aire_deg2 * m_per_deg_lat * m_per_deg_lon
+        superficie_m2 = aire_deg2 * m_per_deg_lat * m_per_deg_lon
+
+        # 1 hectare = 10 000 m2
+        superficie_ha = superficie_m2 / 10000
+
+        return float(superficie_ha)
 
     def fermer(self):
         """
@@ -694,5 +715,6 @@ def charger_noms_forets(liste):
         name = props.get("name")
         if name:
             names.append(name)
+
 
     return names
