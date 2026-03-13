@@ -194,7 +194,7 @@ Consultez le fichier [`journal.md`](journal.md) pour suivre l'évolution du proj
 
 ### Sur les distributions Linux les plus populaires :
 Note : pour une isolation des imports de librairies externes, on utilisera un environnement virtuel pour la suite du 
-guide. On peut en initialiser un avec ```python3 -m venv .venv``` sur systèmes d'explotiation Linux et Windows, avec 
+guide. On peut en initialiser un avec ```python3 -m venv .venv``` sur systèmes d'exploitiation Linux et Windows, avec 
 Python 3 d'installé. Pour installer les librairies nécessaires, on fera :
 Sur Linux : 
 ```bash
