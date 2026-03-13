@@ -210,6 +210,20 @@ class InteractionJSON:
 
         while idx < nb_features and not trouve:
             feature = features[idx]
+
+            # nettoyage des MultiPolygon corrompus
+            if feature:
+                geom = feature.get('geometry')
+                
+                if geom and geom['type'] == 'MultiPolygon':
+                    coords_propres = [
+                        coords for coords in geom['coordinates'] if coords
+                    ]
+
+                    if len(coords_propres) != len(geom['coordinates']):
+                        geom['coordinates'] = coords_propres
+                        self.sauvegarder()
+            
             props = feature.get('properties', {})
             if props.get('id') == id_feature or props.get('@id') == id_feature:
                 trouve = True
@@ -317,12 +331,22 @@ class InteractionJSON:
                 elif geometry['type'] == 'Polygon':
                     # Transformation Polygon -> MultiPolygon
                     anciennes_coords = geometry['coordinates']
-                    geometry['type'] = 'MultiPolygon'
-                    geometry['coordinates'] = [anciennes_coords,
-                                               nouvelles_coords]
+
+                    if not anciennes_coords:
+                        # Polygon vide : on remplace directement
+                        geometry['coordinates'] = nouvelles_coords
+                    else:
+                        # Polygon réel : transformation en MultiPolygon
+                        geometry['type'] = 'MultiPolygon'
+                        geometry['coordinates'] = [
+                            anciennes_coords, nouvelles_coords
+                        ]
 
                 elif geometry['type'] == 'MultiPolygon':
                     # Ajout au MultiPolygon existant
+                    geometry['coordinates'] = [
+                        coords for coords in geometry['coordinates'] if coords
+                    ]
                     geometry['coordinates'].append(nouvelles_coords)
 
                 else:
@@ -404,6 +428,15 @@ class InteractionJSON:
             idx += 1
         return trouve
 
+    def mettre_a_jour_nom(self, id_feature, nouveau_nom):
+        for feature in self.data['features']:
+            props = feature.get('properties', {})
+            if props.get('id') == id_feature or props.get('@id') == id_feature:
+                props['name'] = nouveau_nom
+                self.sauvegarder()
+                return True
+        return False
+
     def sauvegarder(self):
         """
         Rôle \\: Sauvegarde les données actuelles dans le fichier JSON
@@ -433,6 +466,9 @@ class InteractionDonnees:
         self.bdd = BaseDeDonnees(bdd_path)
         self.json = InteractionJSON(json_path)
         self.debug = debug
+
+        self.synchro_depuis_bdd()
+        self.synchro_depuis_json()
 
     def ajouter_foret(self, valeurs_bdd, coords_json):
         """
@@ -483,7 +519,9 @@ class InteractionDonnees:
         Rôle \\: Ajoute une zone (polygone) à une foret existante dans le JSON
         Sortie \\: True si ajoute, False sinon
         """
-        return self.json.ajouter_a_feature(id_foret, nouvelles_coords)
+        infos = self.bdd.rechercher_ligne("FORET", ("id_foret", id_foret))
+        id_feature = str(infos[0][1]) if infos else str(id_foret)
+        return self.json.ajouter_a_feature(id_feature, nouvelles_coords)
 
     def retirer_polygone_a_foret(self, id_foret, index_polygone):
         """
@@ -493,7 +531,9 @@ class InteractionDonnees:
         Rôle \\: Retire une zone (polygone) d'une foret dans le JSON
         Sortie \\: True si retire, False sinon
         """
-        return self.json.retirer_de_feature(id_foret, index_polygone)
+        infos = self.bdd.rechercher_ligne("FORET", ("id_foret", id_foret))
+        id_feature = str(infos[0][1]) if infos else str(id_foret)
+        return self.json.retirer_de_feature(id_feature, index_polygone)
 
     def rechercher_feature(self, id_feature):
         """
@@ -502,7 +542,20 @@ class InteractionDonnees:
         Rôle \\: Recherche la feature correspondante dans le GeoJSON
         Sortie \\: La feature si trouvée, None sinon
         """
-        return self.json.rechercher_feature(id_feature)
+        feature = self.json.rechercher_feature(id_feature)
+        return feature
+    
+    def rechercher_feature_foret(self, id_foret):
+        """
+        Entrées \\: \n
+            id_foret: identifiant de la foret
+        Rôle \\: Recherche la feature correspondante dans le GeoJSON
+        Sortie \\: La feature si trouvée, None sinon
+        """
+        infos = self.bdd.rechercher_ligne("FORET", ("id_foret", id_foret))
+        id_feature = str(infos[0][1]) if infos else str(id_foret)
+        feature = self.json.rechercher_feature(id_feature)
+        return feature
 
     def synchro_depuis_json(self):
         """
@@ -576,8 +629,7 @@ class InteractionDonnees:
 
     def recuperer_centre_foret(self, nom_foret):
         """
-
-         \\: \n
+        Entrées \\: \n
             nom_foret: nom de la foret
         Rôle \\: \n
             Retrouve le centre (centroid) de la foret à partir de son nom
@@ -601,7 +653,10 @@ class InteractionDonnees:
         geometrie = shape(feature['geometry'])
         centre = geometrie.centroid
 
-        return centre.x, centre.y
+        if centre.is_empty:
+            return None
+
+        return centre.y, centre.x
 
     def calculer_superficie_foret(self, id_entree):
         """
@@ -632,6 +687,10 @@ class InteractionDonnees:
         # Calcul de la superficie
         geometrie = shape(feature['geometry'])
         # La géometrie est en degrés (WGS84)
+
+        if geometrie.is_empty:
+            return 0.0
+
         # On calcule l'aire en degrés carres
         aire_deg2 = geometrie.area
 
@@ -652,6 +711,9 @@ class InteractionDonnees:
         superficie_ha = superficie_m2 / 10000
 
         return float(superficie_ha)
+
+    def mettre_a_jour_nom_foret(self, id_foret, nouveau_nom):
+        self.json.mettre_a_jour_nom(str(id_foret), nouveau_nom)
 
     def fermer(self):
         """
@@ -693,7 +755,7 @@ def rechercher_dans_csv(chemin, col, valeur):
         reader = csv.reader(fichier, delimiter=";")
         next(reader, None)
         for ligne in reader:
-            if ligne[col] == valeur:
+            if len(ligne) > col and ligne[col] == valeur:
                 data.append(ligne)
 
     return data
@@ -719,3 +781,17 @@ def charger_noms_forets(liste):
 
 
     return names
+
+def normaliser(coords):
+    return json.loads(json.dumps(coords))
+
+def sous_polygones(coords):
+    coords_norm = normaliser(coords)
+    if coords_norm and coords_norm[0]:
+        # coords peut être un Polygon ou un MultiPolygon, on détecte lequel en
+        # regardant si le premier élément est une liste de points ou une liste
+        # de listes
+        if isinstance(coords_norm[0][0][0], list):
+            return coords_norm       # MultiPolygon
+    
+    return [coords_norm]         # Polygon

@@ -89,17 +89,42 @@ class RequetesOverpass:
 
             print('Features :', features)
             # Pick polygon that contains the click
-            pt = Point(lon, lat)
+            pnt = Point(lon, lat)
 
             containing = []
             for f in features:
                 geom = shape(f["geometry"])
 
-                if geom.contains(pt):
+                if geom.contains(pnt):
                     containing.append(f)
 
             if containing:
                 closest = containing[0]
+                geom = closest["geometry"]
+
+                # Pour un MultiPolygon, ne garder que le sous-polygone cliqué
+                if geom["type"] == "MultiPolygon":
+                    for sous_poly in geom["coordinates"]:
+                        forme_poly = shape(
+                            {"type": "Polygon", "coordinates": sous_poly}
+                        )
+
+                        if forme_poly.contains(pnt):
+                            closest = {
+                                "type": "Feature",
+                                "geometry": {
+                                    "type": "Polygon",
+                                    "coordinates": sous_poly
+                                },
+                                "properties": {}
+                            }
+
+                            return {
+                                "type": "FeatureCollection",
+                                "features": [closest]
+                            }
+
+
             else:
                 return {"type": "FeatureCollection", "features": []}
 

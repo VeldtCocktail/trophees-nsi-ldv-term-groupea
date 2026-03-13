@@ -56,7 +56,10 @@ class Pont(QObject):
         self.fen.gerer_clic((lat, lon), zoom)
 
 
-def generer_carte(coord_depart, zoom = 12, donnees = [], debug = False):
+def generer_carte(
+        coord_depart, zoom = 12, donnees = [], donnees_select = [],
+        donnees_suppr=[], debug = False
+    ):
     """
     Entrées \\: \n
         coord_depart:tuple(int) : latitude et longitude du centre de la carte
@@ -82,9 +85,22 @@ def generer_carte(coord_depart, zoom = 12, donnees = [], debug = False):
         "data/forets_vendee.geojson", style_function = fonction_style_permanent
     ).add_to(carte)
     
+    # polygones temporaires en cours de sélection
     for donnees_json in donnees:
         folium.GeoJson(
             donnees_json, style_function = fonction_style_temp
+        ).add_to(carte)
+
+    # polygones sauvegardés de la forêt sélectionnée
+    for donnees_json in donnees_select:
+        folium.GeoJson(
+            donnees_json, style_function = fonction_style_select
+        ).add_to(carte)
+
+    # polygones sélectionnés à supprimer
+    for donnees_json in donnees_suppr:
+        folium.GeoJson(
+            donnees_json, style_function = fonction_style_suppr
         ).add_to(carte)
 
     map_name = carte.get_name()
@@ -126,7 +142,6 @@ def generer_carte(coord_depart, zoom = 12, donnees = [], debug = False):
     carte.save(pathlib.Path("cartes", "carte.html"))
 
 def fonction_style_permanent(elem):
-    print("Style appliqué à :", elem)
     return {
         "fillColor": "#3700ff",
         "color": "#0000ff00",
@@ -134,11 +149,26 @@ def fonction_style_permanent(elem):
         "fillOpacity": 0.4
     }
 
-def fonction_style_temp(elem):
-    print("Style appliqué à :", elem)
+def fonction_style_select(elem):
     return {
-        "fillColor": "#15ff00",
+        "fillColor": "#0e8014",
+        "color": "#0000ff00",
+        "weight": 3,
+        "fillOpacity": 0.5
+    }
+
+def fonction_style_temp(elem):
+    return {
+        "fillColor": "#eeff00",
+        "color": "#0000ff00",
+        "weight": 4,
+        "fillOpacity": 0.4
+    }
+
+def fonction_style_suppr(elem):
+    return {
+        "fillColor": "#ff0000",
         "color": "#0000ff00",
         "weight": 2,
-        "fillOpacity": 0.4
+        "fillOpacity": 0.5
     }

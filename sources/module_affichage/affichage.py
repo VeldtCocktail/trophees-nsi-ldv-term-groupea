@@ -2,6 +2,7 @@
 # Auteurs : Mathéo Pasquier, Maden Ussereau
 
 # importation des bibliothèques nécessaires
+import copy
 from time import time
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QListWidget, QGroupBox,
@@ -60,6 +61,10 @@ class GroupeForet(QGroupBox):
         # on initialise le mode de sélection à False
         self.mode_sel = False
 
+        # on affect fenetre à self.fen
+        self.fen = fenetre
+        self.dico_foret = foret
+
         self.type_details = "arbres"
         if "details" in foret:
             self.details_temp = foret["details"]
@@ -67,12 +72,8 @@ class GroupeForet(QGroupBox):
             foret["details"] = {}
             self.details_temp = {}
 
-        # on affect fenetre à self.fen
-        self.fen = fenetre
-        self.dico_foret = foret
-
-        # on affecte à cette instance l'identifiant groupe-foret
-        self.setObjectName('groupe-foret')
+        self.polygones_temp = []
+        self.polygones_a_suppr = []
 
         self.liste_details = {
             "arbres": indo.charger_donnees_csv(['data', 'bdd_arbres.csv']),
@@ -81,6 +82,9 @@ class GroupeForet(QGroupBox):
             "eau": indo.charger_donnees_csv(['data', 'eau.csv']),
             "risques": indo.charger_donnees_csv(['data', 'bdd_risques.csv'])
         }
+        
+        # on affecte à cette instance l'identifiant groupe-foret
+        self.setObjectName('groupe-foret')
 
         # on appelle la méthode d'initialisation de l'interface
         self.init_interface()
@@ -183,8 +187,9 @@ class GroupeForet(QGroupBox):
         self.bouton_enregistrer.setText("Enregistrer")
         self.bouton_enregistrer.clicked.connect(self.enregistrer_foret_bdd)
 
-        self.bouton_reinitialiser = QPushButton()
-        self.bouton_reinitialiser.setText("Réinitialiser")
+        self.bouton_supprimer = QPushButton()
+        self.bouton_supprimer.setText("Supprimer la forêt")
+        self.bouton_supprimer.clicked.connect(self.supprimer_foret)
         
 
         layout.addWidget(self.bouton_sel)
@@ -194,7 +199,7 @@ class GroupeForet(QGroupBox):
         layout.addWidget(self.bouton_eau)
         layout.addWidget(self.bouton_risques)
         layout.addWidget(self.bouton_enregistrer)
-        layout.addWidget(self.bouton_reinitialiser)
+        layout.addWidget(self.bouton_supprimer)
 
         return layout
 
@@ -218,9 +223,6 @@ class GroupeForet(QGroupBox):
         layout.addWidget(self.liste_valeurs)
 
         return layout
-
-
-# -----------Fonction liée à recherche_liste -----------
 
     def recherche_liste(self):
         self.resultat_recherche.clear()
@@ -257,9 +259,6 @@ class GroupeForet(QGroupBox):
             if self.fen.debug: print(elem.text())
 
         self.enregistrer_details_temp()
-
-
-# -----------Fonction affichage des données quand click bouton -----------
 
     def afficher_arbres(self):
         self.enregistrer_details_temp()
@@ -320,48 +319,238 @@ class GroupeForet(QGroupBox):
         print('Sélection : ' + str(self.mode_sel))
         self.enregistrer_details_temp()
 
-    def mettre_a_jour(self, foret):
-        self.dico_foret = foret
-        self.mode_sel = False
-        self.nom_foret.setText(foret.get("nom", ""))
-        self.superficie.setText(str(foret.get("superficie", "")))
-        self.nb_visit.setText(str(foret.get("nb_visit", "")))
-
-        if self.fen.debug: print("Update :", foret)
-
-        if "details" in foret:
-            self.details_temp = foret["details"]
-        else:
-            foret["details"] = {}
-            self.details_temp = {}
-
-        self.liste_valeurs.clear()
+    def gerer_clic_cartes(self, coord, zoom):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+            coord:tuple[float] : coordonnées du point cliqué
+            zoom:int : zoom de la carte au moment du clic
         
-        self.type_details = "arbres"
-        self.afficher_details()
+        Rôle \\: \n
+            Récupère le polygone cliqué, l'ajoute ou le retire de la liste
+            des polygones temporaires et l'affiche sur la carte
+        
+        Sortie \\: \n
+            None
+        """
+        resultat = self.fen.requetes.zone_verte(coord)
+        features = resultat.get("features", [])
+
+        if not features:
+            if self.fen.debug:
+                print("Aucun polygone trouvé")
+
+        else:
+            feature = features[0]
+            coordonnees = feature["geometry"]["coordinates"]
+
+            if self.coords_deja_dans_temp(coordonnees):
+                # était "à ajouter" -> on l'annule
+                self.retirer_de_temp(coordonnees)
+                if self.fen.debug: print("Polygone retiré de la sélection")
+
+            elif self.coords_deja_dans_suppr(coordonnees):
+                # était "à supprimer" -> on annule la suppression
+                self.retirer_de_suppr(coordonnees)
+                if self.fen.debug: print("Suppression annulée")
+
+            elif self.coords_deja_sauvegardees(coordonnees):
+                # est sauvegardé -> on le marque pour suppression
+                self.polygones_a_suppr.append(resultat)
+                if self.fen.debug: print("Polygon marqué pour suppression")
+
+            else:
+                # nouveau -> temporaire
+                self.polygones_temp.append(resultat)
+                if self.fen.debug: print("Polygone temporaire ajouté")
+
+            self.fen.recharger_carte(coord, zoom)
+
+    def coords_deja_dans_temp(self, coords):
+        sous_polys = indo.sous_polygones(coords)
+        for elem in self.polygones_temp:
+            coords_temp = elem["features"][0]["geometry"]["coordinates"]
+            for poly in indo.sous_polygones(coords_temp):
+                for sous_poly in sous_polys:
+                    if indo.normaliser(poly) == indo.normaliser(sous_poly):
+                        return True
+        return False
+    
+    def retirer_de_temp(self, coords):
+        sous_polys = indo.sous_polygones(coords)
+        liste = []
+        for elem in self.polygones_temp:
+            coords_temp = elem["features"][0]["geometry"]["coordinates"]
+            commun = False
+            for poly in indo.sous_polygones(coords_temp):
+                for sous_poly in sous_polys:
+                    if indo.normaliser(poly) == indo.normaliser(sous_poly):
+                        commun = True
+            if not commun:
+                liste.append(elem)
+        self.polygones_temp = copy.deepcopy(liste)
+
+    def coords_deja_sauvegardees(self, coords):
+        id_foret = self.dico_foret.get("id")
+        if not id_foret:
+            return False
+        
+        infos = self.fen.inter.bdd.rechercher_ligne(
+            "FORET", ("id_foret", id_foret)
+        )
+
+        id_feature = str(infos[0][1]) if infos else str(id_foret)
+        feature = self.fen.inter.rechercher_feature(id_feature)
+        if not feature or not feature.get("geometry"):
+            return False
+        
+        geom = feature["geometry"]
+        liste_coords = []
+        if geom["type"] == "Polygon":
+            liste_coords = [geom["coordinates"]]
+        elif geom["type"] == "MultiPolygon":
+            liste_coords = geom["coordinates"]
+        else:
+            return False
+
+        for sous_poly in indo.sous_polygones(coords):
+            for sous_poly_sauve in liste_coords:
+                if indo.normaliser(sous_poly) == indo.normaliser(sous_poly_sauve):
+                    return True
+                
+        return False
+
+    def coords_deja_dans_suppr(self, coords):
+        sous_polys = indo.sous_polygones(coords)
+        for elem in self.polygones_a_suppr:
+            coords_temp = elem["features"][0]["geometry"]["coordinates"]
+            for poly in indo.sous_polygones(coords_temp):
+                for sous_poly in sous_polys:
+                    if indo.normaliser(poly) == indo.normaliser(sous_poly):
+                        return True
+                    
+        return False
+    
+    def retirer_de_suppr(self, coords):
+        sous_polys = indo.sous_polygones(coords)
+        liste = []
+        for elem in self.polygones_a_suppr:
+            coords_temp = elem["features"][0]["geometry"]["coordinates"]
+            commun = False
+            for poly in indo.sous_polygones(coords_temp):
+                for sous_poly in sous_polys:
+                    if indo.normaliser(poly) == indo.normaliser(sous_poly):
+                        commun = True
+            if not commun:
+                liste.append(elem)
+
+        self.polygones_a_suppr = copy.deepcopy(liste)
 
     def enregistrer_foret_bdd(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Enregistre la forêt dans la BDD et le GeoJSON. Si un identifiant se
+            trouve dans self.dico_foret, on met à jour la forêt existante.
+            Sinon, on crée une nouvelle forêt.
+        
+        Sortie \\: \n
+            None
+        """
+        self.enregistrer_details_temp()
+        foret = self.dico_foret
         
         if self.fen.debug: print("Détails temp :", self.details_temp)
 
-        for type_detail in self.liste_details.keys():
-            self.details_temp[type_detail] = []
+        foret["nom"] = self.nom_foret.text().strip()
+        foret["superficie"] = float(self.superficie.text() or 0)
+        foret["nb_visit"] = float(self.nb_visit.text() or 0)
 
-        self.enregistrer_details_temp()
-        foret = self.dico_foret
+        if "id" in foret:
+            est_nouvelle = False
+        else:
+            est_nouvelle = True
 
-        foret["superficie"] = float(self.superficie.text())
-        foret["nb_visit"] = float(self.nb_visit.text())
-
-        if "id" not in foret:
+        if est_nouvelle:
             foret["id"] = round(time() * 10 ** 5)
+            valeurs_bdd = [
+                foret["id"],
+                str(foret["id"]),
+                foret["nom"],
+                foret["nb_visit"],
+                foret["superficie"],
+                1
+            ]
 
-        self.fen.inter.bdd.modifier_ligne(
-            "FORET",
-            (("id_foret", foret["id"]), "superficie", foret["superficie"])
-        )
+            self.fen.inter.ajouter_foret(valeurs_bdd, [])
+            if self.fen.debug:
+                print(f"Nouvelle forêt créée : id : {foret['id']}")
+            
+        else:
+            self.fen.inter.bdd.modifier_ligne(
+                "FORET",
+                (("id_foret", foret["id"]), "nom", foret["nom"])
+            )
 
-        if self.fen.debug: print("Forêt enregistrée dans la BDD :", foret)
+            self.fen.inter.bdd.modifier_ligne(
+                "FORET",
+                (("id_foret", foret["id"]), "superficie", foret["superficie"])
+            )
+
+            self.fen.inter.bdd.modifier_ligne(
+                "FORET",
+                (("id_foret", foret["id"]), "nb_visi_par_an", foret["nb_visit"])
+            )
+
+            self.fen.inter.mettre_a_jour_nom_foret(foret["id"], foret["nom"])
+
+        # enregistrement des polygones temporaires
+        for elem in self.polygones_temp:
+            for feature in elem["features"]:
+                geom = feature["geometry"]
+                coords = geom["coordinates"]
+
+                if geom["type"] == "Polygon":
+                    self.fen.inter.ajouter_polygone_a_foret(
+                        foret["id"], coords
+                    )
+
+                elif geom["type"] == "MultiPolygon":
+                    for sous_coords in coords:
+                        self.fen.inter.ajouter_polygone_a_foret(
+                            foret["id"], sous_coords
+                        )
+
+        self.polygones_temp = []
+
+        # suppression des polygones à supprimer
+        for elem in self.polygones_a_suppr:
+            for feature in elem["features"]:
+                coords_a_suppr = indo.normaliser(
+                    feature["geometry"]["coordinates"]
+                )
+
+                feat_sauvegardee = self.fen.inter.rechercher_feature_foret(
+                    foret["id"]
+                )
+
+                if feat_sauvegardee:
+                    coords_liste = feat_sauvegardee["geometry"].get(
+                        "coordinates", []
+                    )
+
+                    for idx in range(len(coords_liste)):
+                        if 0 <= idx and idx < len(coords_liste):
+                            coords_temp = coords_liste[idx]
+
+                            if indo.normaliser(coords_temp) == coords_a_suppr:
+                                self.fen.inter.retirer_polygone_a_foret(
+                                    foret["id"], idx
+                                )
+
+        self.polygones_a_suppr = []
 
         for type_detail in self.liste_details.keys():
             self.fen.inter.bdd.supprimer_ligne(
@@ -377,6 +566,9 @@ class GroupeForet(QGroupBox):
                     resultat = indo.rechercher_dans_csv(
                         chemin_csv, 1, valeur
                     )
+                    if self.fen.debug: print(
+                        f"Recherche de {valeur} dans {chemin_csv} : {resultat}"
+                    )
 
                     if resultat:
                         id_val = resultat[0][0]
@@ -385,19 +577,85 @@ class GroupeForet(QGroupBox):
                             [foret["id"], id_val]
                         )
 
+        self.fen.recharger_carte()
+        self.fen.groupe_recherche_foret.init_donnees()
+        if self.fen.debug: print("Forêt enregistrée dans la BDD :", foret)
+
+    def supprimer_foret(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+    
+        Rôle \\: \n
+            Supprime la forêt courante de la BDD et du GeoJSON, puis
+            réinitialise le groupe et recharge la carte
+    
+        Sortie \\: \n
+            None
+        """
+        if "id" not in self.dico_foret:
+            if self.fen.debug: print("Aucune forêt sélectionnée")
+            return
+    
+        id_foret = self.dico_foret["id"]
+    
+        # Suppression des tables de détails
+        for type_detail in DICO_TABLES_DETAILS.keys():
+            self.fen.inter.bdd.supprimer_ligne(
+                DICO_TABLES_DETAILS[type_detail],
+                ("id_foret", id_foret)
+            )
+    
+        # Suppression dans la BDD et le GeoJSON
+        self.fen.inter.supprimer_foret(id_foret)
+    
+        if self.fen.debug: print(f"Forêt supprimée : id {id_foret}")
+    
+        # Réinitialisation de l'interface et rechargement de la carte
+        self.reinitialiser()
+        self.hide()
+        self.fen.groupe_recherche_foret.init_donnees()
+        self.fen.recharger_carte()
+
+    def mettre_a_jour(self, foret):
+        self.dico_foret = foret
+        self.mode_sel = False
+        self.polygones_temp = []
+        self.polygones_a_suppr = []
+
+        self.nom_foret.setText(foret.get("nom", ""))
+        self.superficie.setText(str(foret.get("superficie", "")))
+        self.nb_visit.setText(str(foret.get("nb_visit", "")))
+
+        self.bouton_supprimer.setEnabled("id" in foret)
+
+        if self.fen.debug: print("Update :", foret)
+
+        self.details_temp = foret.get("details", {})
+        if "details" not in foret.keys():
+            foret["details"] = {}
+
+        self.liste_valeurs.clear()
+        self.type_details = "arbres"
+        self.afficher_details()
+
+    def reinitialiser(self):
+        self.mettre_a_jour({})
 
 class GroupeRecherche(QGroupBox):
     def __init__(self, fenetre):
         super().__init__("Rechercher une forêt")
         self.fen = fenetre
 
+        self.init_donnees()
+        self.init_interface()
+
+    def init_donnees(self):
         if self.fen.debug: print("Chargement des forêts...")
         self.noms_forets = indo.charger_noms_forets(
             ['data', 'forets_vendee.geojson']
         )
         if self.fen.debug: print("Forêts chargées !")
-
-        self.init_interface()
 
     def init_interface(self):
         layout = QVBoxLayout()
@@ -407,14 +665,13 @@ class GroupeRecherche(QGroupBox):
         self.recherche.textChanged.connect(self.chercher_foret)
 
         self.resultats_recherche = QListWidget()
+        self.resultats_recherche.itemClicked.connect(
+            self.afficher_groupe_foret
+        )
         self.resultats_recherche.setFrameShape(QListWidget.NoFrame)
-
-        bouton_modif_foret = QPushButton("Modifier forêt")
-        bouton_modif_foret.clicked.connect(self.afficher_groupe_foret)
 
         layout.addWidget(self.recherche)
         layout.addWidget(self.resultats_recherche)
-        layout.addWidget(bouton_modif_foret)
 
         self.setLayout(layout)
 
@@ -430,22 +687,28 @@ class GroupeRecherche(QGroupBox):
                 self.resultats_recherche.addItem(nom)
 
     def afficher_groupe_foret(self):
+        if self.resultats_recherche.currentItem():
+            
+            nom = self.resultats_recherche.currentItem().text()
 
-        if self.fen.groupe_modif_foret.isHidden():
-            if self.resultats_recherche.currentItem():
-                
-                nom = self.resultats_recherche.currentItem().text()
+            foret = self.foret_depuis_nom(nom)
 
-                foret = self.foret_depuis_nom(nom)
-                self.fen.groupe_modif_foret.mettre_a_jour(foret)
+            if not foret:
+                return
+        
+            self.fen.groupe_modif_foret.mettre_a_jour(foret)
+            self.fen.recharger_carte()
 
+            self.hide()
             self.fen.groupe_modif_foret.show()
-        else:
-            self.fen.groupe_modif_foret.hide()
 
     def foret_depuis_nom(self, nom):
         liste_infos = self.fen.inter.rechercher_foret(("nom", nom))
         if self.fen.debug: print(liste_infos)
+
+        if not liste_infos:
+            if self.fen.debug: print(f"Forêt '{nom}' introuvable en BDD")
+            return {}
 
         id_foret = liste_infos[0][0]
         superficie = liste_infos[0][4]
@@ -564,17 +827,34 @@ class FenetrePrincipale(QWidget):
         self.groupe_modif_foret.hide()
 
         self.groupe_recherche_foret = GroupeRecherche(self)
-        self.groupe_recherche_foret.show()
+        self.groupe_recherche_foret.hide()
 
         # Barre gauche
         interface_gauche = QVBoxLayout()
 
-        #TODO:Boutons "+" et "Recherche"
+        bouton_nouveau = QPushButton("+")
+        bouton_nouveau.clicked.connect(self.afficher_nouvelle_foret)
+
+        bouton_recherche = QPushButton("?")
+        bouton_recherche.clicked.connect(self.afficher_groupe_recherche)
+
+        interface_gauche.addWidget(bouton_nouveau)
+        interface_gauche.addWidget(bouton_recherche)
+        interface_gauche.addStretch()
 
         main_layout.addLayout(interface_gauche)
         main_layout.addWidget(self.groupe_recherche_foret)
         main_layout.addWidget(self.groupe_modif_foret)
         main_layout.addWidget(self.view)
+
+    def afficher_nouvelle_foret(self):
+        self.groupe_modif_foret.mettre_a_jour({})
+        self.groupe_recherche_foret.hide()
+        self.groupe_modif_foret.show()
+
+    def afficher_groupe_recherche(self):
+        self.groupe_modif_foret.hide()
+        self.groupe_recherche_foret.show()
 
     def gerer_clic(self, coord, zoom):
         lat, lon = coord
@@ -585,6 +865,47 @@ class FenetrePrincipale(QWidget):
         if self.groupe_modif_foret.mode_sel:
             if self.debug: print("Clic enregistré et sélection activée :)")
 
-            #TODO
-            # appeler une méthode de self.groupe_modif_foret équivalente à
-            # update_cartes de gestion_clicks.py
+            self.groupe_modif_foret.gerer_clic_cartes(coord, zoom)
+
+    def recharger_carte(self, coord = None, zoom = 12):
+        id_foret = self.groupe_modif_foret.dico_foret.get("id")
+
+        if coord is None:
+            if id_foret:
+                nom = self.groupe_modif_foret.dico_foret.get("nom", "")
+                coord = self.inter.recuperer_centre_foret(nom)
+
+            if coord is None and self.groupe_modif_foret.polygones_temp:
+                premier = self.groupe_modif_foret.polygones_temp[0]
+                geom = premier["features"][0]["geometry"]["coordinates"]
+                if geom and geom[0]:
+                    point = geom[0][0]
+                    coord = (point[1], point[0])
+
+            if coord is None:
+                coord = (46.67, -1.43)
+
+        donnees_temp = self.groupe_modif_foret.polygones_temp
+        donnees_suppr = self.groupe_modif_foret.polygones_a_suppr
+
+        donnees_select = []
+        if id_foret:
+            infos = self.inter.bdd.rechercher_ligne(
+                "FORET", ("id_foret", id_foret)
+            )
+
+            id_feature = str(infos[0][1]) if infos else str(id_foret)
+
+            feature = self.inter.rechercher_feature(str(id_feature))
+            if feature and "geometry" in feature:
+                donnees_select = [
+                    {"type": "FeatureCollection", "features": [feature]}
+                ]
+
+        carte.generer_carte(
+            coord, zoom, donnees_temp, donnees_select, donnees_suppr,
+            self.debug
+        )
+
+        chemin = os.path.abspath(os.sep.join(["cartes", "carte.html"]))
+        self.view.load(QUrl.fromLocalFile(chemin))

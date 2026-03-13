@@ -2,6 +2,7 @@
 import sys
 import os
 import signal
+import traceback
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import Qt
@@ -10,9 +11,9 @@ from module_cartes import *
 from module_bdd import interaction_donnees as indo
 from module_affichage import affichage
 
-def gerer_erreur(type, valeur, message):
+def gerer_erreur(type, valeur, trb):
     print(f"Erreur non gérée : {type.__name__}: {valeur}")
-    print(f"Traceback : {message}")
+    print(f"Traceback : {''.join(traceback.format_tb(trb))}")
 
 sys.excepthook = gerer_erreur
 signal.signal(signal.SIGINT, lambda *args: app.quit())
