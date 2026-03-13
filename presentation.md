@@ -5,7 +5,7 @@
 Dans un premier temps, nous ne savions pas vraiment ce que nous voulions faire, alors nous avons mis plusieurs idées de
 côté. Après un premier tri, nous avons décidé de faire une simulation de sélection naturelle. C'est seulement après
 réflexion que nous avons pensé que cela aurait été trop compliqué de réussir à concrétiser cette idée et que, de plus,
-beaucoup de personnes risquaient d'avoir la même idée également. Alors, nous avons regardé de nouveau à travers la
+beaucoup d'autres candidats risquaient d'avoir la même idée également. Alors, nous avons regardé de nouveau à travers la
 longue liste que nous avions faite et nous avons décidé de garder comme idée de projet un site de localisation de forêts
 🌲🌳.
 
@@ -13,11 +13,8 @@ longue liste que nous avions faite et nous avons décidé de garder comme idée 
 
 Après avoir réfléchi à notre idée générale de projet, il a fallu répondre à plusieurs problématiques. Par exemple, il
 nous fallait trouver via quel procédé l'on devrait générer une carte sous format HTML. Aussi, nous avons dû déterminer
-sous quelle forme stocker les informations telles
-Comment allons-nous générer une carte ? Comment allons-nous stocker les informations ? Comment faire en sorte de trouver
-toutes les informations par rapport aux forêts ? Comment se répartir le travail convenablement ? Comment faire si l'on
-veut ajouter une fôrets ? Que doit-on faire si on recherche une forêt ? Et que doit-on trouver comme information sur
-cette forêt ?
+sous quelle forme stocker les données. Une autre nécessité était de trouver toutes les informations par rapport à une 
+forêt dont on cherche plus de détails.
 
 ## 3 - Objectifs
 
@@ -28,25 +25,24 @@ Notre équipe est composée de quatre personnes :
 
 - ***USSEREAU Maden***, alias **LambdaLight**, élève en Terminale 3, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée,
   Pays de la Loire, France, Europe, la Planète Terre, Le Système Solaire, La Voie lactée, l'Univers, ayant comme
-  spécialité Mathématique et NSI
+  spécialité Mathématiques et NSI
 - ***RAIFAUD Léon***, alias **Onions**, élève en Terminale 2, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée, Pays de
   la Loire, Europe, France, la Planète Terre, Le Système Solaire, La Voie lactée, l'Univers, ayant comme spécialité
-  Mathématique et NSI
+  Mathématiques et NSI
 - ***PASQUIER Mathéo***, alias **Meyzop**, élève en Terminale 8, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée,
   Pays de la Loire, France, Europe, la Planète Terre, Le Système Solaire, La Voie lactée, l'Univers, ayant comme
-  spécialité Mathématique et NSI
+  spécialité Mathématiques et NSI
 - ***PINEAU Charlélie***, alias **.**, élève en Terminale 2, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée, Pays de la
   Loire, France, Europe, la Planète Terre, Le Système Solaire, La Voie lactée, l'Univers, ayant comme spécialité
-  Mathématique et NSI
+  Mathématiques et NSI
 
 ## 2 - Organisation du travail
 
 ***USSEREAU Maden***, qui s'est occupé de la carte, son affichage, la séléction des forêts.
-***RAIFAUD Léon***, Qui s'est occupé de la gestion des données nécessaires, via une base de données SQL, ainsi qu'un
+***RAIFAUD Léon***, qui s'est occupé de la gestion des données nécessaires, via une base de données SQL, ainsi qu'un
 fichier GeoJSON.
 ***PASQUIER Mathéo***, qui s'est principalement occupé de l'interface graphique.
 ***PINEAU Charlélie***, qui s'est occupé des bases de données, ainsi que l'interface graphique.
-
 
 # 3 - Présentation des étapes du projet
 
