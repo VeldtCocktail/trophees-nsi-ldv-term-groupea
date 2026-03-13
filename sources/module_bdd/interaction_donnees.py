@@ -610,7 +610,7 @@ class InteractionDonnees:
         Role \\: \n
             Calcule la superficie de la foret a partir de sa geometrie
             dans le GeoJSON
-        Sortie \\: superficie (float) ou None si non trouve
+        Sortie \\: superficie:float ou None : superficie de la forêt si trouvée
         """
         # Determine l'id_feature
         if isinstance(id_entree, int):
