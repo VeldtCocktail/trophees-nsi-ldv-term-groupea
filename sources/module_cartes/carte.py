@@ -79,11 +79,13 @@ def generer_carte(coord_depart, zoom = 12, donnees = [], debug = False):
     carte = folium.Map(location = coord_depart, zoom_start = zoom)
 
     folium.GeoJson(
-        "data/forets_vendee.geojson", style_function = fonction_style
+        "data/forets_vendee.geojson", style_function = fonction_style_permanent
     ).add_to(carte)
     
     for donnees_json in donnees:
-        folium.GeoJson(donnees_json, style_function = fonction_style).add_to(carte)
+        folium.GeoJson(
+            donnees_json, style_function = fonction_style_temp
+        ).add_to(carte)
 
     map_name = carte.get_name()
 
@@ -123,7 +125,16 @@ def generer_carte(coord_depart, zoom = 12, donnees = [], debug = False):
 
     carte.save(pathlib.Path("cartes", "carte.html"))
 
-def fonction_style(elem):
+def fonction_style_permanent(elem):
+    print("Style appliqué à :", elem)
+    return {
+        "fillColor": "#3700ff",
+        "color": "#0000ff00",
+        "weight": 2,
+        "fillOpacity": 0.4
+    }
+
+def fonction_style_temp(elem):
     print("Style appliqué à :", elem)
     return {
         "fillColor": "#15ff00",
