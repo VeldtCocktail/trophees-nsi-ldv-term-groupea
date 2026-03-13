@@ -182,6 +182,9 @@ class GroupeForet(QGroupBox):
         self.bouton_enregistrer = QPushButton()
         self.bouton_enregistrer.setText("Enregistrer")
         self.bouton_enregistrer.clicked.connect(self.enregistrer_foret_bdd)
+
+        self.bouton_reinitialiser = QPushButton()
+        self.bouton_reinitialiser.setText("Réinitialiser")
         
 
         layout.addWidget(self.bouton_sel)
@@ -191,6 +194,7 @@ class GroupeForet(QGroupBox):
         layout.addWidget(self.bouton_eau)
         layout.addWidget(self.bouton_risques)
         layout.addWidget(self.bouton_enregistrer)
+        layout.addWidget(self.bouton_reinitialiser)
 
         return layout
 
@@ -253,8 +257,6 @@ class GroupeForet(QGroupBox):
             if self.fen.debug: print(elem.text())
 
         self.enregistrer_details_temp()
-        self.liste_valeurs.removeItemWidget(self.liste_valeurs.currentItem())
-        self.liste_valeurs.update()
 
 
 # -----------Fonction affichage des données quand click bouton -----------
@@ -291,12 +293,16 @@ class GroupeForet(QGroupBox):
         self.recherche_liste()
 
     def enregistrer_details_temp(self):
+
+        if self.fen.debug: print("Détails temp :", self.details_temp)
+
+        self.details_temp[self.type_detail] = []
+
         for idx in range(self.liste_valeurs.count()):
             elem = self.liste_valeurs.item(idx)
             if self.type_details not in self.details_temp:
                 self.details_temp[self.type_details] = [elem.text()]
             else:
-                list(self.details_temp[self.type_details]).clear()
                 if elem.text() not in self.details_temp[self.type_details]:
                     self.details_temp[self.type_details].append(elem.text())
 
@@ -331,6 +337,12 @@ class GroupeForet(QGroupBox):
         self.afficher_arbres()
 
     def enregistrer_foret_bdd(self):
+        
+        if self.fen.debug: print("Détails temp :", self.details_temp)
+
+        for type_detail in self.liste_details.keys():
+            self.details_temp[type_detail] = []
+
         self.enregistrer_details_temp()
         foret = self.dico_foret
 
