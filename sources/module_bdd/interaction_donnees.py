@@ -498,7 +498,9 @@ class InteractionDonnees:
         self.bdd.supprimer_ligne("FORET", ("id_foret", id_foret))
 
         # Suppression JSON
-        self.json.supprimer_feature(id_foret)
+        infos = self.bdd.rechercher_ligne("FORET", ("id_foret", id_foret))
+        id_feature = str(infos[0][1]) if infos else str(id_foret)
+        self.json.supprimer_feature(id_feature)
 
     def rechercher_foret(self, critere):
         """

@@ -98,6 +98,10 @@
 
 - 08/03/2026 : Maden (3h) : Chargement, affichage et enregistrement des détails d'une forêt dans la BDD
 
+- 13/03/2026 : Maden (3h) : Enregistrement et suppression des polygones d'une forêt dans la BDD, création, modification et suppression de forêts
+
+- 14/03/2026 : Maden (5h) : Correction de bugs, intercepteur de requêtes pour éviter le blocage des tuiles OSM, spécifications et commentaires, structuration du code
+
 #### TODO : Sélection et enregistrement des polygones + chargement, affichage, modif des infos de base des forêts
 
 🧃

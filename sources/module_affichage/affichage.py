@@ -52,13 +52,25 @@ LISTE_DETAILS = {
     "risques": indo.charger_donnees_csv(['data', 'bdd_risques.csv'])
 }
 
+# constante qui correspond à une table de traduction, qui permet d'associer à
+# chaque caractère "spécial" la ou les lettres qui lui correspondent sans
+# accent, tilde, cédille, etc (uniquement les caractères les plus fréquents)
+ACCENTS = str.maketrans({
+    "à": "a", "â": "a", "ä": "a",
+    "é": "e", "è": "e", "ê": "e", "ë": "e",
+    "ï": "i", "î": "i", "ì": "i",
+    "ò": "o", "ô": "o", "ö": "o",
+    "ù": "u", "û": "u", "ü": "u",
+    "ñ": "n", "ç": "c", "œ": "oe"
+})
+
 
 class GroupeForet(QGroupBox):
     """
     Classe représentant les éléments qui permettent à l'utilisateur d'afficher,
     de modifier, de créer et d'enregistrer une forêt dans la BDD
     """
-    
+
     def __init__(self, fenetre):
         """
         Entrées \\: \n
@@ -185,9 +197,22 @@ class GroupeForet(QGroupBox):
         return layout
 
     def creer_layout_boutons(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Créer la zone du groupe de modification de forêt qui contient les
+            boutons utilisables par l'utilisateur
+        
+        Sortie \\: \n
+            layout:QVBoxLayout : layout contenant les boutons
+        """
+        # on crée une instance de la classe QVBoxLayout() pour représenter une
+        # zone verticale dans laquelle on ajoute des éléments
         layout = QVBoxLayout()
 
-        # création d'un bouton pour sélectionner une zone verte
+        # création du bouton de sélection de polygones
         self.bouton_sel = QPushButton()
         # on change le texte du bouton
         self.bouton_sel.setText('Sélection')
@@ -218,15 +243,19 @@ class GroupeForet(QGroupBox):
         self.bouton_risques.setText("Risques")
         self.bouton_risques.clicked.connect(self.afficher_risques)
 
+        # on crée une bouton pour enregistrer les modifications de la forêt
+        # dans la base de données
         self.bouton_enregistrer = QPushButton()
         self.bouton_enregistrer.setText("Enregistrer")
         self.bouton_enregistrer.clicked.connect(self.enregistrer_foret_bdd)
 
+        # on crée un bouton pour supprimer la forêt sélectionnée
         self.bouton_supprimer = QPushButton()
         self.bouton_supprimer.setText("Supprimer la forêt")
         self.bouton_supprimer.clicked.connect(self.supprimer_foret)
         
 
+        # on ajoute tous ces boutons à l'intérieur du layout
         layout.addWidget(self.bouton_sel)
         layout.addWidget(self.bouton_arbres)
         layout.addWidget(self.bouton_anim)
@@ -236,88 +265,256 @@ class GroupeForet(QGroupBox):
         layout.addWidget(self.bouton_enregistrer)
         layout.addWidget(self.bouton_supprimer)
 
+        # puis on renvoie le layout
         return layout
 
     def creer_layout_details(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Créer la zone du groupe de modification de forêt qui contient les
+            zones pour ajouter et supprimer des détails (arbres, animaux, etc)
+            pour la forêt sélectionnée ou en cours de création
+        
+        Sortie \\: \n
+            layout:QVBoxLayout : layout contenant la zone de recherche et la
+                liste des détails
+        """
+        # on crée une instance de la classe QVBoxLayout() pour représenter une
+        # zone verticale dans laquelle on ajoute des éléments
         layout = QVBoxLayout()
 
+        # on crée une zone de texte dans laquelle l'utilisateur peut saisir
+        # le nom de l'arbre/animaux/etc qu'il souhaite ajouter à la forêt
         self.zone_recherche = QLineEdit()
-        self.zone_recherche.setPlaceholderText(self.type_details)
+        # on affiche comme texte de remplacement le nom du type de détails
+        # sélectionné par l'utilisateur
+        self.zone_recherche.setPlaceholderText(self.type_details.upper())
+        # lorsque l'utilisateur écrit dans cette zone, on appelle la méthode
+        # recherche_liste qui affiche la liste des choix possibles
         self.zone_recherche.textChanged.connect(self.recherche_liste)
 
+        # on crée une zone qui contient la liste des choix possibles de détails
+        # qui correspondent au texte entré par l'utilisateur dans la zone de 
+        # texte
         self.resultat_recherche = QListWidget()
+        # lors d'un clic sur un élément de cette liste, on appelle la méthode
+        # qui ajoute cet élément aux détails de la forêt
         self.resultat_recherche.itemClicked.connect(self.ajouter_valeur)
 
+        # on crée une zone qui contient la liste des détails de la forêt
         self.liste_valeurs = QListWidget()
+        # lors d'un clic sur un élément de cette liste, on appelle la méthode
+        # qui retire cet élément de la liste
         self.liste_valeurs.itemClicked.connect(self.supprimer_valeur)
 
+        # on appelle une fois la méthode afficher_arbres pour afficher par 
+        # défaut les arbres présents dans la forêt
         self.afficher_arbres()
 
+        # on ajoute la zone de texte et les deux listes au layout
         layout.addWidget(self.zone_recherche)
         layout.addWidget(self.resultat_recherche)
         layout.addWidget(self.liste_valeurs)
 
+        # puis on renvoie ce layout
         return layout
 
     def recherche_liste(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Rechercher dans la liste des détails d'un certain type le mot écrit
+            par l'utilisateur dans la zone de recherche et afficher en dessous
+            les résultats qui y correspondent.
+        
+        Sortie \\: \n
+            None
+        """
+        # on vide la liste des résultats de la recherche de l'utilisateur
         self.resultat_recherche.clear()
-        texte = self.zone_recherche.text().strip().lower()
+        # on récupère le texte saisi par l'utilisateur dans la zone de texte et
+        # on y retire les espaces en début et fin de chaîne de caractères avant
+        # de le convertir en lettre minuscules et de supprimer les accents
+        texte = self.zone_recherche.text().strip().lower().translate(ACCENTS)
 
-        if self.type_details in LISTE_DETAILS.keys():
-            for elem in LISTE_DETAILS[self.type_details]:
-                if not texte or texte in elem.lower():
-                    self.resultat_recherche.addItem(elem)
+        # pour chaque élément de la liste des choix correspondant au type de
+        # détail en cours de modification
+        for elem in LISTE_DETAILS[self.type_details]:
+
+            # on récupère le nom de cet élément en minuscule et sans accents
+            nom = str(elem).strip().lower().translate(ACCENTS)
+
+            # si rien n'est écrit ou que le texte saisi apparait dans le nom de
+            # l'élément traité par la boucle
+            if not texte or texte in nom:
+                # on ajoute cet élément à la liste des résultats
+                self.resultat_recherche.addItem(elem)
 
     def ajouter_valeur(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Ajouter la valeur cliquée parmi les résultats de la recherche à la
+            liste des détails de la forêt pour le type sélectionné
+        
+        Sortie \\: \n
+            None
+        """
+        # on récupère l'élément sélectionné parmi les résultats de la recherche
         elem = self.resultat_recherche.currentItem()
 
+        # message en console si debug vaut True
         if self.fen.debug: print(elem.text())
 
+        # on initialise trouve à False et un indice à 0
         trouve = False
         idx = 0
+
+        # tant qu'on n'a pas trouvé l'élément à ajouter dans les détails de la
+        # forêt et qu'on n'a pas entièrement parcouru cette liste de détails
         while not trouve and idx < self.liste_valeurs.count():
+            # si l'élément qu'on souhaite ajouter est déjà présent
             if elem.text() == self.liste_valeurs.item(idx).text():
+                # on change trouve en True
                 trouve = True
+                # message en console si debug vaut True
                 if self.fen.debug: print("Déjà présent !")
 
+            # on incrémente l'indice
             idx += 1
 
+        # si l'élément à ajouter n'est pas déjà présent
         if not trouve:
+            # on l'ajoute à la liste des détails de la forêt
             self.liste_valeurs.addItem(elem.text())
             self.liste_valeurs.update()
 
     def supprimer_valeur(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Retirer la valeur cliquée de la liste des détails de la forêt pour
+            le type sélectionné
+        
+        Sortie \\: \n
+            None
+        """
+        # on récupère l'indice de la ligne des détails de la forêt sélectionnée
         idx = self.liste_valeurs.currentRow()
 
-        if idx != -1:
+        # si l'indice existe et est compris entre 0 et le nombre d'éléments de
+        # la liste des détails
+        if idx and idx >= 0 and idx < self.liste_valeurs.count():
+            # on retire de la liste l'élément à cet indice en le récupérant
             elem = self.liste_valeurs.takeItem(idx)
+            # message en console si debug vaut True
             if self.fen.debug: print(elem.text())
 
+        # on enregistre la modification des détails temporaires de la forêt
         self.enregistrer_details_temp()
 
     def afficher_arbres(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Change le type de détails affichés pour afficher les arbres de la
+            forêt
+        
+        Sortie \\: \n
+            None
+        """
+        # on enregistre les détails temporaires pour le type qui était affiché
         self.enregistrer_details_temp()
+        # on définit le type des détails en cours de modification à "arbres"
         self.type_details = "arbres"
+        # puis on appelle la méthode d'affichage des détails
         self.afficher_details()
 
     def afficher_eau(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Change le type de détails affichés pour afficher les cours d'eau de
+            la forêt
+        
+        Sortie \\: \n
+            None
+        """
+        # on enregistre les détails temporaires pour le type qui était affiché
         self.enregistrer_details_temp()
+        # on définit le type des détails en cours de modification à "eau"
         self.type_details = "eau"
+        # puis on appelle la méthode d'affichage des détails
         self.afficher_details()
 
     def afficher_anim(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Change le type de détails affichés pour afficher les animaux de la
+            forêt
+        
+        Sortie \\: \n
+            None
+        """
+        # on enregistre les détails temporaires pour le type qui était affiché
         self.enregistrer_details_temp()
+        # on définit le type des détails en cours de modification à "anim"
         self.type_details = "anim"
+        # puis on appelle la méthode d'affichage des détails
         self.afficher_details()
 
     def afficher_champis(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Change le type de détails affichés pour afficher les champignons de
+            la forêt
+        
+        Sortie \\: \n
+            None
+        """
+        # on enregistre les détails temporaires pour le type qui était affiché
         self.enregistrer_details_temp()
+        # on définit le type des détails en cours de modification à "champis"
         self.type_details = "champis"
+        # puis on appelle la méthode d'affichage des détails
         self.afficher_details()
 
     def afficher_risques(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Change le type de détails affichés pour afficher les risques de la
+            forêt
+        
+        Sortie \\: \n
+            None
+        """
+        # on enregistre les détails temporaires pour le type qui était affiché
         self.enregistrer_details_temp()
+        # on définit le type des détails en cours de modification à "risques"
         self.type_details = "risques"
+        # puis on appelle la méthode d'affichage des détails
         self.afficher_details()
 
     def afficher_details(self):
@@ -710,15 +907,15 @@ class GroupeRecherche(QGroupBox):
 
         self.setLayout(layout)
 
-    def chercher_foret(self, text):
+    def chercher_foret(self, texte):
         self.resultats_recherche.clear()
-        text = text.strip().lower()
+        texte = str(texte).strip().lower().translate(ACCENTS)
 
-        if not text:
+        if not texte:
             return
 
         for nom in self.noms_forets:
-            if text in nom.lower():
+            if texte in nom.strip().lower().translate(ACCENTS):
                 self.resultats_recherche.addItem(nom)
 
     def afficher_groupe_foret(self):
