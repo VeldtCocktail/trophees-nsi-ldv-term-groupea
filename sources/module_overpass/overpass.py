@@ -8,10 +8,19 @@ class RequetesOverpass:
             "https://overpass-api.de/api/interpreter",
             "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
         ]
+        self.headers = {
+            "User-Agent": "CarteForets/1.0 (contact: lambda.light@proton.me)"
+        }
+        self.cache = {}
 
     def zone_verte(self, coords):
         lat, lon = coords
-        delta = 0.01  # ~1km bounding box
+
+        cle = (round(lat,4), round(lon,4))
+        if cle in self.cache:
+            return self.cache[cle]
+
+        delta = 0.005  # ~500m bounding box
         min_lat, max_lat = lat - delta, lat + delta
         min_lon, max_lon = lon - delta, lon + delta
 
@@ -33,7 +42,8 @@ class RequetesOverpass:
             requete = requests.post(
                 self.apis[self.compteur % len(self.apis)],
                 data=query,
-                timeout=60
+                timeout=60,
+                headers=self.headers
             )
             requete.raise_for_status()
             data = requete.json()
@@ -119,17 +129,21 @@ class RequetesOverpass:
                                 "properties": {}
                             }
 
-                            return {
+                            resultat = {
                                 "type": "FeatureCollection",
                                 "features": [closest]
                             }
 
+                            self.cache[cle] = resultat
+                            return resultat
 
             else:
                 return {"type": "FeatureCollection", "features": []}
 
 
-            return {"type": "FeatureCollection", "features": [closest]}
+            resultat = {"type": "FeatureCollection", "features": [closest]}
+            self.cache[cle] = resultat
+            return resultat
 
         except Exception as e:
             print("Erreur :", e)

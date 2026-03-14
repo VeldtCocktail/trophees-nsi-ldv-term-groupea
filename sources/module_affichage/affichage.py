@@ -18,6 +18,7 @@ import copy
 from module_bdd import interaction_donnees as indo
 from module_overpass import overpass
 from module_cartes import carte
+from module_reseau import intercepteur
 
 
 # constante qui associe chaque chaîne de caractères correspondant à un type de
@@ -823,14 +824,22 @@ class FenetrePrincipale(QWidget):
     def __init__(self, debug = False):
         super().__init__()
 
+        self.debug = debug
+
         self.requetes = overpass.RequetesOverpass()
         self.inter = indo.InteractionDonnees(
             os.sep.join(["data", "bdd.db"]),
             os.sep.join(["data", "forets_vendee.geojson"]),
             debug
         )
+        
         self.view = QtWebEngineWidgets.QWebEngineView()
-        self.debug = debug
+        self.intercepteur = intercepteur.IntercepteurRequetes()
+        profil = QtWebEngineWidgets.QWebEngineProfile.defaultProfile()
+        profil.setRequestInterceptor(self.intercepteur)
+        profil.setHttpUserAgent(
+            "CarteForets/1.0 (educational project)"
+        )
 
         # Carte
         chemin_html = os.path.abspath(os.sep.join(['cartes', 'carte.html']))

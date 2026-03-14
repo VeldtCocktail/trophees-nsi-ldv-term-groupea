@@ -79,7 +79,11 @@ def generer_carte(
         None
     """
 
-    carte = folium.Map(location = coord_depart, zoom_start = zoom)
+    carte = folium.Map(
+        location = coord_depart,
+        zoom_start = zoom,
+        tiles = "OpenStreetMap"
+    )
 
     folium.GeoJson(
         "data/forets_vendee.geojson", style_function = fonction_style_permanent
