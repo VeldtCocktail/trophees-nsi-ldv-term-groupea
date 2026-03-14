@@ -69,7 +69,7 @@ class GroupeForet(QGroupBox):
             Initialisation de la classe GroupeForet
 
         Sortie \\: \n
-            None (j’ai vérifié, n’en déplaise à M. Nauleau)
+            None
         """
         # initialisation de la superclasse QGroupBox
         super().__init__("Enregistrer une forêt")
@@ -142,29 +142,45 @@ class GroupeForet(QGroupBox):
         layout_principal.addLayout(layout_details, 5)
 
         # on définit layout_principal comme le layout du widget correspondant à
-        # la classe
+        # l'instance de la classe
         self.setLayout(layout_principal)
 
     def creer_layout_infos(self):
         """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Créer la zone du groupe de modification de forêt qui contient les
+            informations principales comme que le nom, la superficie, le nombre
+            de visiteurs par an si connu ainsi que l'origine de la forêt
+            (naturelle ou articifielle) si connue
+        
+        Sortie \\: \n
+            layout:QVBoxLayout : layout contenant les informations principales
         """
+        # on crée une instance de la classe QVBoxLayout() pour représenter une
+        # zone verticale dans laquelle on ajoute des éléments
         layout = QVBoxLayout()
 
+        # on crée une zone de texte représentant le nom de la forêt et on lui
+        # affecte une texte de remplacement tant qu'elle est vide
         self.nom_foret = QLineEdit()
         self.nom_foret.setPlaceholderText("Nom de la forêt")
 
+        # on fait de même pour la superficie et le nombre de visiteurs par an
         self.superficie = QLineEdit()
-        if self.dico_foret != {} and "superficie" in self.dico_foret:
-            self.superficie.setText(str(self.dico_foret["superficie"]))
         self.superficie.setPlaceholderText("Superficie")
 
         self.nb_visit = QLineEdit()
         self.nb_visit.setPlaceholderText("Visiteurs / an")
 
+        # on ajoute ces trois zones de texte au layout
         layout.addWidget(self.nom_foret)
         layout.addWidget(self.superficie)
         layout.addWidget(self.nb_visit)
 
+        # puis on renvoie le layout
         return layout
 
     def creer_layout_boutons(self):
