@@ -2,8 +2,6 @@
 # Auteurs : Mathéo Pasquier, Maden Ussereau
 
 # importation des bibliothèques nécessaires
-import copy
-from time import time
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QListWidget, QGroupBox,
     QLineEdit, QRadioButton, QComboBox, QLabel
@@ -11,14 +9,19 @@ from PyQt5.QtWidgets import (
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtCore import QUrl, Qt
+
+from time import time
 from pathlib import Path
 import os
+import copy
 
 from module_bdd import interaction_donnees as indo
 from module_overpass import overpass
 from module_cartes import carte
 
 
+# constante qui associe chaque chaîne de caractères correspondant à un type de
+# détail au nom de la table correspondant dans la base de données (BDD)
 DICO_TABLES_DETAILS = {
     "arbres": "FORET_ARBRE",
     "anim": "FORET_ANIM",
@@ -27,6 +30,8 @@ DICO_TABLES_DETAILS = {
     "risques": "FORET_RISQUE"
 }
 
+# constante qui associe chaque chaîne de caractères correspondant à un type de
+# détail au nom du fichier csv correspondant dans le répertoire .\data
 DICO_CSV_DETAILS = {
     "arbres":  "bdd_arbres.csv",
     "anim":    "bdd_animaux.csv",
@@ -35,22 +40,33 @@ DICO_CSV_DETAILS = {
     "risques": "bdd_risques.csv"
 }
 
+# constante qui associe chaque chaîne de caractères correspondant à un type de
+# détail à la liste des valeurs possibles de ce détail dans le fichier csv qui
+# lui correspond
+LISTE_DETAILS = {
+    "arbres": indo.charger_donnees_csv(['data', 'bdd_arbres.csv']),
+    "anim": indo.charger_donnees_csv(['data', 'bdd_animaux.csv']),
+    "champis": indo.charger_donnees_csv(['data', 'bdd_toad.csv']),
+    "eau": indo.charger_donnees_csv(['data', 'eau.csv']),
+    "risques": indo.charger_donnees_csv(['data', 'bdd_risques.csv'])
+}
+
 
 class GroupeForet(QGroupBox):
     """
-    Classe représentant les éléments qui permettent à l'utilisateur
-    d'enregistrer une forêt
+    Classe représentant les éléments qui permettent à l'utilisateur d'afficher,
+    de modifier, de créer et d'enregistrer une forêt dans la BDD
     """
     
-    def __init__(self, fenetre, foret = {}):
+    def __init__(self, fenetre):
         """
         Entrées \\: \n
-            self:GroupeAjoutForet : instance de la classe
+            self:GroupeForet : instance de la classe GroupeForet
             fenetre:FenetrePrincipale : instance de la classe FenetrePrincipale
                 qui instancie cette classe
 
         Rôle \\: \n
-            Initialisation de la classe
+            Initialisation de la classe GroupeForet
 
         Sortie \\: \n
             None (j’ai vérifié, n’en déplaise à M. Nauleau)
@@ -58,41 +74,39 @@ class GroupeForet(QGroupBox):
         # initialisation de la superclasse QGroupBox
         super().__init__("Enregistrer une forêt")
 
-        # on initialise le mode de sélection à False
-        self.mode_sel = False
-
-        # on affect fenetre à self.fen
+        # on à self.fen l'instance de la fenêtre principale
         self.fen = fenetre
-        self.dico_foret = foret
 
+        # on initialise self.dico_foret, qui contiendra lors de l'affichage de
+        # cette instance les informations correspondant à la forêt affichée
+        self.dico_foret = {"details": {}}
+
+        # on initialise le dictionnaire des détails temporaires, qui contiendra
+        # lors de la modification d'une forêt les informations modifiées mais
+        # pas encore enregistrées
+        self.details_temp = {}
+
+        # on initialise le type des détails affichés à "arbres"
         self.type_details = "arbres"
-        if "details" in foret:
-            self.details_temp = foret["details"]
-        else:
-            foret["details"] = {}
-            self.details_temp = {}
 
+        # on initialise les listes des polygones à ajouter et à supprimer de la
+        # forêt en cours de modification
         self.polygones_temp = []
         self.polygones_a_suppr = []
 
-        self.liste_details = {
-            "arbres": indo.charger_donnees_csv(['data', 'bdd_arbres.csv']),
-            "anim": indo.charger_donnees_csv(['data', 'bdd_animaux.csv']),
-            "champis": indo.charger_donnees_csv(['data', 'bdd_toad.csv']),
-            "eau": indo.charger_donnees_csv(['data', 'eau.csv']),
-            "risques": indo.charger_donnees_csv(['data', 'bdd_risques.csv'])
-        }
+        # on initialise le mode de sélection à False
+        self.mode_sel = False
         
         # on affecte à cette instance l'identifiant groupe-foret
         self.setObjectName('groupe-foret')
 
-        # on appelle la méthode d'initialisation de l'interface
+        # on appelle la méthode d'initialisation de l'interface de la classe
         self.init_interface()
         
     def init_interface(self):
         """
         Entrées \\: \n
-            self:GroupeAjoutForet : instance de la classe
+            self:GroupeForet : instance de la classe GroupeForet
 
         Rôle \\: \n
             Initialisation de l’interface utilisateur de la classe
@@ -103,14 +117,18 @@ class GroupeForet(QGroupBox):
         # création du layout principal qui contient les éléments de la fenêtre
         layout_principal = QVBoxLayout()
 
+        # on définit l'alignement du texte pour le centrer
         self.setAlignment(Qt.AlignCenter)
 
         # création de la zone qui contient les informations générales de la
-        # forêt si l'utilisateur affiche une forêt déjà existante
+        # forêt si l'utilisateur affiche une forêt déjà existante, ou des zones
+        # de texte qui lui permettent de définir ces informations lors de la
+        # création d'une forêt
         layout_infos = self.creer_layout_infos()
 
         # création de la zone qui contient les boutons permettant d'afficher et
-        # de modifier les détails de la forêt (arbres, animaux, etc.)
+        # de modifier les détails de la forêt (arbres, animaux, etc.) ainsi que
+        # d'enregistrer une forêt ou d'annuler les modifications apportées
         layout_boutons = self.creer_layout_boutons()
 
         # création de la zone d'affichage et de modification de la
@@ -118,10 +136,10 @@ class GroupeForet(QGroupBox):
         layout_details = self.creer_layout_details()
 
         # on ajoute ces trois zones au layout principal en spécifiant leur
-        # ratio relatif
+        # facteur d'étirement
         layout_principal.addLayout(layout_infos, 1)
         layout_principal.addLayout(layout_boutons, 3)
-        layout_principal.addLayout(layout_details, 3)
+        layout_principal.addLayout(layout_details, 5)
 
         # on définit layout_principal comme le layout du widget correspondant à
         # la classe
@@ -228,8 +246,8 @@ class GroupeForet(QGroupBox):
         self.resultat_recherche.clear()
         texte = self.zone_recherche.text().strip().lower()
 
-        if self.type_details in self.liste_details.keys():
-            for elem in self.liste_details[self.type_details]:
+        if self.type_details in LISTE_DETAILS.keys():
+            for elem in LISTE_DETAILS[self.type_details]:
                 if not texte or texte in elem.lower():
                     self.resultat_recherche.addItem(elem)
 
@@ -552,7 +570,7 @@ class GroupeForet(QGroupBox):
 
         self.polygones_a_suppr = []
 
-        for type_detail in self.liste_details.keys():
+        for type_detail in LISTE_DETAILS.keys():
             self.fen.inter.bdd.supprimer_ligne(
                 DICO_TABLES_DETAILS[type_detail],
                 ("id_foret", foret["id"])
