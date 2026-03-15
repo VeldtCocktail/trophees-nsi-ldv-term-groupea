@@ -14,6 +14,14 @@ from module_bdd import interaction_donnees as indo
 from module_affichage import affichage
 
 def gerer_erreur(type, valeur, trb):
+    """
+    Entrées \\: \n
+        type:str type d'erreur
+        valeur:str valeur
+        message:str message d'erreur
+    Rôle \\: permet de gérer différentes erreurs
+    Sortie : dans la console via print()
+    """
     print(f"Erreur non gérée : {type.__name__}: {valeur}")
     print(f"Traceback : {''.join(traceback.format_tb(trb))}")
 
