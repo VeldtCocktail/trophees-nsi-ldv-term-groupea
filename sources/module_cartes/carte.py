@@ -57,8 +57,8 @@ class Pont(QObject):
 
 
 def generer_carte(
-        coord_depart, zoom = 12, donnees = [], donnees_select = [],
-        donnees_suppr=[], debug = False
+        coord_depart, zoom = 12, donnees = None, donnees_select = None,
+        donnees_suppr = None, debug = False
     ):
     """
     Entrées \\: \n
@@ -79,14 +79,31 @@ def generer_carte(
         None
     """
 
+    donnees = donnees or []
+    donnees_select = donnees_select or []
+    donnees_suppr = donnees_suppr or []
+
     carte = folium.Map(
         location = coord_depart,
         zoom_start = zoom,
-        tiles = "OpenStreetMap"
+        tiles = r"https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",
+        attr = "© OpenStreetMap contributors",
+        control_scale = True
     )
 
+    filtre_luminosite = """
+    <style>
+        .leaflet-tile {
+            filter: brightness(50%);
+        }
+    </style>
+    """
+    carte.get_root().header.add_child(folium.Element(filtre_luminosite))
+
+
     folium.GeoJson(
-        "data/forets_vendee.geojson", style_function = fonction_style_permanent
+        "data/forets_vendee.geojson",
+        style_function = fonction_style_permanent,
     ).add_to(carte)
     
     # polygones temporaires en cours de sélection
@@ -146,16 +163,40 @@ def generer_carte(
     carte.save(pathlib.Path("cartes", "carte.html"))
 
 def fonction_style_permanent(elem):
+    """
+    Style pour les polygones permanents (forêts).
+    Gère correctement les multipolygones avec trous.
+    """
+    geom = elem.get('geometry', {})
+    coords = geom.get('coordinates', [])
+
+    # Si c'est un MultiPolygon et qu'il y a des trous, ajuster l'opacité
+    # coords = [ [ [x,y], ... ] , [ [x,y], ... ] , ... ]
+    if geom.get('type') == 'MultiPolygon':
+        # Comptons le nombre d'anneaux par polygone
+        nb_anneaux = [len(polygon) for polygon in coords]
+        # Si au moins un polygone a plus d'un anneau => il y a un trou
+        a_trou = any(n > 1 for n in nb_anneaux)
+    else:
+        a_trou = False
+
     return {
-        "fillColor": "#3700ff",
-        "color": "#0000ff00",
+        "fillColor": "#2e8b57",             # vert forêt
+        "color": "#1f5f3f",                 # contour bien visible
         "weight": 2,
-        "fillOpacity": 0.4
+        "fillOpacity": 0.6 if not a_trou else 0.55 
+    }
+
+def fonction_surligner(elem):
+    return {
+        "fillColor": "#00ff00",
+        "weight": 3,
+        "fillOpacity": 0.7
     }
 
 def fonction_style_select(elem):
     return {
-        "fillColor": "#0e8014",
+        "fillColor": "#230e80e6",
         "color": "#0000ff00",
         "weight": 3,
         "fillOpacity": 0.5
@@ -171,7 +212,7 @@ def fonction_style_temp(elem):
 
 def fonction_style_suppr(elem):
     return {
-        "fillColor": "#ff0000",
+        "fillColor": "#e21313ed",
         "color": "#0000ff00",
         "weight": 2,
         "fillOpacity": 0.5

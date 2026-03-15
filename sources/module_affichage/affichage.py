@@ -635,12 +635,7 @@ class GroupeForet(QGroupBox):
         if not id_foret:
             return False
         
-        infos = self.fen.inter.bdd.rechercher_ligne(
-            "FORET", ("id_foret", id_foret)
-        )
-
-        id_feature = str(infos[0][1]) if infos else str(id_foret)
-        feature = self.fen.inter.rechercher_feature(id_feature)
+        feature = self.fen.inter.rechercher_feature_foret(id_foret)
         if not feature or not feature.get("geometry"):
             return False
         
@@ -1094,9 +1089,9 @@ class FenetrePrincipale(QWidget):
         )
         
         self.view = QtWebEngineWidgets.QWebEngineView()
-        self.intercepteur = intercepteur.IntercepteurRequetes()
+        self.intercepteur = intercepteur.IntercepteurRequetes(self, self.debug)
         profil = QtWebEngineWidgets.QWebEngineProfile.defaultProfile()
-        profil.setRequestInterceptor(self.intercepteur)
+        profil.setUrlRequestInterceptor(self.intercepteur)
         profil.setHttpUserAgent(
             "CarteForets/1.0 (educational project)"
         )
@@ -1105,7 +1100,7 @@ class FenetrePrincipale(QWidget):
         chemin_html = os.path.abspath(os.sep.join(['cartes', 'carte.html']))
         obj_path = Path(chemin_html).resolve()
 
-        self.view.load(QUrl.fromLocalFile(str(obj_path)))
+        self.view.load(QUrl("http://127.0.0.1:8000/cartes/carte.html"))
 
         self.pont = carte.Pont(self)
         self.channel = QWebChannel()
@@ -1211,4 +1206,4 @@ class FenetrePrincipale(QWidget):
         )
 
         chemin = os.path.abspath(os.sep.join(["cartes", "carte.html"]))
-        self.view.load(QUrl.fromLocalFile(chemin))
+        self.view.load(QUrl("http://127.0.0.1:8000/cartes/carte.html"))

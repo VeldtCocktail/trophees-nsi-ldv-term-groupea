@@ -494,13 +494,13 @@ class InteractionDonnees:
             id_foret: identifiant de la foret à supprimer
         Rôle \\: Supprime une foret de la BDD et du fichier GeoJSON
         """
-        # Suppression BDD
-        self.bdd.supprimer_ligne("FORET", ("id_foret", id_foret))
-
         # Suppression JSON
         infos = self.bdd.rechercher_ligne("FORET", ("id_foret", id_foret))
         id_feature = str(infos[0][1]) if infos else str(id_foret)
         self.json.supprimer_feature(id_feature)
+
+        # Suppression BDD
+        self.bdd.supprimer_ligne("FORET", ("id_foret", id_foret))
 
     def rechercher_foret(self, critere):
         """

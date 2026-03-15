@@ -11,16 +11,11 @@ class RequetesOverpass:
         self.headers = {
             "User-Agent": "CarteForets/1.0 (contact: lambda.light@proton.me)"
         }
-        self.cache = {}
 
     def zone_verte(self, coords):
         lat, lon = coords
 
-        cle = (round(lat,4), round(lon,4))
-        if cle in self.cache:
-            return self.cache[cle]
-
-        delta = 0.005  # ~500m bounding box
+        delta = 0.01  # ~1km bounding box
         min_lat, max_lat = lat - delta, lat + delta
         min_lon, max_lon = lon - delta, lon + delta
 
@@ -134,7 +129,6 @@ class RequetesOverpass:
                                 "features": [closest]
                             }
 
-                            self.cache[cle] = resultat
                             return resultat
 
             else:
@@ -142,7 +136,6 @@ class RequetesOverpass:
 
 
             resultat = {"type": "FeatureCollection", "features": [closest]}
-            self.cache[cle] = resultat
             return resultat
 
         except Exception as e:
