@@ -163,28 +163,11 @@ def generer_carte(
     carte.save(pathlib.Path("cartes", "carte.html"))
 
 def fonction_style_permanent(elem):
-    """
-    Style pour les polygones permanents (forêts).
-    Gère correctement les multipolygones avec trous.
-    """
-    geom = elem.get('geometry', {})
-    coords = geom.get('coordinates', [])
-
-    # Si c'est un MultiPolygon et qu'il y a des trous, ajuster l'opacité
-    # coords = [ [ [x,y], ... ] , [ [x,y], ... ] , ... ]
-    if geom.get('type') == 'MultiPolygon':
-        # Comptons le nombre d'anneaux par polygone
-        nb_anneaux = [len(polygon) for polygon in coords]
-        # Si au moins un polygone a plus d'un anneau => il y a un trou
-        a_trou = any(n > 1 for n in nb_anneaux)
-    else:
-        a_trou = False
-
     return {
-        "fillColor": "#2e8b57",             # vert forêt
-        "color": "#1f5f3f",                 # contour bien visible
+        "fillColor": "#2e8b57",
+        "color": "#1f5f3f",
         "weight": 2,
-        "fillOpacity": 0.6 if not a_trou else 0.55 
+        "fillOpacity": 0.6
     }
 
 def fonction_surligner(elem):
