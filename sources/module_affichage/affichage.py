@@ -31,6 +31,14 @@ DICO_TABLES_DETAILS = {
     "risques": "FORET_RISQUE"
 }
 
+DICO_ID_DETAILS = {
+    "arbres": "id_arbre",
+    "anim": "id_anim",
+    "eau": "id_eau",
+    "champis": "id_champi",
+    "risques": "id_risque"
+}
+
 # constante qui associe chaque chaîne de caractères correspondant à un type de
 # détail au nom du fichier csv correspondant dans le répertoire .\data
 DICO_CSV_DETAILS = {
@@ -892,23 +900,31 @@ class GroupeRecherche(QGroupBox):
     def init_interface(self):
         layout = QVBoxLayout()
 
-        self.recherche = QLineEdit()
-        self.recherche.setPlaceholderText("Rechercher une forêt")        
-        self.recherche.textChanged.connect(self.chercher_foret)
+        self.rech_for = QLineEdit()
+        self.rech_for.setPlaceholderText("Rechercher une forêt")        
+        self.rech_for.textChanged.connect(self.chercher_foret)
 
-        self.resultats_recherche = QListWidget()
-        self.resultats_recherche.itemClicked.connect(
+        self.res_rech_for = QListWidget()
+        self.res_rech_for.itemClicked.connect(
             self.afficher_groupe_foret
         )
-        self.resultats_recherche.setFrameShape(QListWidget.NoFrame)
 
-        layout.addWidget(self.recherche)
-        layout.addWidget(self.resultats_recherche)
+        self.rech_det = QLineEdit()
+        self.rech_det.setPlaceholderText("Rechercher un détail")
+        self.rech_det.textChanged.connect(self.chercher_detail)
+
+        self.res_rech_det = QListWidget()
+        self.res_rech_det.itemClicked.connect(self.chercher_forets_det)
+
+        layout.addWidget(self.rech_for)
+        layout.addWidget(self.res_rech_for)
+        layout.addWidget(self.rech_det)
+        layout.addWidget(self.res_rech_det)
 
         self.setLayout(layout)
 
     def chercher_foret(self, texte):
-        self.resultats_recherche.clear()
+        self.res_rech_for.clear()
         texte = str(texte).strip().lower().translate(ACCENTS)
 
         if not texte:
@@ -916,12 +932,12 @@ class GroupeRecherche(QGroupBox):
 
         for nom in self.noms_forets:
             if texte in nom.strip().lower().translate(ACCENTS):
-                self.resultats_recherche.addItem(nom)
+                self.res_rech_for.addItem(nom)
 
     def afficher_groupe_foret(self):
-        if self.resultats_recherche.currentItem():
+        if self.res_rech_for.currentItem():
             
-            nom = self.resultats_recherche.currentItem().text()
+            nom = self.res_rech_for.currentItem().text()
 
             foret = self.foret_depuis_nom(nom)
 
@@ -933,6 +949,53 @@ class GroupeRecherche(QGroupBox):
 
             self.hide()
             self.fen.groupe_modif_foret.show()
+
+    def chercher_detail(self, texte):
+        self.res_rech_det.clear()
+        texte = str(texte).strip().lower().translate(ACCENTS)
+
+        if texte:
+            for cle_dico in LISTE_DETAILS:
+                for nom_det in LISTE_DETAILS[cle_dico]:
+                    if texte in nom_det.strip().lower().translate(ACCENTS):
+                        self.res_rech_det.addItem(nom_det)
+
+    def chercher_forets_det(self):
+        detail = self.res_rech_det.currentItem().text()
+        type_det = None
+        idx = 0
+
+        for cle_dico in LISTE_DETAILS:
+            if detail in LISTE_DETAILS[cle_dico]:
+                type_det = cle_dico
+                if self.fen.debug: print("Type détail :", type_det)
+
+            idx += 1
+
+        if type_det:
+            self.res_rech_for.clear()
+
+            chemin_csv = os.sep.join(
+                ["data", DICO_CSV_DETAILS[type_det]]
+            )
+
+            resultat = indo.rechercher_dans_csv(
+                chemin_csv, 1, detail
+            )
+
+            id_det = resultat[0][0]
+
+            liste_id_tuples = self.fen.inter.bdd.rechercher_valeur(
+                DICO_TABLES_DETAILS[type_det],
+                (DICO_ID_DETAILS[type_det], id_det),
+                "id_foret"
+            )
+
+            for elem in liste_id_tuples:
+                id_foret = elem[0]
+                foret = self.fen.inter.rechercher_foret(("id_foret", id_foret))
+                nom = foret[0][2]
+                self.res_rech_for.addItem(nom)
 
     def foret_depuis_nom(self, nom):
         liste_infos = self.fen.inter.rechercher_foret(("nom", nom))
