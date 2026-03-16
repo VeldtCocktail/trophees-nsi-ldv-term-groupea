@@ -526,54 +526,129 @@ class GroupeForet(QGroupBox):
         self.afficher_details()
 
     def afficher_details(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Remplacer le texte de remplacement dans la zone de recherche par le
+            type de détail, puis appeler la méthode de chargement des détails
+            temporaires de la forêt
+        
+        Sortie \\: \n
+            None
+        """
+        # on vide la zone de recherche
         self.zone_recherche.clear()
+        # on change le texte de remplacement de la zone de recherche pour qu'il
+        # corresponde à la valeur de type_details
         self.zone_recherche.setPlaceholderText(self.type_details)
+        # on appelle la méthode de chargement des détails temporaires
         self.charger_details_temp()
+        # on appelle la méthode de recherche de détail parmi la liste (pour
+        # vider la liste des résultats)
         self.recherche_liste()
 
     def enregistrer_details_temp(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Enregistrer des détails temporaires correspondant au type de
+            détails sélectionné par l'utilisateur dans le dictionnaire qui
+            contient ces détails, self.details_temp
+        
+        Sortie \\: \n
+            None
+        """
+        # message en console si debug vaut True
+        if self.fen.debug: print("Anciens détails :", self.details_temp)
 
-        if self.fen.debug: print("Détails temp :", self.details_temp)
-
+        # on remplace la liste des détails correspondant au type sélectionné
+        # par une liste vide
         self.details_temp[self.type_details] = []
 
+        # on parcourt la liste des valeurs correspondant aux détails choisis 
+        # par l'utilisateur
         for idx in range(self.liste_valeurs.count()):
+            # on récupère l'élément à l'indice actuel
             elem = self.liste_valeurs.item(idx)
-            if self.type_details not in self.details_temp:
-                self.details_temp[self.type_details] = [elem.text()]
-            else:
-                if elem.text() not in self.details_temp[self.type_details]:
-                    self.details_temp[self.type_details].append(elem.text())
+            # si l'élément n'est pas déjà dans la liste du dictionnaire qui
+            # correspond à la clé self.type_details, on l'y ajoute
+            if elem.text() not in self.details_temp[self.type_details]:
+                self.details_temp[self.type_details].append(elem.text())
 
+        # message en console si debug vaut True
         if self.fen.debug: print("Enregistrement :", self.details_temp)
 
     def charger_details_temp(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Charger les détails temporaires correspondant au type de détails
+            sélectionné par l'utilisateur, qui sont enregistrés dans le
+            dictionnaire self.details_temp
+        
+        Sortie \\: \n
+            None
+        """
+        # on vide la liste des valeurs affichées pour le type de détails choisi
         self.liste_valeurs.clear()
+
+        # message en console si debug vaut True
         if self.fen.debug: print("Chargement :", self.details_temp)
+
+        # si le type de détails est bien une clé du dictionnaire
         if self.type_details in self.details_temp:
+            # on parcourt les détails temporaires pour ce type
             for texte in self.details_temp[self.type_details]:
+                # en ajoutant chaque détail à la liste des éléments affichés
                 self.liste_valeurs.addItem(texte)
 
     def changer_mode_sel(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Changer le mode de sélection (activée/désactivée) lors d'un clic
+            sur le bouton de sélection
+        
+        Sortie \\: \n
+            None
+        """
+        # on remplace la valeur de mode_sel par sa négation booléenne
         self.mode_sel = not self.mode_sel
-        print('Sélection : ' + str(self.mode_sel))
+
+        # message en console si debug vaut True
+        if self.fen.debug: print('Sélection : ' + str(self.mode_sel))
+
+        # on appelle la méthode d'enregistrement des détails temporaires
         self.enregistrer_details_temp()
 
     def gerer_clic_cartes(self, coord, zoom):
         """
         Entrées \\: \n
             self:GroupeForet : instance de la classe GroupeForet
-            coord:tuple[float] : coordonnées du point cliqué
-            zoom:int : zoom de la carte au moment du clic
+            coord:tuple[float] : latitude et longitude du point cliqué
+            zoom:int : facteur de zoom de la carte au moment du clic
         
         Rôle \\: \n
             Récupère le polygone cliqué, l'ajoute ou le retire de la liste
-            des polygones temporaires et l'affiche sur la carte
+            des polygones temporaires ou de celle des polygones à supprimer et
+            l'affiche sur la carte
         
         Sortie \\: \n
             None
         """
+        # on appelle la méthode d'exécution d'une requête overpass pour obtenir
+        # le polygone dans lequel l'utilisateur a cliqué
         resultat = self.fen.requetes.zone_verte(coord)
+        # on récupère les "features" du résultat renvoyé (structure GeoJSON) ou
+        # None si la clé "features" n'est pas présente dans le dictionnaire
         features = resultat.get("features", [])
 
         if not features:
@@ -614,6 +689,7 @@ class GroupeForet(QGroupBox):
                 for sous_poly in sous_polys:
                     if indo.normaliser(poly) == indo.normaliser(sous_poly):
                         return True
+                    
         return False
     
     def retirer_de_temp(self, coords):
