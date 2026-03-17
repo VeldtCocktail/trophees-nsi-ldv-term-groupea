@@ -1,3 +1,4 @@
+# importation des bibliothèques nécessaires
 import sqlite3
 import json
 import csv
@@ -12,12 +13,11 @@ class BaseDeDonnees:
     def __init__(self, nom_fichier):
         """
         Entrées \\: \n
-            nom_fichier: chemin vers le fichier de base de données
+            nom_fichier:str chemin vers le fichier de base de données
         Rôle \\: \n
             initialise l'interaction avec le fichier de base de données
         Sortie \\: \n
-            self.connexion contient la connexion avec la base de données
-            self.curseur contient le curseur pour exécuter des commandes
+            None
         """
         # Connexion avec la base de données, a l'aide de sqlite3
         self.connexion = sqlite3.connect(nom_fichier)
@@ -26,19 +26,21 @@ class BaseDeDonnees:
 
     def fermer(self):
         """
-        Rôle \\: ferme la connexion avec la base de données
+        Rôle \\: \n
+            ferme la connexion avec la base de données
         """
         self.connexion.close()
 
     def ajouter_ligne(self, table, valeurs):
         """
         Entrées \\: \n
-            table: str, nom de la table
-            valeurs: list, liste des valeurs à insérer dans la table
+            table:str, nom de la table dans laquelle on veut ajouter une ligne
+            valeurs:list, liste des valeurs à insérer dans la table
         Rôle \\: \n
             ajoute une ligne dans la table spécifiée avec les valeurs
             données dans valeurs
-        Sortie \\: modifie la base de données
+        Sortie \\: \n
+            None
         """
         # Variable temporaire pour le stockage des valeurs à ajouter
         temp = ", ".join(["?" for element in valeurs])
@@ -53,12 +55,12 @@ class BaseDeDonnees:
         """
         Entrées \\: \n
             table: str, nom de la table
-            identification: tuple(colonne: str, valeur: any), critère de
+            identification: tuple(colonne:str, valeur:any), critère de
                     suppression, ex : ("id_foret", 1)
         Rôle \\: \n
-            supprime une ligne dans la table spécifiée correspondant au
-            critère
-        Sortie \\: base de données indiquée par self modifiée
+            supprime une ligne dans la table spécifiée correspondant au critère
+        Sortie \\: \n
+            None
         """
         # Variables pour identifier la/les lignes à supprimer
         # Il faut que l'attribut dans la colonne colonne
@@ -75,13 +77,15 @@ class BaseDeDonnees:
     def modifier_ligne(self, table, modif):
         """
         Entrées \\: \n
-            table: str, nom de la table
-            modif: tuple, contient (
-                    identification: tuple(colonne: str, valeur: any),
-                    colonne: str,
-                    valeur: any)
-        Rôle \\: modifie une valeur dans la table spécifiée
-        Sortie \\: base de données modifiée
+            table:str, nom de la table
+            modif:tuple, contient (
+                    identification: tuple(colonne:str, valeur:any),
+                    colonne:str,
+                    valeur:any)
+        Rôle \\: \n
+            modifie une valeur dans la table spécifiée
+        Sortie \\: \n
+            None
         """
         # Dans quelle colonne on doit modifier la variable
         colonne_modif = modif[1]
@@ -109,13 +113,14 @@ class BaseDeDonnees:
     def rechercher_ligne(self, table, identification):
         """
         Entrées \\: \n
-            table: str, nom de la table
-            identification: tuple(colonne: str, valeur: any), critère de
+            table:str, nom de la table
+            identification: tuple(colonne:str, valeur:any), critère de
                     recherche, ex : ("id_foret", 1)
         Rôle \\: \n
             recherche une ligne dans la table spécifiée correspondant au
             critère
-        Sortie \\: liste des lignes trouvées
+        Sortie \\:
+            list des lignes trouvées
         """
         # D'abord, dans quelle colonne on vérifie
         colonne = identification[0]
@@ -128,21 +133,22 @@ class BaseDeDonnees:
         '''
         # On "imprime" cette requete
         self.curseur.execute(requete, (valeur,))
-        # Et on l'exécute
+        # Et on l'exécute, en renvoyant les valeurs
         return self.curseur.fetchall()
 
     def rechercher_valeur(self, table, identification, colonne_recherchee):
         """
         Entrées \\: \n
-            table: str, nom de la table
-            identification: tuple(colonne: str, valeur: any), critère de
+            table:str, nom de la table
+            identification:tuple(colonne:str, valeur:any), critère de
                     recherche, ex : ("id_foret", 1)
-            colonne_recherchee: str, nom de la colonne dont on veut
+            colonne_recherchee:str, nom de la colonne dont on veut
                     récupérer la valeur
         Rôle \\: \n
             recherche une valeur dans la table spécifiée correspondant au
             critère
-        Sortie \\: liste des valeurs trouvées
+        Sortie \\: \n
+            list des valeurs trouvées
         """
         # D'abord, dans quelle colonne on vérifie
         colonne = identification[0]
@@ -155,28 +161,39 @@ class BaseDeDonnees:
         '''
         # On "imprime" cette requete
         self.curseur.execute(requete, (valeur,))
-        # Et on l'exécute
+        # Et on l'exécute, en renvoyant les valeurs
         return self.curseur.fetchall()
 
     def recuperer_tout(self, table):
         """
         Entrées \\: \n
-            table: str, nom de la table
-        Rôle \\: récupérer toutes les lignes d'une table
-        Sortie \\: liste de toutes les lignes de la table
+            table:str, nom de la table
+        Rôle \\: \n
+            récupérer toutes les lignes d'une table
+        Sortie \\: \n
+            list de toutes les lignes de la table
         """
+        # Variable contenant la requete SQL
         requete = f"SELECT * FROM {table}"
+        # On "imprime" cette requête
         self.curseur.execute(requete)
+        # Et on l'exécute, en renvoyant les valeurs
         return self.curseur.fetchall()
 
     def vider_table(self, table):
         """
         Entrées \\: \n
-            table: str, nom de la table
-        Rôle \\: Supprimer toutes les lignes d'une table
+            table:str, nom de la table
+        Rôle \\: \n
+            Supprimer toutes les lignes d'une table
+        Sortie \\: \n
+            None
         """
+        # Variable contenant la requete SQL
         requete = f"DELETE FROM {table}"
+        # On "imprime" cette requête
         self.curseur.execute(requete)
+        # Et on l'exécute
         self.connexion.commit()
 
 
@@ -191,6 +208,7 @@ class InteractionJSON:
         Rôle \\: initialise l'interaction avec le fichier JSON
         Sortie \\: self.data contient les données du fichier JSON
         """
+
         self.json_path = json_path
         with open(json_path, 'r', encoding='utf-8') as file_json:
             self.data = json.load(file_json)
