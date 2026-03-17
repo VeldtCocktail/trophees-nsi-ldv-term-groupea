@@ -1,4 +1,3 @@
-# importation des bibliothèques nécessaires
 import sqlite3
 import json
 import csv
@@ -19,7 +18,7 @@ class BaseDeDonnees:
         Sortie \\: \n
             None
         """
-        # Connexion avec la base de données, a l'aide de sqlite3
+        # Connexion avec la base de données, à l'aide de sqlite3
         self.connexion = sqlite3.connect(nom_fichier)
         # Création du curseur, pour pouvoir exécuter des commandes
         self.curseur = self.connexion.cursor()
@@ -44,9 +43,9 @@ class BaseDeDonnees:
         """
         # Variable temporaire pour le stockage des valeurs à ajouter
         temp = ", ".join(["?" for element in valeurs])
-        # Variable contenant la requete SQL
+        # Variable contenant la requête SQL
         requete = f"INSERT INTO {table} VALUES ({temp})"
-        # On "imprime" cette requete
+        # On "imprime" cette requête
         self.curseur.execute(requete, valeurs)
         # Et on l'exécute
         self.connexion.commit()
@@ -54,9 +53,9 @@ class BaseDeDonnees:
     def supprimer_ligne(self, table, identification):
         """
         Entrées \\: \n
-            table: str, nom de la table
-            identification: tuple(colonne:str, valeur:any), critère de
-                    suppression, ex : ("id_foret", 1)
+            table:str, nom de la table
+            identification:tuple(colonne:str, valeur:any), critère de
+                    suppression, ex: ("id_foret", 1)
         Rôle \\: \n
             supprime une ligne dans la table spécifiée correspondant au critère
         Sortie \\: \n
@@ -67,9 +66,9 @@ class BaseDeDonnees:
         colonne = identification[0]
         # Soit égal à valeur
         valeur = identification[1]
-        # Variable contenant la requete SQL
+        # Variable contenant la requête SQL
         requete = f"DELETE FROM {table} WHERE {colonne} = ?"
-        # On "imprime" cette requete
+        # On "imprime" cette requête
         self.curseur.execute(requete, (valeur,))
         # Et on l'exécute
         self.connexion.commit()
@@ -79,7 +78,7 @@ class BaseDeDonnees:
         Entrées \\: \n
             table:str, nom de la table
             modif:tuple, contient (
-                    identification: tuple(colonne:str, valeur:any),
+                    identification:tuple(colonne:str, valeur:any),
                     colonne:str,
                     valeur:any)
         Rôle \\: \n
@@ -99,13 +98,13 @@ class BaseDeDonnees:
         # Et à quelle valeur ce doit être égal
         valeur_id = identification[1]
 
-        # Variable contenant la requete SQL
+        # Variable contenant la requête SQL
         requete = f'''
             UPDATE {table}
             SET {colonne_modif} = ?
             WHERE {colonne_id} = ?
         '''
-        # On "imprime" cette requete
+        # On "imprime" cette requête
         self.curseur.execute(requete, (nouvelle_valeur, valeur_id))
         # Et on l'exécute
         self.connexion.commit()
@@ -114,24 +113,24 @@ class BaseDeDonnees:
         """
         Entrées \\: \n
             table:str, nom de la table
-            identification: tuple(colonne:str, valeur:any), critère de
-                    recherche, ex : ("id_foret", 1)
+            identification:tuple(colonne:str, valeur:any), critère de
+                    recherche, ex: ("id_foret", 1)
         Rôle \\: \n
             recherche une ligne dans la table spécifiée correspondant au
             critère
-        Sortie \\:
+        Sortie \\: \n
             list des lignes trouvées
         """
         # D'abord, dans quelle colonne on vérifie
         colonne = identification[0]
         # Et à quelle valeur ce doit être égal
         valeur = identification[1]
-        # Variable contenant la requete SQL
+        # Variable contenant la requête SQL
         requete = f'''
             SELECT * FROM {table}
             WHERE {colonne} = ?
         '''
-        # On "imprime" cette requete
+        # On "imprime" cette requête
         self.curseur.execute(requete, (valeur,))
         # Et on l'exécute, en renvoyant les valeurs
         return self.curseur.fetchall()
@@ -141,7 +140,7 @@ class BaseDeDonnees:
         Entrées \\: \n
             table:str, nom de la table
             identification:tuple(colonne:str, valeur:any), critère de
-                    recherche, ex : ("id_foret", 1)
+                    recherche, ex: ("id_foret", 1)
             colonne_recherchee:str, nom de la colonne dont on veut
                     récupérer la valeur
         Rôle \\: \n
@@ -154,12 +153,12 @@ class BaseDeDonnees:
         colonne = identification[0]
         # Et à quelle valeur ce doit être égal
         valeur = identification[1]
-        # Variable contenant la requete SQL
+        # Variable contenant la requête SQL
         requete = f'''
             SELECT {colonne_recherchee} FROM {table}
             WHERE {colonne} = ?
         '''
-        # On "imprime" cette requete
+        # On "imprime" cette requête
         self.curseur.execute(requete, (valeur,))
         # Et on l'exécute, en renvoyant les valeurs
         return self.curseur.fetchall()
@@ -173,7 +172,7 @@ class BaseDeDonnees:
         Sortie \\: \n
             list de toutes les lignes de la table
         """
-        # Variable contenant la requete SQL
+        # Variable contenant la requête SQL
         requete = f"SELECT * FROM {table}"
         # On "imprime" cette requête
         self.curseur.execute(requete)
@@ -189,36 +188,41 @@ class BaseDeDonnees:
         Sortie \\: \n
             None
         """
-        # Variable contenant la requete SQL
+        # Variable contenant la requête SQL
         requete = f"DELETE FROM {table}"
         # On "imprime" cette requête
         self.curseur.execute(requete)
         # Et on l'exécute
         self.connexion.commit()
 
-
 class InteractionJSON:
     """
     Classe d'interaction avec le fichier JSON
     """
-    def __init__(self, json_path):
+    def __init__(self, chemin_json):
         """
         Entrées \\: \n
-            json_path: chemin vers le fichier JSON
-        Rôle \\: initialise l'interaction avec le fichier JSON
-        Sortie \\: self.data contient les données du fichier JSON
+            chemin_json:str chemin vers le fichier JSON (en relatif)
+        Rôle \\: \n
+            initialise l'interaction avec le fichier JSON
+        Sortie \\: \n
+            None
         """
-
-        self.json_path = json_path
-        with open(json_path, 'r', encoding='utf-8') as file_json:
-            self.data = json.load(file_json)
+        # On initialise le chemin vers le fichier formaté JSON
+        self.chemin_json = chemin_json
+        # On ouvre ce fichier
+        with open(chemin_json, 'r', encoding='utf-8') as fichier_json:
+            # Et on transfère toutes ces données dans self
+            self.data = json.load(fichier_json)
 
     def rechercher_feature(self, id_feature):
         """
         Entrées \\: \n
-            id_feature: identifiant de la feature à rechercher
-        Rôle \\: Recherche une feature dans le GeoJSON par son ID
-        Sortie \\: La feature si trouvée, None sinon
+            id_feature:int identifiant de la feature à rechercher
+        Rôle \\: \n
+            Recherche une feature dans le GeoJSON par son ID
+        Sortie \\: \n
+            La feature si trouvée, None sinon
         """
         features = self.data.get('features', [])
         nb_features = len(features)
@@ -229,10 +233,10 @@ class InteractionJSON:
         while idx < nb_features and not trouve:
             feature = features[idx]
 
-            # nettoyage des MultiPolygon corrompus
+            # Nettoyage des MultiPolygon corrompus
             if feature:
                 geom = feature.get('geometry')
-                
+
                 if geom and geom['type'] == 'MultiPolygon':
                     coords_propres = [
                         coords for coords in geom['coordinates'] if coords
@@ -241,7 +245,7 @@ class InteractionJSON:
                     if len(coords_propres) != len(geom['coordinates']):
                         geom['coordinates'] = coords_propres
                         self.sauvegarder()
-            
+
             props = feature.get('properties', {})
             if props.get('id') == id_feature or props.get('@id') == id_feature:
                 trouve = True
@@ -253,12 +257,16 @@ class InteractionJSON:
     def ajouter_foret(self, id_foret, nom, coords):
         """
         Entrées \\: \n
-            id_foret: identifiant de la foret (doit être le meme que dans
+            id_foret:int identifiant de la forêt (doit être le même que dans
                     la BDD)
-            nom: nom de la foret
-            coords: liste de polygones (MultiPolygon coords)
-        Rôle \\: Ajoute une foret au fichier GeoJSON
+            nom:str nom de la forêt
+            coords:list de polygones (MultiPolygon coords)
+        Rôle \\: \n
+            Ajoute une forêt au fichier GeoJSON
+        Sortie \\: \n
+            None
         """
+        # Dictionnaire représentant la nouvelle feature
         nouvelle_feature = {
             "type": "Feature",
             "properties": {
@@ -271,21 +279,25 @@ class InteractionJSON:
             }
         }
 
+        # On ajoute cette feature à data
         self.data['features'].append(nouvelle_feature)
+        # Et on sauvegarde
         self.sauvegarder()
 
     def creer_feature(self, id_feature, nom, geometry_type, coords):
         """
         Entrées \\: \n
-            id_feature: identifiant de la feature
-            nom: nom de la feature
-            geometry_type: type de géometrie (ex: 'Polygon' ou
+            id_feature:int identifiant de la feature
+            nom:str nom de la feature
+            geometry_type:str type de géométrie (ex: 'Polygon' ou
                     'MultiPolygon')
-            coords: coordonnées de la géometrie
-        Rôle \\: Cree une nouvelle feature si elle n'existe pas deja
-        Sortie \\: True si cree, False si deja existante
+            coords:list coordonnées de la géométrie
+        Rôle \\: \n
+            Crée une nouvelle feature si elle n'existe pas déjà
+        Sortie \\: \n
+            True si créée, False si déjà existante
         """
-        # On vérifie d'abord si la feature existe deja pour éviter les doublons
+        # On vérifie d'abord si la feature existe déjà pour éviter les doublons
         trouve = False
         features = self.data['features']
         nb_features = len(features)
@@ -301,6 +313,7 @@ class InteractionJSON:
         if trouve:
             return False
 
+        # Dictionnaire de la nouvelle feature à rajouter
         nouvelle_feature = {
             "type": "Feature",
             "properties": {
@@ -319,13 +332,14 @@ class InteractionJSON:
     def ajouter_a_feature(self, id_feature, nouvelles_coords):
         """
         Entrées \\: \n
-            id_feature: identifiant de la feature à modifier
-            nouvelles_coords: coordonnées du nouveau polygone à ajouter
+            id_feature:int identifiant de la feature à modifier
+            nouvelles_coords:list coordonnées du nouveau polygone à ajouter
         Rôle \\: \n
-            Ajoute un polygone a une feature existante.
+            Ajoute un polygone à une feature existante.
             Si c'est un Polygon, il devient un MultiPolygon.
-            Si c'est deja un MultiPolygon, on ajoute les coordonnées
-        Sortie \\: True si ajoute, False sinon
+            Si c'est déjà un MultiPolygon, on ajoute les coordonnées
+        Sortie \\: \n
+            True si ajouté, False sinon
         """
         trouve = False
         features = self.data['features']
@@ -340,7 +354,7 @@ class InteractionJSON:
                 geometry = feature.get('geometry')
 
                 if not geometry:
-                    # Si pas de géometrie, on en cree une
+                    # Si pas de géométrie, on en crée une
                     feature['geometry'] = {
                         "type": "Polygon",
                         "coordinates": nouvelles_coords
@@ -351,10 +365,10 @@ class InteractionJSON:
                     anciennes_coords = geometry['coordinates']
 
                     if not anciennes_coords:
-                        # Polygon vide : on remplace directement
+                        # Polygon vide: on remplace directement
                         geometry['coordinates'] = nouvelles_coords
                     else:
-                        # Polygon réel : transformation en MultiPolygon
+                        # Polygon réel: transformation en MultiPolygon
                         geometry['type'] = 'MultiPolygon'
                         geometry['coordinates'] = [
                             anciennes_coords, nouvelles_coords
@@ -368,7 +382,7 @@ class InteractionJSON:
                     geometry['coordinates'].append(nouvelles_coords)
 
                 else:
-                    # Par défaut si type different (ex: Point), on remplace
+                    # Par défaut si type différent (ex: Point), on remplace
                     geometry['type'] = 'Polygon'
                     geometry['coordinates'] = nouvelles_coords
 
@@ -381,8 +395,10 @@ class InteractionJSON:
         """
         Entrées \\: \n
             id_feature: identifiant de la feature à supprimer
-        Rôle \\: Supprime une feature du fichier GeoJSON
-        Sortie \\: True si supprimée, False sinon
+        Rôle \\: \n
+            Supprime une feature du fichier GeoJSON
+        Sortie \\: \n
+            True si supprimée, False sinon
         """
         trouve = False
         features = self.data['features']
@@ -402,12 +418,13 @@ class InteractionJSON:
     def retirer_de_feature(self, id_feature, index_polygone):
         """
         Entrées \\: \n
-            id_feature: identifiant de la feature a modifier
-            index_polygone: index du polygone a retirer dans la liste
+            id_feature:int identifiant de la feature à modifier
+            index_polygone: index du polygone à retirer dans la liste
         Rôle \\: \n
             Retire un polygone d'une feature. S'il ne reste qu'un polygone,
             on retransforme le MultiPolygon en Polygon.
-        Sortie \\: True si retire, False sinon
+        Sortie \\: \n
+            True si retiré, False sinon
         """
         trouve = False
         features = self.data['features']
@@ -431,7 +448,7 @@ class InteractionJSON:
                             geometry['type'] = 'Polygon'
                             geometry['coordinates'] = coords[0]
                         elif len(coords) == 0:
-                            # Plus de géometrie
+                            # Plus de géométrie
                             feature['geometry'] = None
 
                         self.sauvegarder()
@@ -442,7 +459,7 @@ class InteractionJSON:
                     feature['geometry'] = None
                     self.sauvegarder()
                 else:
-                    trouve = False # Pas de polygone a cet index ou pas le bon type
+                    trouve = False # Pas de polygone à cet index ou pas le bon type
             idx += 1
         return trouve
 
@@ -457,32 +474,32 @@ class InteractionJSON:
 
     def sauvegarder(self):
         """
-        Rôle \\: Sauvegarde les données actuelles dans le fichier JSON
+        Rôle \\: \n
+            Sauvegarde les données actuelles dans le fichier JSON
         """
-        with open(self.json_path, 'w', encoding='utf-8') as file_json:
-            json.dump(self.data, file_json, indent=4)
-
+        with open(self.chemin_json, 'w', encoding='utf-8') as fichier_json:
+            json.dump(self.data, fichier_json, indent=4)
 
 class InteractionDonnees:
     """
     Classe de coordination entre la BDD SQLite et le fichier GeoJSON
     """
-    def __init__(self, bdd_path, json_path, debug=False):
+    def __init__(self, bdd_path, chemin_json, debug=False):
         """
         Entrées \\: \n
             bdd_path: chemin vers le fichier de base de données
-            json_path: chemin vers le fichier GeoJSON
+            chemin_json: chemin vers le fichier GeoJSON
             debug: booléen pour activer/désactiver le mode debug (par défaut: False)
         Rôle \\: \n
             Initialise les interactions avec la base de données SQLite et le fichier GeoJSON.
-            Cree une instance de BaseDeDonnees et une instance de InteractionJSON.
+            Crée une instance de BaseDeDonnees et une instance de InteractionJSON.
         Sortie \\: \n
             self.bdd: instance de BaseDeDonnees pour interagir avec la base de données
             self.json: instance de InteractionJSON pour interagir avec le fichier GeoJSON
-            self.debug: booléen indiquant si le mode debug est active
+            self.debug: booléen indiquant si le mode debug est actif
         """
         self.bdd = BaseDeDonnees(bdd_path)
-        self.json = InteractionJSON(json_path)
+        self.json = InteractionJSON(chemin_json)
         self.debug = debug
 
         self.synchro_depuis_bdd()
@@ -491,14 +508,15 @@ class InteractionDonnees:
     def ajouter_foret(self, valeurs_bdd, coords_json):
         """
         Entrées \\: \n
-            valeurs_bdd: liste des valeurs pour la table FORET
+            valeurs_bdd: list des valeurs pour la table FORET
                     (id_foret, id_feature, nom, nb_visi,
                     superficie, ...)
             coords_json: coordonnées initiales (Polygon) pour le GeoJSON
-        Rôle \\: Ajoute une foret dans la BDD et dans le GeoJSON
+        Rôle \\: \n
+            Ajoute une forêt dans la BDD et dans le GeoJSON
         """
         # Ajout dans la BDD
-        # On suppose que valeurs_bdd est une liste complete correspondant au schema
+        # On suppose que valeurs_bdd est une liste complète correspondant au schéma
         self.bdd.ajouter_ligne("FORET", valeurs_bdd)
 
         # Ajout dans le JSON
@@ -509,8 +527,9 @@ class InteractionDonnees:
     def supprimer_foret(self, id_foret):
         """
         Entrées \\: \n
-            id_foret: identifiant de la foret à supprimer
-        Rôle \\: Supprime une foret de la BDD et du fichier GeoJSON
+            id_foret: identifiant de la forêt à supprimer
+        Rôle \\: \n
+            Supprime une forêt de la BDD et du fichier GeoJSON
         """
         # Suppression JSON
         infos = self.bdd.rechercher_ligne("FORET", ("id_foret", id_foret))
@@ -523,21 +542,24 @@ class InteractionDonnees:
     def rechercher_foret(self, critere):
         """
         Entrées \\: \n
-            critère: tuple (colonne, valeur) pour la recherche
+            critère: tuple(colonne, valeur) pour la recherche
         Rôle \\: \n
-            Recherche des forets dans la BDD correspondant au critère.
+            Recherche des forêts dans la BDD correspondant au critère.
             Si on cherche par nom, cela permet de retrouver l'id GeoJSON.
-        Sortie \\: liste des résultats (lignes de la table FORET)
+        Sortie \\: \n
+            list des résultats (lignes de la table FORET)
         """
         return self.bdd.rechercher_ligne("FORET", critere)
 
     def ajouter_polygone_a_foret(self, id_foret, nouvelles_coords):
         """
         Entrées \\: \n
-            id_foret: identifiant de la foret
+            id_foret: identifiant de la forêt
             nouvelles_coords: coordonnées du nouveau polygone
-        Rôle \\: Ajoute une zone (polygone) à une foret existante dans le JSON
-        Sortie \\: True si ajoute, False sinon
+        Rôle \\: \n
+            Ajoute une zone (polygone) à une forêt existante dans le JSON
+        Sortie \\: \n
+            True si ajouté, False sinon
         """
         infos = self.bdd.rechercher_ligne("FORET", ("id_foret", id_foret))
         id_feature = str(infos[0][1]) if infos else str(id_foret)
@@ -546,10 +568,12 @@ class InteractionDonnees:
     def retirer_polygone_a_foret(self, id_foret, index_polygone):
         """
         Entrées \\: \n
-            id_foret: identifiant de la foret
+            id_foret: identifiant de la forêt
             index_polygone: index du polygone à retirer
-        Rôle \\: Retire une zone (polygone) d'une foret dans le JSON
-        Sortie \\: True si retire, False sinon
+        Rôle \\: \n
+            Retire une zone (polygone) d'une forêt dans le JSON
+        Sortie \\: \n
+            True si retiré, False sinon
         """
         infos = self.bdd.rechercher_ligne("FORET", ("id_foret", id_foret))
         id_feature = str(infos[0][1]) if infos else str(id_foret)
@@ -558,19 +582,23 @@ class InteractionDonnees:
     def rechercher_feature(self, id_feature):
         """
         Entrées \\: \n
-            id_feature: identifiant literal de la feature
-        Rôle \\: Recherche la feature correspondante dans le GeoJSON
-        Sortie \\: La feature si trouvée, None sinon
+            id_feature: identifiant littéral de la feature
+        Rôle \\: \n
+            Recherche la feature correspondante dans le GeoJSON
+        Sortie \\: \n
+            La feature si trouvée, None sinon
         """
         feature = self.json.rechercher_feature(id_feature)
         return feature
-    
+
     def rechercher_feature_foret(self, id_foret):
         """
         Entrées \\: \n
-            id_foret: identifiant de la foret
-        Rôle \\: Recherche la feature correspondante dans le GeoJSON
-        Sortie \\: La feature si trouvée, None sinon
+            id_foret: identifiant de la forêt
+        Rôle \\: \n
+            Recherche la feature correspondante dans le GeoJSON
+        Sortie \\: \n
+            La feature si trouvée, None sinon
         """
         infos = self.bdd.rechercher_ligne("FORET", ("id_foret", id_foret))
         id_feature = str(infos[0][1]) if infos else str(id_foret)
@@ -580,12 +608,13 @@ class InteractionDonnees:
     def synchro_depuis_json(self):
         """
         Rôle \\: \n
-            Parcourt le GeoJSON et ajoute à la BDD les forets manquantes.
+            Parcourt le GeoJSON et ajoute à la BDD les forêts manquantes.
             C'est utile si le fichier GeoJSON contient plus de données
             que la BDD
-        Sortie \\: Modifie la BDD en y ajoutant les lignes manquantes
+        Sortie \\: \n
+            Modifie la BDD en y ajoutant les lignes manquantes
         """
-        # On recupere toutes les features du GeoJSON
+        # On récupère toutes les features du GeoJSON
         features = self.json.data.get('features', [])
         if self.debug: print(features)
 
@@ -597,9 +626,9 @@ class InteractionDonnees:
             if not id_geojson:
                 continue
 
-            nom = props.get('name', 'Foret inconnue')
+            nom = props.get('name', 'Forêt inconnue')
 
-            # On vérifie si la foret existe deja dans la BDD (recherche par id_feature)
+            # On vérifie si la forêt existe déjà dans la BDD (recherche par id_feature)
             existe = self.bdd.rechercher_ligne("FORET", ("id_feature", id_geojson))
             if self.debug: print('Existe : ', existe)
 
@@ -613,7 +642,7 @@ class InteractionDonnees:
                     # On prend le max des id_foret et on ajoute 1
                     nouvel_id = max(f[0] for f in forets_actuelles) + 1
 
-                # Structure de la table FORET :
+                # Structure de la table FORET:
                 # id_foret, id_feature, nom, nb_visi_par_an, superficie,
                 # implan_naturelle
                 valeurs = [nouvel_id, id_geojson, nom, 0, 0.0, 0]
@@ -623,26 +652,27 @@ class InteractionDonnees:
     def synchro_depuis_bdd(self):
         """
         Rôle \\: \n
-            Parcourt la BDD et ajoute au GeoJSON les forets manquantes.
+            Parcourt la BDD et ajoute au GeoJSON les forêts manquantes.
             C'est utile si la BDD contient plus de données que le
             fichier GeoJSON
-        Sortie \\: Modifie le GeoJSON en y ajoutant les features manquantes
+        Sortie \\: \n
+            Modifie le GeoJSON en y ajoutant les features manquantes
         """
-        # On recupere toutes les forets de la BDD
+        # On récupère toutes les forêts de la BDD
         forets = self.bdd.recuperer_tout("FORET")
 
         for foret in forets:
-            # Structure de la table FORET : id_foret, id_feature, nom, ...
+            # Structure de la table FORET: id_foret, id_feature, nom, ...
             id_feature = foret[1]
             nom = foret[2]
 
             if not id_feature:
                 continue
 
-            # On vérifie si la foret existe deja dans le GeoJSON
+            # On vérifie si la forêt existe déjà dans le GeoJSON
             existe = self.json.rechercher_feature(id_feature)
 
-            # Si elle n'existe pas, on l'ajoute avec une géometrie vide
+            # Si elle n'existe pas, on l'ajoute avec une géométrie vide
             if not existe:
                 # On utilise un MultiPolygon vide par défaut
                 self.json.creer_feature(id_feature, nom, "MultiPolygon", [])
@@ -650,26 +680,27 @@ class InteractionDonnees:
     def recuperer_centre_foret(self, nom_foret):
         """
         Entrées \\: \n
-            nom_foret: nom de la foret
+            nom_foret: nom de la forêt
         Rôle \\: \n
-            Retrouve le centre (centroid) de la foret à partir de son nom
-        Sortie \\: (longitude, latitude) du centre, ou None si non trouvé
+            Retrouve le centre (centroid) de la forêt à partir de son nom
+        Sortie \\: \n
+            (longitude, latitude) du centre, ou None si non trouvé
         """
-        #1. Rechercher la foret par son nom dans la BDD pour avoir l'id_feature
+        # 1. Rechercher la forêt par son nom dans la BDD pour avoir l'id_feature
         resultats = self.bdd.rechercher_ligne("FORET", ("nom", nom_foret))
         if not resultats:
             return None
 
-        # Structure de la table FORET : id_foret, id_feature, nom, ...
-        # On prend le premier resultat
+        # Structure de la table FORET: id_foret, id_feature, nom, ...
+        # On prend le premier résultat
         id_feature = resultats[0][1]
 
-        #2. Rechercher la feature dans le GeoJSON
+        # 2. Rechercher la feature dans le GeoJSON
         feature = self.json.rechercher_feature(id_feature)
         if not feature or not feature.get('geometry'):
             return None
 
-        #3. Calculer le centre avec shapely
+        # 3. Calculer le centre avec shapely
         geometrie = shape(feature['geometry'])
         centre = geometrie.centroid
 
@@ -681,14 +712,15 @@ class InteractionDonnees:
     def calculer_superficie_foret(self, id_entree):
         """
         Entrées \\: \n
-            id_entree: identifiant de la foret (int pour id_foret ou
+            id_entree: identifiant de la forêt (int pour id_foret ou
                     str pour id_feature)
         Rôle \\: \n
-            Calcule la superficie de la foret à partir de sa géometrie
+            Calcule la superficie de la forêt à partir de sa géométrie
             dans le GeoJSON
-        Sortie \\: superficie:float ou None : superficie de la forêt si trouvée
+        Sortie \\: \n
+            superficie:float ou None: superficie de la forêt si trouvée
         """
-        # Determine l'id_feature
+        # Détermine l'id_feature
         if isinstance(id_entree, int):
             # C'est un ID numérique de la BDD, on cherche l'id_feature
             res = self.bdd.rechercher_ligne("FORET", ("id_foret", id_entree))
@@ -699,25 +731,25 @@ class InteractionDonnees:
             # On suppose que c'est l'id_feature directement
             id_feature = id_entree
 
-        # Recuperation de la feature
+        # Récupération de la feature
         feature = self.json.rechercher_feature(id_feature)
         if not feature or not feature.get('geometry'):
             return None
 
         # Calcul de la superficie
         geometrie = shape(feature['geometry'])
-        # La géometrie est en degrés (WGS84)
+        # La géométrie est en degrés (WGS84)
 
         if geometrie.is_empty:
             return 0.0
 
-        # On calcule l'aire en degrés carres
+        # On calcule l'aire en degrés carrés
         aire_deg2 = geometrie.area
 
-        # Conversion en hectares (approximation pour la France/Vendee)
+        # Conversion en hectares (approximation pour la France/Vendée)
         # 1 degré de latitude ~= 111132 m
         # 1 degré de longitude ~= 111132 * cos(latitude) m
-        # On utilise le centre de la géometrie pour la latitude
+        # On utilise le centre de la géométrie pour la latitude
         centre = geometrie.centroid
         lat_rad = math.radians(centre.y)
 
@@ -737,18 +769,20 @@ class InteractionDonnees:
 
     def fermer(self):
         """
-        Rôle \\: ferme les interactions (connexion BDD)
+        Rôle \\: \n
+            Ferme les interactions (connexion BDD)
         """
         self.bdd.fermer()
-
 
 def charger_donnees_csv(liste, col=1):
     """
     Entrées \\: \n
-        liste: liste de str, chemin vers le fichier CSV
-        col: int, index de la colonne à extraire (par défaut : 1)
-    Rôle \\: Charge les données d'une colonne spécifique d'un fichier CSV
-    Sortie \\: liste des valeurs de la colonne spécifiée
+        liste: list de str, chemin vers le fichier CSV
+        col: int, index de la colonne à extraire (par défaut: 1)
+    Rôle \\: \n
+        Charge les données d'une colonne spécifique d'un fichier CSV
+    Sortie \\: \n
+        list des valeurs de la colonne spécifiée
     """
     data = []
     chemin = os.sep.join(liste)
@@ -765,10 +799,12 @@ def rechercher_dans_csv(chemin, col, valeur):
     """
     Entrées \\: \n
         chemin: str, chemin vers le fichier CSV
-        col: int, index de la colonne è rechercher
-        valeur: any, valeur è rechercher dans la colonne
-    Rôle \\: Recherche les lignes d'un fichier CSV ou une colonne a une valeur spécifique
-    Sortie \\: liste des lignes correspondant au critère
+        col: int, index de la colonne à rechercher
+        valeur: any, valeur à rechercher dans la colonne
+    Rôle \\: \n
+        Recherche les lignes d'un fichier CSV où une colonne a une valeur spécifique
+    Sortie \\: \n
+        list des lignes correspondant au critère
     """
     data = []
     with open(chemin, newline="", encoding="ISO 8859-3") as fichier:
@@ -783,13 +819,15 @@ def rechercher_dans_csv(chemin, col, valeur):
 def charger_noms_forets(liste):
     """
     Entrées \\: \n
-        liste: liste de str, chemin vers le fichier GeoJSON
-    Rôle \\: Charge les noms des forets depuis un fichier GeoJSON
-    Sortie \\: liste des noms des forets
+        liste: list de str, chemin vers le fichier GeoJSON
+    Rôle \\: \n
+        Charge les noms des forêts depuis un fichier GeoJSON
+    Sortie \\: \n
+        list des noms des forêts
     """
-    json_path = os.sep.join(liste)
+    chemin_json = os.sep.join(liste)
 
-    with open(json_path, encoding="utf-8") as f:
+    with open(chemin_json, encoding="utf-8") as f:
         data = json.load(f)
 
     names = []
@@ -798,7 +836,6 @@ def charger_noms_forets(liste):
         name = props.get("name")
         if name:
             names.append(name)
-
 
     return names
 
@@ -813,5 +850,5 @@ def sous_polygones(coords):
         # de listes
         if isinstance(coords_norm[0][0][0], list):
             return coords_norm       # MultiPolygon
-    
+
     return [coords_norm]         # Polygon
