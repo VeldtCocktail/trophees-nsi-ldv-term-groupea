@@ -31,6 +31,8 @@ DICO_TABLES_DETAILS = {
     "risques": "FORET_RISQUE"
 }
 
+# constante qui associe chaque chaîne de caractères correspondant à un type de
+# détail à l'identifiant de ce détail dans la table de la BDD qui y correspond
 DICO_ID_DETAILS = {
     "arbres": "id_arbre",
     "anim": "id_anim",
@@ -651,87 +653,93 @@ class GroupeForet(QGroupBox):
         # None si la clé "features" n'est pas présente dans le dictionnaire
         features = resultat.get("features", [])
 
+        # si les features sont vides, on affiche un message en console si debug
+        # vaut True
         if not features:
             if self.fen.debug:
                 print("Aucun polygone trouvé")
 
+        # sinon
         else:
+            # on récupère le premier élément de la liste des features
             feature = features[0]
+            # on récupère la liste des coordonnées des polygones de la feature
             coordonnees = feature["geometry"]["coordinates"]
 
+            # si les coordonnées sont déjà dans la liste "temporaire"
             if self.coords_deja_dans_temp(coordonnees):
-                # était "à ajouter" -> on l'annule
+                # le polygone était "à ajouter", on l'annule
                 self.retirer_de_temp(coordonnees)
                 if self.fen.debug: print("Polygone retiré de la sélection")
 
+            # si les coordonnées sont déjà dans la liste "à supprimer"
             elif self.coords_deja_dans_suppr(coordonnees):
-                # était "à supprimer" -> on annule la suppression
+                # le polygone était "à supprimer", on annule la suppression
                 self.retirer_de_suppr(coordonnees)
                 if self.fen.debug: print("Suppression annulée")
 
+            # si les coordonnées sont déjà enregistrées dans le GeoJSON
             elif self.coords_deja_sauvegardees(coordonnees):
-                # est sauvegardé -> on le marque pour suppression
+                # le polygone est sauvegardé, on le marque pour suppression
                 self.polygones_a_suppr.append(resultat)
                 if self.fen.debug: print("Polygon marqué pour suppression")
 
+            # sinon
             else:
-                # nouveau -> temporaire
+                # le polygone est nouveau, on le place dans la liste temporaire
                 self.polygones_temp.append(resultat)
                 if self.fen.debug: print("Polygone temporaire ajouté")
 
+            # on recharge la carte pour afficher le polygone cliqué en couleur
             self.fen.recharger_carte(coord, zoom)
 
     def coords_deja_dans_temp(self, coords):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+            coords: list[list[tuple[float]]] : coordonnées du polygone cliqué
+        
+        Rôle \\: \n
+            Déterminer si les coordonnées du polygone cliqué sont présentes
+            dans la liste des polygones temporaires
+        
+        Sortie \\: \n
+            bool : présence des coordonnées dans self.polygones_temp
+        """
+        if self.fen.debug: print("Coordonnées :", coords)
+
+        # on récupère la liste des polygones des coordonnées
         sous_polys = indo.sous_polygones(coords)
+        # on parcourt la liste des polygones temporaires
         for elem in self.polygones_temp:
+            # on récupère les coordonnées du polygone temporaires
             coords_temp = elem["features"][0]["geometry"]["coordinates"]
+            # on parcourt chaque polygone des coordonnées temporaires
             for poly in indo.sous_polygones(coords_temp):
+                # on parcourt chaque sous polygone de la liste
                 for sous_poly in sous_polys:
+                    # si les deux polygones sont égaux, on renvoie True
                     if indo.normaliser(poly) == indo.normaliser(sous_poly):
                         return True
                     
+        # si on n'a pas trouvé d'égalité de polygones, on renvoie False
         return False
     
-    def retirer_de_temp(self, coords):
-        sous_polys = indo.sous_polygones(coords)
-        liste = []
-        for elem in self.polygones_temp:
-            coords_temp = elem["features"][0]["geometry"]["coordinates"]
-            commun = False
-            for poly in indo.sous_polygones(coords_temp):
-                for sous_poly in sous_polys:
-                    if indo.normaliser(poly) == indo.normaliser(sous_poly):
-                        commun = True
-            if not commun:
-                liste.append(elem)
-        self.polygones_temp = copy.deepcopy(liste)
-
-    def coords_deja_sauvegardees(self, coords):
-        id_foret = self.dico_foret.get("id")
-        if not id_foret:
-            return False
-        
-        feature = self.fen.inter.rechercher_feature_foret(id_foret)
-        if not feature or not feature.get("geometry"):
-            return False
-        
-        geom = feature["geometry"]
-        liste_coords = []
-        if geom["type"] == "Polygon":
-            liste_coords = [geom["coordinates"]]
-        elif geom["type"] == "MultiPolygon":
-            liste_coords = geom["coordinates"]
-        else:
-            return False
-
-        for sous_poly in indo.sous_polygones(coords):
-            for sous_poly_sauve in liste_coords:
-                if indo.normaliser(sous_poly) == indo.normaliser(sous_poly_sauve):
-                    return True
-                
-        return False
-
     def coords_deja_dans_suppr(self, coords):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+            coords: list[list[tuple[float]]] : coordonnées du polygone cliqué
+        
+        Rôle \\: \n
+            Déterminer si les coordonnées du polygone cliqué sont présentes
+            dans la liste des polygones à supprimer
+        
+        Sortie \\: \n
+            bool : présence des coordonnées dans self.polygones_a_suppr
+        """
+        # même fonctionnement que self.coords_deja_dans_temp
+
         sous_polys = indo.sous_polygones(coords)
         for elem in self.polygones_a_suppr:
             coords_temp = elem["features"][0]["geometry"]["coordinates"]
@@ -741,8 +749,112 @@ class GroupeForet(QGroupBox):
                         return True
                     
         return False
+
+    def coords_deja_sauvegardees(self, coords):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+            coords: list[list[tuple[float]]] : coordonnées du polygone cliqué
+        
+        Rôle \\: \n
+            Déterminer si les coordonnées du polygone cliqué sont présentes
+            dans la feature de la forêt dans le fichier GeoJSON
+        
+        Sortie \\: \n
+            bool : présence des coordonnées le GeoJSON pour la forêt actuelle
+        """
+        # on récupère l'identifiant de la forêt actuelle depuis le dictionnaire
+        id_foret = self.dico_foret.get("id")
+
+        # on renvoie False si cet identifiant n'existe pas
+        if not id_foret:
+            return False
+        
+        # on récupère à partir de cet id la feature de la forêt dans le GeoJSON
+        feature = self.fen.inter.rechercher_feature_foret(id_foret)
+        # si cette feature n'existe pas ou n'a pas de géométrie
+        if not feature or not feature.get("geometry"):
+            # on renvoie False
+            return False
+        
+        # on récupère la géométrie de la feature
+        geom = feature["geometry"]
+        liste_coords = []
+
+        # on récupère la liste des coordonnées du polygone ou du multi-polygone
+        if geom["type"] == "Polygon":
+            liste_coords = [geom["coordinates"]]
+        elif geom["type"] == "MultiPolygon":
+            liste_coords = geom["coordinates"]
+        else:
+            return False
+
+        # on parcourt chaque sous-polygone des coordonnées
+        for sous_poly in indo.sous_polygones(coords):
+            # on parcourt chaque polygone de la liste de coordonnées construite
+            for poly in liste_coords:
+                # si les deux polygones sont égaux, on renvoie True
+                if indo.normaliser(sous_poly) == indo.normaliser(poly):
+                    return True
+                
+        # si on n'a pas trouvé d'égalité, on renvoie False
+        return False
+
+    def retirer_de_temp(self, coords):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+            coords: list[list[tuple[float]]] : coordonnées du polygone cliqué
+        
+        Rôle \\: \n
+            Retirer les coordonnées du polygone cliqué de self.polygones_temp
+        
+        Sortie \\: \n
+            None
+        """
+        # on récupère la liste des sous-polygones des coordonnées coords
+        sous_polys = indo.sous_polygones(coords)
+        liste = []
+        # pour chaque élément de la liste de polygones temporaires
+        for elem in self.polygones_temp:
+            # on récupère les coordonnées de cet élément
+            coords_temp = elem["features"][0]["geometry"]["coordinates"]
+            # on initialise commun à False
+            commun = False
+            # pour chaque polygone des coordonnées temporaires
+            for poly in indo.sous_polygones(coords_temp):
+                # pour chaque polygone parmi les sous-polygones des coordonnées
+                for sous_poly in sous_polys:
+                    # si les deux polygones sont égaux
+                    if indo.normaliser(poly) == indo.normaliser(sous_poly):
+                        # commun vaut True
+                        commun = True
+
+            # si commun vaut False, l'élément traité doit être retiré des
+            # polygones temporaires, donc on l'ajoute à la nouvelle liste
+            if not commun:
+                liste.append(elem)
+
+        # après avoir tout traité, on remplace les polygones temporaires par
+        # la nouvelle liste construite uniquement avec les élément qui doivent
+        # y rester
+        self.polygones_temp = copy.deepcopy(liste)
     
     def retirer_de_suppr(self, coords):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+            coords: list[list[tuple[float]]] : coordonnées du polygone cliqué
+        
+        Rôle \\: \n
+            Retirer les coordonnées du polygone cliqué de la liste des 
+            polygones à supprimer self.polygones_a_suppr
+        
+        Sortie \\: \n
+            None
+        """
+        # Même fonctionnement que self.retirer_de_temp
+
         sous_polys = indo.sous_polygones(coords)
         liste = []
         for elem in self.polygones_a_suppr:
