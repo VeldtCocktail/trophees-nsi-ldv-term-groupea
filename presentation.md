@@ -65,13 +65,52 @@ Voici la répartition de la programmation des modules du projet :
 
 - Module *reseau* : 
 
-  Maden : création d'un serveur asynchrone depuis lequel est chargé la carte, afin de charger les tuiles OpenStreetMap de façon conforme à leurs conditions d'utilisation
+  Maden : création d'un serveur asynchrone depuis lequel est chargée la carte, afin de charger les tuiles OpenStreetMap de façon conforme à leurs conditions d'utilisation
 
 - Répertoire *data* :
 
   Léon : création de la base de données SQLite `bdd.db` \
   Maden : création de la base de données `forets_vendee.geojson` \
   Charlélie : création des fichiers csv et du style dans le fichier `style.qss`
+
+## D - Temps passé sur le projet
+
+### En classe
+
+| Période | Élève | Temps passé | Objectifs | Résultats |
+|--------|------|------------|----------|----------|
+| Cours du 15/12 | Tous | 1h | Réflexion sur le projet | Plusieurs idées proposées |
+| Cours du 18/12 | Tous | 1h | Choix du projet | Projet de carte de forêts choisi, réflexion sur les données |
+| Cours du 08/01 | Tous | 1h | Choix des outils | Utilisation de SQLite et Folium |
+| Cours du 09/01 | Tous | 1h | Récupération des données | Début récupération des forêts, recherche de BDD |
+| Cours du 13/01 | Tous | 1h | Organisation du projet | GitHub mis en place, schéma BDD refait |
+| Cours du 15/01 | Tous | 1h | Travail sur les données | Amélioration des données et export HTML |
+| Cours du 16/01 | Maden | 1h | Affichage de la carte | Carte affichée avec PyQt5 |
+| Cours du 23/01 | Tous | 1h | Début interface graphique | Interface PyQt commencée |
+| Cours du 27/01 | Tous | 1h | Interface graphique | Avancement de l’interface |
+| Cours du 29/01 | Tous | 1h | Interface graphique | Poursuite du développement |
+| Cours du 30/01 | Tous | 1h | Interface graphique | Interface enrichie |
+| Cours du 03/02 | Tous | 1h | Interaction carte | Sélection des forêts via Overpass |
+| Cours du 05/02 | Partiel | 1h | Interface graphique | Améliorations interface |
+| Cours du 06/02 | Tous | 1h | Données arbres | Ajout BDD arbres |
+| Cours du 10/02 | Tous | 1h | Interaction BDD | Ajout de polygones, données enrichies |
+| Cours du 12/02 | Tous | 1h | Finalisation interactions | Requête overpass fonctionnelle |
+| Cours du 03/03 | Tous | 1h | Finalisation | Interface + compatibilité Linux |
+| Cours du 05/03 | Tous | 1h | Améliorations | Interface + README |
+| Cours du 10/03 | Partiel | 1h | Améliorations | Interface + documentation |
+
+### Travail personnel
+
+| Date | Élève | Temps | Objectifs | Résultats |
+|------|------|------|----------|----------|
+| 14/01 | Léon | 2h | Interaction BDD | Classe SQLite fonctionnelle |
+| 21/02 | Maden | 2h30 | Organisation code | Code restructuré, zoom conservé |
+| 07/03 | Maden | 4h30 | Interface graphique | Fenêtre création/modification |
+| 08/03 | Maden | 3h | Gestion des données | Affichage et sauvegarde BDD |
+| 13/03 | Maden | 3h | Polygones | Ajout/suppression fonctionnels |
+| 14/03 | Maden | 5h | Corrections | Bugs corrigés, structure améliorée |
+| 15–17/03 | Maden / Léon | 6h | Documentation | Commentaires et nettoyage |
+| 18/03 | Maden | 2h | Présentation | Fichier final rédigé |
 
 # 3 - Présentation des étapes du projet
 
