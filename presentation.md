@@ -1,48 +1,77 @@
-# 1 - Présentation du projet
+# 1 - Présentation globale du projet
 
-## 1 - Naissance de l'idée
+## A - Naissance de l'idée
 
-Dans un premier temps, nous ne savions pas vraiment ce que nous voulions faire, alors nous avons mis plusieurs idées de
-côté. Après un premier tri, nous avons décidé de faire une simulation de sélection naturelle. C'est seulement après
-réflexion que nous avons pensé que cela aurait été trop compliqué de réussir à concrétiser cette idée et que, de plus,
-beaucoup d'autres candidats risquaient d'avoir la même idée également. Alors, nous avons regardé de nouveau à travers la
-longue liste que nous avions faite et nous avons décidé de garder comme idée de projet un site de localisation de forêts
-🌲🌳.
+Dans un premier temps, nous ne savions pas vraiment ce que nous voulions faire, alors nous avons proposé plusieurs idées.
+Après un premier tri, nous avions pensé réaliser une simulation de sélection naturelle.
+Cependant, après réflexion, nous avions peur de ne pas réussir à aboutir à un projet original, puisque cela a déjà été fait à de nombreuses reprises, et de nombreuses vidéos YouTube proposent ce type de programme.
+En poursuivant notre réflexion, nous avons donc choisi de réaliser un programme permettant d'afficher les emplacements des forêts en France ainsi que certaines informations les concernant.
 
-## 2 - Problématique Initiale
+## B - Problématique Initiale
 
-Après avoir réfléchi à notre idée générale de projet, il a fallu répondre à plusieurs problématiques. Par exemple, il
-nous fallait trouver via quel procédé l'on devrait générer une carte sous format HTML. Aussi, nous avons dû déterminer
-sous quelle forme stocker les données. Une autre nécessité était de trouver toutes les informations par rapport à une 
-forêt dont on cherche plus de détails.
+Après avoir réfléchi à notre idée générale de projet, nous nous sommes interrogés sur la forme de l'interface graphique, la manière dont nous pourrions enregistrées les données.
+Nous avons également réfléchi à la manière dont nous pourrions remplir notre base de données.
 
-## 3 - Objectifs
+## C - Objectifs
+
+Les fonctionnalités initiales que nous avions choisis pour la réalisation de notre application étaient les suivants :
+- Affichage des forêts sur une carte : nous avons dès le début souhaité afficher en couleur les forêts sur une carte interactive
+- Création et modification des données géométriques : nous souhaitions implémenter la possiblité pour l'utilisateur de modifier les espaces des forêts, d'en enregistrer de nouvelles ou encore de modifier leurs caractéristiques, même si nous ne savions pas encore comment nous nous y prendrions
+- Affichage d'informations à propos de chaque forêt : nous voulions permettre à l'utilisateur de rechercher des forêts et d'accéder à plusieurs informations les concernant, telles que les variétés d'arbres ou les espèces qu'on peut y trouver.
 
 # 2 - Organisation du travail
 
-## 1 - Présentation de l'équipe
+## A - Présentation de l'équipe
+
 Notre équipe est composée de quatre personnes :
 
-- ***USSEREAU Maden***, alias **LambdaLight**, élève en Terminale 3, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée,
-  Pays de la Loire, France, Europe, la Planète Terre, Le Système Solaire, La Voie lactée, l'Univers, ayant comme
-  spécialité Mathématiques et NSI
-- ***RAIFAUD Léon***, alias **Onions**, élève en Terminale 2, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée, Pays de
-  la Loire, Europe, France, la Planète Terre, Le Système Solaire, La Voie lactée, l'Univers, ayant comme spécialité
-  Mathématiques et NSI
-- ***PASQUIER Mathéo***, alias **Meyzop**, élève en Terminale 8, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée,
-  Pays de la Loire, France, Europe, la Planète Terre, Le Système Solaire, La Voie lactée, l'Univers, ayant comme
-  spécialité Mathématiques et NSI
-- ***PINEAU Charlélie***, alias **.**, élève en Terminale 2, Lycée Léonard de Vinci, Montaigu-Vendée, Vendée, Pays de la
-  Loire, France, Europe, la Planète Terre, Le Système Solaire, La Voie lactée, l'Univers, ayant comme spécialité
-  Mathématiques et NSI
+- **Maden USSEREAU**, élève en T03, spécialités Maths et NSI
+- **Léon RAIFAUD**, élève en T02, spécialités Maths et NSI
+- **Charlélie PINEAU**, élève en T02, spécialités Maths et NSI
+- **Mathéo PASQUIER**, élève en T08, spécialités Maths et NSI
 
-## 2 - Organisation du travail
+## B - Rôle de chaque membre du groupe
 
-***USSEREAU Maden***, qui s'est occupé de la carte, son affichage, la séléction des forêts.
-***RAIFAUD Léon***, qui s'est occupé de la gestion des données nécessaires, via une base de données SQL, ainsi qu'un
-fichier GeoJSON.
-***PASQUIER Mathéo***, qui s'est principalement occupé de l'interface graphique.
-***PINEAU Charlélie***, qui s'est occupé des bases de données, ainsi que l'interface graphique.
+Nous avons initialement choisi de séparer les tâches à réaliser en plusieurs parties, en fonction des préférences de chaque membre du groupe :
+
+- Maden : Dans un premier temps, récupérer les données correspondant aux positions géographiques des forêts et générer la carte en affichant ces données ; ensuite, gérer la partie logique et algorithmique de l'interface utilisateur
+- Mathéo : Créer l'interface utilisateur du projet en implémentant l'affichage des informations concernant chaque forêt et en intégrant la carte générée à la fenêtre du programme
+- Léon : Créer la base de données SQL ainsi que les classes et méthodes qui permettent l'interaction avec cette BDD et avec le fichier GeoJSON où sont enregistrés les polygones correspondant aux forêts à afficher
+- Charlélie : Récupérer des bases de données d'arbres, d'animaux, de champignons ; définir l'apparence de l'interface graphique à travers le style QSS
+
+## C - Répartition des tâches
+
+Voici la répartition de la programmation des modules du projet :
+
+- Module *affichage* : 
+
+  Maden : création, modification et suppression de forêts et de polygones, lien entre l'interface graphique et le module *bdd* \
+  Mathéo : affichage de tous les éléments nécessaires : carte et listes de forêts, d'informations, de détails dans les fenêtres de recherche et de modification \
+  Charlélie : éléments de style de la carte
+
+- Module *bdd* : 
+
+  Léon : classes principales du module pour pemettre l'interaction avec la base de données SQLite et avec le fichier GeoJSON \
+  Maden : correction d'erreurs liées à la recherche ou à la suppression des forêts \
+  Charlélie : fonctions pour récupérer sous forme de listes les données des fichiers csv
+
+- Module *cartes* :
+
+  Maden : génération du fichier `carte.html`
+
+- Module *overpass* :
+
+  Maden : méthode qui exécute une requête overpass pour obtenir le polygone correspondant à la zone verte cliquée
+
+- Module *reseau* : 
+
+  Maden : création d'un serveur asynchrone depuis lequel est chargé la carte, afin de charger les tuiles OpenStreetMap de façon conforme à leurs conditions d'utilisation
+
+- Répertoire *data* :
+
+  Léon : création de la base de données SQLite `bdd.db` \
+  Maden : création de la base de données `forets_vendee.geojson` \
+  Charlélie : création des fichiers csv et du style dans le fichier `style.qss`
 
 # 3 - Présentation des étapes du projet
 

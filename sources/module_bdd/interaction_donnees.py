@@ -705,10 +705,13 @@ class InteractionDonnees:
                 continue
 
             # Nom de la forêt, valeur par défaut si absent
+            nom = props.get('name', "nom inconnu")
 
             # On vérifie si la forêt existe déjà dans la BDD (recherche par 
             # id_feature)
-            existe = self.bdd.rechercher_ligne("FORET", ("id_feature", id_geojson))
+            existe = self.bdd.rechercher_ligne(
+                "FORET", ("id_feature", id_geojson)
+            )
             if self.debug: print('Existe : ', existe)
 
             # Si elle n'existe pas, on l'ajoute avec des valeurs par défaut
@@ -776,7 +779,7 @@ class InteractionDonnees:
         Sortie \\: \n
             (longitude, latitude) du centre, ou None si non trouvé
         """
-        # 1. Rechercher la forêt par son nom dans la BDD pour avoir l'id_feature
+        # 1. Rechercher la forêt par son nom dans la BDD pour avoir id_feature
         # Recherche par nom
         resultats = self.bdd.rechercher_ligne("FORET", ("nom", nom_foret))  
         if not resultats:
@@ -919,7 +922,8 @@ def rechercher_dans_csv(chemin, col, valeur):
         col: int, index de la colonne à rechercher
         valeur: any, valeur à rechercher dans la colonne
     Rôle \\: \n
-        Recherche les lignes d'un fichier CSV où une colonne a une valeur spécifique
+        Recherche les lignes d'un fichier CSV où une colonne a une valeur
+        spécifique
     Sortie \\: \n
         list des lignes correspondant au critère
     """

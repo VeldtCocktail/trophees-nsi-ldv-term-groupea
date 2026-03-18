@@ -1,28 +1,29 @@
 # Explication de la base de donnees
 
 ## Table FORET
-- **id_foret** : identifiant unique de la foret, un INT
-- nom : nom de la foret, un TEXT
-- nb_visi_par_an : nombre de visites par an, un INT
-- superficie : superficie de la foret, un REAL (equivalent du flottant en Python)
-- implan_naturelle : implantation naturelle, un INT (0 pour FALSE, 1 pour TRUE)
-- \#id_eau : cle etrangere, pointant vers un identifiant unique d'un cours d'eau dans la table EAU
-- \#id_espece : cle etrangere, pointant vers un identifiant unique d'une espece dans la table ESPACE
-- \#id_risque : cle etrangere, pointant vers un identifiant unique d'un risque dans la table RISQUE
+- **id_foret** : identifiant unique de la foret (INT)
+- id_feature : identifiant unique de la "feature" correspondant à la forêt dans le fichier GeoJSON (TEXT)
+- nom : nom de la foret (TEXT)
+- nb_visi_par_an : nombre de visites par an (INT)
+- superficie : superficie de la foret (REAL)
+- implan_naturelle : implantation naturelle (INT) (0 pour FALSE, 1 pour TRUE)
 
-## Table EAU
-- **id_eau** : identifiant unique d'un cours d'eau, un INT
-- nom : nom du cours d'eau, un TEXT
-- type : type de cours d'eau, un TEXT
+## Table FORET_ANIM
+- **id_foret** : identifiant unique de la forêt qu'on met en relation (INT)
+- **id_anim** : identifiant dans le fichier csv de l'animal qu'on met en relation avec une forêt (INT)
 
-## Table ESPECE
-- **id_espece** : identifiant unique d'une espece, un INT
-- nom : nom de l'espece, un TEXT
-- scientifique : nom scientifique de l'espece, un TEXT
-- mammifere : si c'est un mammifere ou non, un INT (0 pour FALSE, 1 pour TRUE)
+## Table FORET_ARBRE
+- **id_foret** : identifiant unique de la forêt qu'on met en relation (INT)
+- **id_arbre** : identifiant dans le fichier csv de l'arbre qu'on met en relation avec une forêt (INT)
 
-## Table RISQUE
-- **id_risque** : identifiant unique d'un risque, un INT
-- type : type de risque, un TEXT
-- mortel : si c'est mortel ou non, un INT (0 pour FALSE, 1 pour TRUE)
-- commentaire : court commentaire sur ce risque (plus de details), un TEXT
+## Table FORET_CHAMPI
+- **id_foret** : identifiant unique de la forêt qu'on met en relation (INT)
+- **id_champi** : identifiant dans le fichier csv du champignon qu'on met en relation avec une forêt (INT)
+
+## Table FORET_EAU
+- **id_foret** : identifiant unique de la forêt qu'on met en relation (INT)
+- **id_eau** : identifiant dans le fichier csv du cours d'eau qu'on met en relation avec une forêt (INT)
+
+## Table FORET_RISQUE
+- **id_foret** : identifiant unique de la forêt qu'on met en relation (INT)
+- **id_risque** : identifiant dans le fichier csv du risque qu'on met en relation avec une forêt (INT)

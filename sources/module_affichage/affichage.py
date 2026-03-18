@@ -1284,11 +1284,7 @@ class FenetrePrincipale(QWidget):
             "CarteForets/1.0 (educational project)"
         )
 
-        # Carte
-        chemin_html = os.path.abspath(os.sep.join(['cartes', 'carte.html']))
-        obj_path = Path(chemin_html).resolve()
-
-        self.view.load(QUrl("http://127.0.0.1:8000/cartes/carte.html"))
+        self.view.load(QUrl("http://127.0.0.1:8000/data/cartes/carte.html"))
 
         self.pont = carte.Pont(self)
         self.channel = QWebChannel()
@@ -1393,5 +1389,4 @@ class FenetrePrincipale(QWidget):
             self.debug
         )
 
-        chemin = os.path.abspath(os.sep.join(["cartes", "carte.html"]))
-        self.view.load(QUrl("http://127.0.0.1:8000/cartes/carte.html"))
+        self.view.load(QUrl("http://127.0.0.1:8000/data/cartes/carte.html"))

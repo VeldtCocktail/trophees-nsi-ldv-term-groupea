@@ -77,7 +77,9 @@ class RequetesOverpass:
                             continue
 
                         coords_poly = [(p["lon"], p["lat"]) for p in geom_list]
-                        polygons.append([coords_poly])  # chaque polygon doit être [[coords]]
+                        
+                        # chaque polygon doit être [[coords]]
+                        polygons.append([coords_poly])
 
                     if polygons:
                         features.append({

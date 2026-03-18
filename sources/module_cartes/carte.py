@@ -155,12 +155,12 @@ def generer_carte(
     });
     </script>
     """
-    # fin de cette portion
+    # fin de la portion générée par IA
 
     carte.get_root().script.add_child(folium.Element(click_js))
     carte.get_root().html.add_child(folium.Element(qwebchannel_js))
 
-    carte.save(pathlib.Path("cartes", "carte.html"))
+    carte.save(pathlib.Path("data", "cartes", "carte.html"))
 
 def fonction_style_permanent(elem):
     return {
@@ -168,13 +168,6 @@ def fonction_style_permanent(elem):
         "color": "#1f5f3f",
         "weight": 2,
         "fillOpacity": 0.6
-    }
-
-def fonction_surligner(elem):
-    return {
-        "fillColor": "#00ff00",
-        "weight": 3,
-        "fillOpacity": 0.7
     }
 
 def fonction_style_select(elem):
