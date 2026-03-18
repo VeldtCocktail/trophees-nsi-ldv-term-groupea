@@ -102,6 +102,8 @@
 
 - 14/03/2026 : Maden (5h) : Correction de bugs, intercepteur de requêtes pour éviter le blocage des tuiles OSM, spécifications et commentaires, structuration du code
 
-#### TODO : Sélection et enregistrement des polygones + chargement, affichage, modif des infos de base des forêts
+- 15/03/2026 : Maden (1h) : Commentaires
 
-🧃
+- 16/03/1026 : Maden (1h) : Commentaires
+
+- 17/03/2026 : Maden (2h) : Commentaires
