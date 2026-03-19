@@ -90,6 +90,8 @@ def generer_carte(
     donnees_select = donnees_select or []
     donnees_suppr = donnees_suppr or []
 
+    # on crée une instance de carte Folium grâce aux tuiles OpenStreetMap
+    # depuis l'interface française
     carte = folium.Map(
         location = coord_depart,
         zoom_start = zoom,
@@ -98,16 +100,7 @@ def generer_carte(
         control_scale = True
     )
 
-    filtre_luminosite = """
-    <style>
-        .leaflet-tile {
-            filter: brightness(50%);
-        }
-    </style>
-    """
-    carte.get_root().header.add_child(folium.Element(filtre_luminosite))
-
-
+    # on ajoute à la carte les données du fichier GeoJSON
     folium.GeoJson(
         "data/forets_vendee.geojson",
         style_function = fonction_style_permanent,
