@@ -147,7 +147,7 @@ Nous pourrions enfin faire en sorte de pouvoir élargir ce programme pour qu'il 
 
 ## B – Analyse critique
 
-Nous voulions que notre programme que nous avons réalisée soit facilement accessible : que ce soit dans les recherche de forêts (permettant à l'utilisateur d'avoir la localisation de la forêts et des informations dessus) mais également dans la création ou la modifications d'une forêt (permettant de modifier les infos lorsque celle ci sont fausse ou encore de rajouter une forêt si celle ci viens d'etre crée). Les boutons, les fenêtres ou encore les barres de recherches sont visibles et intuitifs.
+Nous voulions que notre programme que nous avons réalisée soit facilement accessible : que ce soit dans les recherche de forêts (permettant à l'utilisateur d'avoir la localisation de la forêts et des informations dessus ) mais également dans la création ou la modifications d'une forêt (permettant de modifier les infos lorsque celle ci sont fausse ou encore de rajouter une forêt si celle-ci viens d'etre crée) grâce aux boutons, aux fenêtres ou encore aux barres de recherches sont également assez visibles et intuitifs.
 
 
 ## C – Compétences personnelles développées
