@@ -882,22 +882,38 @@ class GroupeForet(QGroupBox):
         Sortie \\: \n
             None
         """
+        # on enregistre les détails en cours d'édition dans le dictionnaire
         self.enregistrer_details_temp()
+
+        # on récupère le dictionnaire de la forêt en cours d'édition
         foret = self.dico_foret
         
+        # message en console si debug vaut True
         if self.fen.debug: print("Détails temp :", self.details_temp)
 
+        # on récupère les informations de la forêt depuis les zones de texte
         foret["nom"] = self.nom_foret.text().strip()
-        foret["superficie"] = float(self.superficie.text() or 0)
-        foret["nb_visit"] = float(self.nb_visit.text() or 0)
+        try:
+            foret["superficie"] = float(self.superficie.text())
+        except:
+            foret["superficie"] = 0.0
+        
+        try:
+            foret["nb_visit"] = float(self.nb_visit.text())
+        except:
+            foret["nb_visit"] = 0.0
 
+        # on détermine si l'action est une création ou une modification
         if "id" in foret:
             est_nouvelle = False
         else:
             est_nouvelle = True
 
+        # si il s'agit d'une création de forêt
         if est_nouvelle:
+            # on crée un identifiant à partir du moment de la création
             foret["id"] = round(time() * 10 ** 5)
+            # on liste les valeurs à insérer dans la table FORET de la BDD
             valeurs_bdd = [
                 foret["id"],
                 str(foret["id"]),
@@ -907,11 +923,14 @@ class GroupeForet(QGroupBox):
                 1
             ]
 
+            # on appelle la méthode d'enregistrement de la forêt dans les BDD
             self.fen.inter.ajouter_foret(valeurs_bdd, [])
             if self.fen.debug:
                 print(f"Nouvelle forêt créée : id : {foret['id']}")
             
+        # s'il s'agit d'une modification
         else:
+            # on remplace les lignes de la BDD par les nouvelles informations
             self.fen.inter.bdd.modifier_ligne(
                 "FORET",
                 (("id_foret", foret["id"]), "nom", foret["nom"])
@@ -927,6 +946,8 @@ class GroupeForet(QGroupBox):
                 (("id_foret", foret["id"]), "nb_visi_par_an", foret["nb_visit"])
             )
 
+            # on appelle la méthode de modification du nom de la forêt dans le
+            # fichier GeoJSON
             self.fen.inter.mettre_a_jour_nom_foret(foret["id"], foret["nom"])
 
         # enregistrement des polygones temporaires
@@ -975,12 +996,15 @@ class GroupeForet(QGroupBox):
 
         self.polygones_a_suppr = []
 
+        # pour chaque type de détail
         for type_detail in LISTE_DETAILS.keys():
+            # on supprime les détails de ce type pour la forêt qu'on modifie
             self.fen.inter.bdd.supprimer_ligne(
                 DICO_TABLES_DETAILS[type_detail],
                 ("id_foret", foret["id"])
             )
 
+            # on enregistre ensuite les identifiants des détails de ce type
             if type_detail in self.details_temp:
                 for valeur in self.details_temp[type_detail]:
                     chemin_csv = os.sep.join(
@@ -1000,7 +1024,10 @@ class GroupeForet(QGroupBox):
                             [foret["id"], id_val]
                         )
 
+        # on recharge la carte pour afficher la forêt créée ou modifiée
         self.fen.recharger_carte()
+        # on réinitialise les données du groupe de recherche de forêt avec les
+        # informations mises à jour
         self.fen.groupe_recherche_foret.init_donnees()
         if self.fen.debug: print("Forêt enregistrée dans la BDD :", foret)
 
