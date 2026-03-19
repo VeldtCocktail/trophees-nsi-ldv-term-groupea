@@ -140,14 +140,15 @@ Pour améliorer notre programme permettant d'afficher les emplacements des forê
 Au niveau esthétique, nous pourrions améliorer le style des barres de recherche mais nous pouvions également faire en sorte de mettre des icones ou des images sur les différentes fenetre de selection pour permettre à un utilisateur de se repérer plus facilement.
 
 
-Au niveau fonctionnel, nous pourrions prendre une carte ayant plus de précisions pour permettre à l'utilisateur de visualiser plus précisément où se trouve la forêt. Nous aurions pu aussi faire 
+Au niveau fonctionnel, nous pourrions prendre une carte ayant plus de précisions pour permettre à l'utilisateur de visualiser plus précisément où se trouve la forêt. Nous aurions pu aussi faire en sorte que l'utilisateur puisse mettre une note et un commentaire pour chaque forêts que l'on aurais également stockés comme informations sur la forêt. 
 
 
 Nous pourrions enfin faire en sorte de pouvoir élargir ce programme pour qu'il soit accessible au monde entier et réussir à capturer toutes les forêts du monde. Mais également nous pourrions faire en sorte de connaitre de nouvelles informations si des choses arrive dans la forêt ou encore si des activités sont accessibles tels que des chemins de randonnées ou encore si des compétitions sportives se font ici etc ... 
 
 ## B – Analyse critique
 
-Nous voulions que notre programme que nous avons réalisée soit facilement accessible : que ce soit dans les recherche de forêts (permettant à l'utilisateur d'avoir la localisation de la forêts et des informations dessus) mais également dans la création ou la modifications d'une forêt (permettant de modifier les infos lorsque celle ci sont fausse ou encore de rajouter une forêt si celle ci viens d'etre crée). Les boutons, les fenêtres ou encore les barres de recherches sont visibles et intuitifs
+Nous voulions que notre programme que nous avons réalisée soit facilement accessible : que ce soit dans les recherche de forêts (permettant à l'utilisateur d'avoir la localisation de la forêts et des informations dessus) mais également dans la création ou la modifications d'une forêt (permettant de modifier les infos lorsque celle ci sont fausse ou encore de rajouter une forêt si celle ci viens d'etre crée). Les boutons, les fenêtres ou encore les barres de recherches sont visibles et intuitifs.
+
 
 ## C – Compétences personnelles développées
 
