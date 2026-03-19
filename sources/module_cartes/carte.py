@@ -67,6 +67,12 @@ def generer_carte(
         donnees:list[dict[str: any]] : dictionnaire des données temporaires à
             ajouter sur la carte, de la forme {'type':'FeatureCollection', 
             'features': list[dict[str: any]]}
+        donnees:list[dict[str: any]] : dictionnaire des données de la forêt
+            sélectionnée à ajouter sur la carte, de la forme
+            {'type':'FeatureCollection', 'features': list[dict[str: any]]}
+        donnees:list[dict[str: any]] : dictionnaire des données à supprimer, à
+            ajouter sur la carte, de la forme {'type':'FeatureCollection', 
+            'features': list[dict[str: any]]}
         debug:bool : affichage des messages de debug en console
     
     Rôle \\: \n
@@ -79,6 +85,7 @@ def generer_carte(
         None
     """
 
+    # on récupère les données passées en paramètres ou des listes vides
     donnees = donnees or []
     donnees_select = donnees_select or []
     donnees_suppr = donnees_suppr or []
