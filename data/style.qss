@@ -1,5 +1,3 @@
-/* ── Forest Theme ── Premium QSS Stylesheet ── */
-
 /* ── Global ── */
 QWidget {
     background-color: #111d14;
@@ -26,7 +24,7 @@ QLabel[title="true"] {
     letter-spacing: 0.5px;
 }
 
-/* ── Group Boxes ── */
+/* ── Boites de groupes ── */
 QGroupBox {
     border: 1px solid #2e5c38;
     border-radius: 10px;
@@ -51,7 +49,7 @@ QGroupBox#groupe-foret {
     max-width: 300px;
 }
 
-/* ── Inputs ── */
+/* ── Entrees ── */
 QComboBox,
 QLineEdit,
 QSpinBox,
@@ -94,7 +92,7 @@ QComboBox QAbstractItemView {
     outline: none;
 }
 
-/* ── Buttons ── */
+/* ── Boutons ── */
 QPushButton {
     background-color: #2e7d44;
     color: #e8f5e2;
@@ -122,20 +120,22 @@ QPushButton:disabled {
     border: 1px solid #2e5c38;
 }
 
-/* ── Action Icon Buttons (+ and ?) ── */
+/* ── Boutons d'actions (+ and ?) ── */
 QPushButton#bouton-action {
     background-color: #1e4a28;
     color: #7ec87a;
     border: 1px solid #2e5c38;
-    border-radius: 8px;
-    font-size: 20px;
-    font-weight: bold;
-    min-width: 44px;
-    max-width: 44px;
-    min-height: 44px;
-    max-height: 44px;
+    border-radius: 6px;
+    font-size: 16px;
+    min-width: 34px;
+    max-width: 34px;
+    min-height: 34px;
+    max-height: 34px;
     padding: 0px;
 }
+
+
+
 
 QPushButton#bouton-action:hover {
     background-color: #2e7d44;
@@ -249,7 +249,7 @@ QTabBar::tab:hover:!selected {
     color: #a8d5a2;
 }
 
-/* ── Status Bar ── */
+/* ── Barre de statut ── */
 QStatusBar {
     background-color: #0e1a10;
     color: #5d9462;
@@ -257,7 +257,7 @@ QStatusBar {
     border-top: 1px solid #1e3d22;
 }
 
-/* ── Tool Tips ── */
+/* ── Tooltips ── */
 QToolTip {
     background-color: #1c3820;
     color: #c8e0c3;
@@ -267,7 +267,7 @@ QToolTip {
     font-size: 12px;
 }
 
-/* ── Menu Bar & Menus ── */
+/* ── Barre Menu & Menus ── */
 QMenuBar {
     background-color: #0e1a10;
     color: #a8d5a2;
