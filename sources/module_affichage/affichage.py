@@ -1340,7 +1340,7 @@ class FenetrePrincipale(QWidget):
         bouton_nouveau = QPushButton("+")
         bouton_nouveau.clicked.connect(self.afficher_nouvelle_foret)
 
-        bouton_recherche = QPushButton("?")
+        bouton_recherche = QPushButton("🔍")
         bouton_recherche.clicked.connect(self.afficher_groupe_recherche)
 
         bouton_nouveau.setObjectName("bouton-action")
