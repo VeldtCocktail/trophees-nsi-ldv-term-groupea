@@ -226,8 +226,11 @@ class GroupeForet(QGroupBox):
         self.bouton_sel = QPushButton()
         # on change le texte du bouton
         self.bouton_sel.setText('Sélection')
+        self.bouton_sel.setCheckable(True)
+        self.bouton_sel.setObjectName("bouton-sel")
         # on exécutera self.changer_mode_sel lors d'un clic sur ce bouton
         self.bouton_sel.clicked.connect(self.changer_mode_sel)
+
 
         # on crée un bouton pour afficher et modifier les arbres de la forêt
         self.bouton_arbres = QPushButton()
@@ -257,12 +260,15 @@ class GroupeForet(QGroupBox):
         # dans la base de données
         self.bouton_enregistrer = QPushButton()
         self.bouton_enregistrer.setText("Enregistrer")
+        self.bouton_enregistrer.setObjectName("bouton-enregistrer")
         self.bouton_enregistrer.clicked.connect(self.enregistrer_foret_bdd)
 
         # on crée un bouton pour supprimer la forêt sélectionnée
         self.bouton_supprimer = QPushButton()
         self.bouton_supprimer.setText("Supprimer la forêt")
+        self.bouton_supprimer.setObjectName("bouton-supprimer")
         self.bouton_supprimer.clicked.connect(self.supprimer_foret)
+
         
 
         # on ajoute tous ces boutons à l'intérieur du layout
@@ -626,11 +632,15 @@ class GroupeForet(QGroupBox):
         """
         # on remplace la valeur de mode_sel par sa négation booléenne
         self.mode_sel = not self.mode_sel
+        
+        # on synchronise l'état du bouton avec la variable mode_sel
+        self.bouton_sel.setChecked(self.mode_sel)
 
         # message en console si debug vaut True
         if self.fen.debug: print('Sélection : ' + str(self.mode_sel))
 
         # on appelle la méthode d'enregistrement des détails temporaires
+
         self.enregistrer_details_temp()
 
     def gerer_clic_cartes(self, coord, zoom):
@@ -1072,7 +1082,9 @@ class GroupeForet(QGroupBox):
     def mettre_a_jour(self, foret):
         self.dico_foret = foret
         self.mode_sel = False
+        self.bouton_sel.setChecked(False)
         self.polygones_temp = []
+
         self.polygones_a_suppr = []
 
         self.nom_foret.setText(foret.get("nom", ""))

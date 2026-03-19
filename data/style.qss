@@ -114,6 +114,41 @@ QPushButton:pressed {
     color: #c8e0c3;
 }
 
+/* ── Bouton Sélection (Toggle) ── */
+QPushButton#bouton-sel:checked {
+    background-color: #7ec87a;
+    color: #0e1a10;
+}
+
+/* ── Bouton Enregistrer (Blue) ── */
+QPushButton#bouton-enregistrer {
+    background-color: #3b82f6;
+    color: #ffffff;
+}
+
+QPushButton#bouton-enregistrer:hover {
+    background-color: #60a5fa;
+}
+
+QPushButton#bouton-enregistrer:pressed {
+    background-color: #2563eb;
+}
+
+/* ── Bouton Supprimer (Red) ── */
+QPushButton#bouton-supprimer {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+
+QPushButton#bouton-supprimer:hover {
+    background-color: #f87171;
+}
+
+QPushButton#bouton-supprimer:pressed {
+    background-color: #dc2626;
+}
+
+
 QPushButton:disabled {
     background-color: #1f3522;
     color: #557060;
