@@ -418,16 +418,18 @@ class GroupeForet(QGroupBox):
         Sortie \\: \n
             None
         """
+        if self.fen.debug: print("Détail à supprimer")
+
         # on récupère l'indice de la ligne des détails de la forêt sélectionnée
         idx = self.liste_valeurs.currentRow()
 
         # si l'indice existe et est compris entre 0 et le nombre d'éléments de
         # la liste des détails
-        if idx and idx >= 0 and idx < self.liste_valeurs.count():
+        if idx is not None and idx > -1 and idx < self.liste_valeurs.count():
             # on retire de la liste l'élément à cet indice en le récupérant
             elem = self.liste_valeurs.takeItem(idx)
             # message en console si debug vaut True
-            if self.fen.debug: print(elem.text())
+            if self.fen.debug: print("Suppression :", elem.text())
 
         # on enregistre la modification des détails temporaires de la forêt
         self.enregistrer_details_temp()
