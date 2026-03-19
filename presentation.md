@@ -117,6 +117,20 @@ Voici la répartition de la programmation des modules du projet :
 
 # 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
 
+## A - Vérification des bugs et bon fonctionnement de l'application
+
+Afin d'éviter les bugs, nous avons mis en place plusieurs tests et vérifications. 
+Pour permettre une meilleure organisation des tests, nous avons décidé de vérifier le bon fonctionnement de chaque module séparément, puis de vérifier le bon fonctionnement de l'application dans son ensemble.
+Cela se manifeste par des fichiers (absents aujourd'hui) qui ont permis de tester plusieurs fonctionnalités cruciales du programme. 
+Par exemple, dans le cas du module s'occupant de la base de données (voir le dossier ```module_bdd```), un fichier précédemment nommé ```tests.py``` nous a permis d'essayer et tester de nouvelles fonctions/ méthodes associées à la base de données. 
+Aussi, cela nous a permis d'utiliser des extraits de données pour tester le bon fonctionnement de l'application, sans avoir à les charger dans leur entièreté.
+
+## B - Difficultés rencontrées et solutions algorithmiques
+Tout au long du développement de notre projet, plusieurs difficultés se sont placées sur notre chemin. Cela nous a obligé à réfléchir à des solutions pertinentes, efficaces et pouvant être inclues dans notre programme de façon cohérente et facilement compréhensible/ débogable.
+
+Un des défis associés à lister et afficher les forêts est de réussir à récupérer les polygones correspondant aux forêts. En effet, un de nos objectifs était non seulement de lister et afficher les forêts que nous pouvons trouver via Overpass (et par extension OpenStreetMap), mais également de permettre à l'utilisateur d'en créer de nouvelles, d'en supprimer, et de les modifier en termes de détails (arbres, insectes, etc ...).
+Malgré l'existence de bibliothèques comme Shapely et JSON nous permettant d'interagir avec ces polygones, il a fallu faire correspondre les données liées aux polygones seulement de [forets_vendee.geojson](data/forets_vendee.geojson) avec les données de la base de données SQLite [bdd.db](data/bdd.db), comme par exemple les noms des forêts, leur superficie, etc ...  
+
 # 5 - Ouverture
 
 ## A – Idées d'amélioration du projet
