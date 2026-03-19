@@ -111,6 +111,7 @@ Voici la répartition de la programmation des modules du projet :
 | 14/03 | Maden | 5h | Corrections | Bugs corrigés, structure améliorée |
 | 15–17/03 | Maden / Léon | 6h | Documentation | Commentaires et nettoyage |
 | 18/03 | Maden | 2h | Présentation | Fichier final rédigé |
+| 19/03 | Charlélie | 1h | Visuel | Style.qss |
 
 # 3 - Présentation des étapes du projet
 
