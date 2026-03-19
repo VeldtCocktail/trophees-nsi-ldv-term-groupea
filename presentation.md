@@ -122,7 +122,10 @@ Voici la répartition de la programmation des modules du projet :
 ## A – Idées d'amélioration du projet
 
 Pour améliorer notre programme permettant d'afficher les emplacements des forêts, nous pourrions travailler sur plusieurs aspects différents.
-Au niveau esthétique, nous pourrions améliorer le style et la mise en page de certaines pages comme la page d’accueil ou les listes d’événements.
+
+Au niveau esthétique, nous pourrions améliorer le style des barres de recherche 
+
+Nous pourrions enfin faire en sorte de pouvoir élargir ce programme pour qu'il soit accessible au monde entier et réussir à capturer toutes les forêts du monde. Mais également nous pourrions faire en sorte de connaitre de nouvelles informations si des choses arrive dans la forêt ou encore si des activités sont accessibles tels que des chemins de randonnées ou encore si des compétitions sportives se font ici etc ... 
 
 ## B – Analyse critique
 
