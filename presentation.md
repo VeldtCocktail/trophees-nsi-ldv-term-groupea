@@ -121,6 +121,9 @@ Voici la répartition de la programmation des modules du projet :
 
 ## A – Idées d'amélioration du projet
 
+Pour améliorer notre programme permettant d'afficher les emplacements des forêts, nous pourrions travailler sur plusieurs aspects différents.
+Au niveau esthétique, nous pourrions améliorer le style et la mise en page de certaines pages comme la page d’accueil ou les listes d’événements.
+
 ## B – Analyse critique
 
 ## C – Compétences personnelles développées
