@@ -118,3 +118,11 @@ Voici la répartition de la programmation des modules du projet :
 # 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
 
 # 5 - Ouverture
+
+## A – Idées d'amélioration du projet
+
+## B – Analyse critique
+
+## C – Compétences personnelles développées
+
+## D – Accessibilité et inclusion
