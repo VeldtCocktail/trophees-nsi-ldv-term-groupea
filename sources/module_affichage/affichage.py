@@ -893,15 +893,8 @@ class GroupeForet(QGroupBox):
 
         # on récupère les informations de la forêt depuis les zones de texte
         foret["nom"] = self.nom_foret.text().strip()
-        try:
-            foret["superficie"] = float(self.superficie.text())
-        except:
-            foret["superficie"] = 0.0
-        
-        try:
-            foret["nb_visit"] = float(self.nb_visit.text())
-        except:
-            foret["nb_visit"] = 0.0
+        foret["superficie"] = float(self.superficie.text() or 0)
+        foret["nb_visit"] = float(self.nb_visit.text() or 0)
 
         # on détermine si l'action est une création ou une modification
         if "id" in foret:
@@ -1108,6 +1101,7 @@ class GroupeRecherche(QGroupBox):
         if self.fen.debug: print("Forêts chargées !")
 
     def init_interface(self):
+        self.setObjectName('groupe-foret')
         layout = QVBoxLayout()
 
         self.rech_for = QLineEdit()
@@ -1347,14 +1341,17 @@ class FenetrePrincipale(QWidget):
         bouton_recherche = QPushButton("?")
         bouton_recherche.clicked.connect(self.afficher_groupe_recherche)
 
-        interface_gauche.addWidget(bouton_nouveau)
-        interface_gauche.addWidget(bouton_recherche)
+        bouton_nouveau.setObjectName("bouton-action")
+        bouton_recherche.setObjectName("bouton-action")
+
         interface_gauche.addStretch()
+        interface_gauche.addWidget(bouton_recherche)
+        interface_gauche.addWidget(bouton_nouveau)
 
         main_layout.addLayout(interface_gauche)
         main_layout.addWidget(self.groupe_recherche_foret)
         main_layout.addWidget(self.groupe_modif_foret)
-        main_layout.addWidget(self.view)
+        main_layout.addWidget(self.view, 1)
 
     def afficher_nouvelle_foret(self):
         self.groupe_modif_foret.mettre_a_jour({})
