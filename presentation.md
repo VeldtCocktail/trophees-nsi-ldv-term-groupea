@@ -137,7 +137,11 @@ Malgré l'existence de bibliothèques comme Shapely et JSON nous permettant d'in
 
 Pour améliorer notre programme permettant d'afficher les emplacements des forêts, nous pourrions travailler sur plusieurs aspects différents.
 
-Au niveau esthétique, nous pourrions améliorer le style des barres de recherche mais nous pouvions également faire en sorte de mettre des icones ou des images sur les différentes fenetre de selection por permettre à un utilisateur de se repérer plus facilement.
+Au niveau esthétique, nous pourrions améliorer le style des barres de recherche mais nous pouvions également faire en sorte de mettre des icones ou des images sur les différentes fenetre de selection pour permettre à un utilisateur de se repérer plus facilement.
+
+
+Au niveau fonctionnel, nous pourrions prendre une carte ayant plus de précisions pour permettre à l'utilisateur de visualiser plus précisément où se trouve la forêt. Nous aurions pu aussi faire 
+
 
 Nous pourrions enfin faire en sorte de pouvoir élargir ce programme pour qu'il soit accessible au monde entier et réussir à capturer toutes les forêts du monde. Mais également nous pourrions faire en sorte de connaitre de nouvelles informations si des choses arrive dans la forêt ou encore si des activités sont accessibles tels que des chemins de randonnées ou encore si des compétitions sportives se font ici etc ... 
 
