@@ -1311,7 +1311,7 @@ class FenetrePrincipale(QWidget):
         profil = QtWebEngineWidgets.QWebEngineProfile.defaultProfile()
         profil.setUrlRequestInterceptor(self.intercepteur)
         profil.setHttpUserAgent(
-            "CarteForets/1.0 (educational project)"
+            "DaVinciMap/1.0 (educational project)"
         )
 
         self.view.load(QUrl("http://127.0.0.1:8000/data/cartes/carte.html"))
