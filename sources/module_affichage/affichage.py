@@ -893,8 +893,15 @@ class GroupeForet(QGroupBox):
 
         # on récupère les informations de la forêt depuis les zones de texte
         foret["nom"] = self.nom_foret.text().strip()
-        foret["superficie"] = float(self.superficie.text() or 0)
-        foret["nb_visit"] = float(self.nb_visit.text() or 0)
+        try:
+            foret["superficie"] = float(self.superficie.text())
+        except:
+            foret["superficie"] = 0.0
+        
+        try:
+            foret["nb_visit"] = float(self.nb_visit.text())
+        except:
+            foret["nb_visit"] = 0.0
 
         # on détermine si l'action est une création ou une modification
         if "id" in foret:
