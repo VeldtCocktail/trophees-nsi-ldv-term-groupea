@@ -649,7 +649,6 @@ class GroupeForet(QGroupBox):
         if self.fen.debug: print('Sélection : ' + str(self.mode_sel))
 
         # on appelle la méthode d'enregistrement des détails temporaires
-
         self.enregistrer_details_temp()
 
     def gerer_clic_cartes(self, coord, zoom):
@@ -914,6 +913,9 @@ class GroupeForet(QGroupBox):
 
         # on récupère les informations de la forêt depuis les zones de texte
         foret["nom"] = self.nom_foret.text().strip()
+        if foret["nom"] == "":
+            foret["nom"] = "Forêt sans nom"
+
         try:
             foret["superficie"] = float(self.superficie.text())
         except:
