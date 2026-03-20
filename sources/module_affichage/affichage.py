@@ -204,13 +204,19 @@ class GroupeForet(QGroupBox):
         layout_superficie.addWidget(label_superficie)
         layout_superficie.addWidget(self.superficie)
 
+        # on crée une zone horizontale pour les visiteurs
+        layout_visit = QHBoxLayout()
+        label_visit = QLabel("Visiteurs/an")
+        label_visit.setObjectName("label-champ")
         self.nb_visit = QLineEdit()
         self.nb_visit.setPlaceholderText("Visiteurs / an")
+        layout_visit.addWidget(label_visit)
+        layout_visit.addWidget(self.nb_visit)
 
         # on ajoute ces zones au layout
         layout.addLayout(layout_nom)
         layout.addLayout(layout_superficie)
-        layout.addWidget(self.nb_visit)
+        layout.addLayout(layout_visit)
 
         # puis on renvoie le layout
         return layout
