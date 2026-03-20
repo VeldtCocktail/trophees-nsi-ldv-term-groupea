@@ -186,21 +186,30 @@ class GroupeForet(QGroupBox):
         # zone verticale dans laquelle on ajoute des éléments
         layout = QVBoxLayout()
 
-        # on crée une zone de texte représentant le nom de la forêt et on lui
-        # affecte une texte de remplacement tant qu'elle est vide
+        # on crée une zone horizontale pour le nom
+        layout_nom = QHBoxLayout()
+        label_nom = QLabel("Nom")
+        label_nom.setObjectName("label-champ")
         self.nom_foret = QLineEdit()
-        self.nom_foret.setPlaceholderText("Nom de la forêt")
+        self.nom_foret.setPlaceholderText("Nom")
+        layout_nom.addWidget(label_nom)
+        layout_nom.addWidget(self.nom_foret)
 
-        # on fait de même pour la superficie et le nombre de visiteurs par an
+        # on crée une zone horizontale pour la superficie
+        layout_superficie = QHBoxLayout()
+        label_superficie = QLabel("Superficie")
+        label_superficie.setObjectName("label-champ")
         self.superficie = QLineEdit()
         self.superficie.setPlaceholderText("Superficie")
+        layout_superficie.addWidget(label_superficie)
+        layout_superficie.addWidget(self.superficie)
 
         self.nb_visit = QLineEdit()
         self.nb_visit.setPlaceholderText("Visiteurs / an")
 
-        # on ajoute ces trois zones de texte au layout
-        layout.addWidget(self.nom_foret)
-        layout.addWidget(self.superficie)
+        # on ajoute ces zones au layout
+        layout.addLayout(layout_nom)
+        layout.addLayout(layout_superficie)
         layout.addWidget(self.nb_visit)
 
         # puis on renvoie le layout

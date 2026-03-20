@@ -24,6 +24,14 @@ QLabel[title="true"] {
     letter-spacing: 0.5px;
 }
 
+QLabel#label-champ {
+    background-color: #1c2e1e;
+    color: #d4e8d0;
+    border: 1px solid #2e5c38;
+    border-radius: 6px;
+    padding: 5px 9px;
+}
+
 /* ── Boites de groupes ── */
 QGroupBox {
     border: 1px solid #2e5c38;
