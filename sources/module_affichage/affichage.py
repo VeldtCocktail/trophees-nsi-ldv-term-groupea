@@ -705,6 +705,7 @@ class GroupeForet(QGroupBox):
 
         # si les features sont vides
         if not features:
+            # On affiche une fenêtre popup pour en informer l'utilisateur
             self.fen.msg_box = QMessageBox()
             self.fen.msg_box.setText("Aucun polygone trouvé")
             self.fen.msg_box.show()
