@@ -3,7 +3,8 @@ import json
 import csv
 import os
 import math
-from shapely.geometry import shape
+from shapely.geometry import shape, mapping
+from shapely.ops import orient
 
 class BaseDeDonnees:
     """
@@ -364,6 +365,17 @@ class InteractionJSON:
         Sortie \\: \n
             True si ajouté, False sinon
         """
+        # normalisation du sens des anneaux GeoJSON
+        try:
+            geom_temp = shape(
+                {"type": "Polygon", "coordinates": nouvelles_coords}
+            )
+            geom_orientee = orient(geom_temp, sign = 1.0)
+            nouvelles_coords = mapping(geom_orientee)["coordinates"]
+
+        except Exception:
+            pass
+
         trouve = False
         # Référence à la liste des features
         features = self.data['features']
@@ -873,9 +885,9 @@ class InteractionDonnees:
 
         # 1 hectare = 10 000 m2
         # Conversion m² -> hectares
-        superficie_ha = superficie_m2 / 10000               
+        superficie_ha = superficie_m2 / 10000
 
-        return float(superficie_ha)
+        return float(round(superficie_ha, 5))
 
     def mettre_a_jour_nom_foret(self, id_foret, nouveau_nom):
         # Conversion en str car les IDs GeoJSON sont des chaînes
@@ -990,3 +1002,35 @@ def sous_polygones(coords):
 
     # Polygon : on l'encapsule dans une liste pour uniformiser
     return [coords_norm]         
+
+def egaux(coords_a, coords_b, tolerance = 0.99):
+    """
+    Entrées \\: \n
+        coords_a: list[tuple], coordonnées du premier polygone
+        coords_b: list, coordonnées du second polygone
+        tolerance:float : ratio minimal d'intersection pour considérer deux
+            polygones comme égaux (par défaut: 0.99)
+
+    Rôle \\: \n
+        Compare deux polygones géométriquement via shapely pour éviter
+        les faux négatifs dus aux différences de précision de flottants
+
+    Sortie \\: \n
+        bool : True si les deux polygones sont géométriquement équivalents
+    """
+    try:
+        geo_a = shape({"type": "Polygon", "coordinates": coords_a})
+        geo_b = shape({"type": "Polygon", "coordinates": coords_b})
+
+        # si l'un des deux polygones est vide, on ne peut pas comparer
+        if geo_a.area == 0 or geo_b.area == 0:
+            return False
+
+        # on calcule le ratio d'intersection sur le plus grand des polygones
+        intersection = geo_a.intersection(geo_b)
+        ratio = intersection.area / max(geo_a.area, geo_b.area)
+
+        return ratio > tolerance
+
+    except Exception:
+        return False

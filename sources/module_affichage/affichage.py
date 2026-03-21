@@ -4,7 +4,7 @@
 # importation des bibliothèques nécessaires
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QListWidget, QGroupBox,
-    QLineEdit, QRadioButton, QComboBox, QLabel
+    QLineEdit, QRadioButton, QComboBox, QLabel, QMessageBox
 )
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtWebChannel import QWebChannel
@@ -637,6 +637,17 @@ class GroupeForet(QGroupBox):
                 self.liste_valeurs.addItem(texte)
 
     def calculer(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+        
+        Rôle \\: \n
+            Calculer la superficie de la forêt et modifier les lignes dans la
+            BDD ainsi que le texte du champ "Superficie"
+        
+        Sortie \\: \n
+            None
+        """
         id_foret = self.dico_foret.get('id', None)
 
         if id_foret:
@@ -692,9 +703,13 @@ class GroupeForet(QGroupBox):
         # None si la clé "features" n'est pas présente dans le dictionnaire
         features = resultat.get("features", [])
 
-        # si les features sont vides, on affiche un message en console si debug
-        # vaut True
+        # si les features sont vides
         if not features:
+            self.fen.msg_box = QMessageBox()
+            self.fen.msg_box.setText("Aucun polygone trouvé")
+            self.fen.msg_box.show()
+
+            # on affiche un message en console si debug vaut True
             if self.fen.debug:
                 print("Aucun polygone trouvé")
 
@@ -758,7 +773,7 @@ class GroupeForet(QGroupBox):
                 # on parcourt chaque sous polygone de la liste
                 for sous_poly in sous_polys:
                     # si les deux polygones sont égaux, on renvoie True
-                    if indo.normaliser(poly) == indo.normaliser(sous_poly):
+                    if indo.egaux(poly, sous_poly):
                         return True
                     
         # si on n'a pas trouvé d'égalité de polygones, on renvoie False
@@ -784,7 +799,7 @@ class GroupeForet(QGroupBox):
             coords_temp = elem["features"][0]["geometry"]["coordinates"]
             for poly in indo.sous_polygones(coords_temp):
                 for sous_poly in sous_polys:
-                    if indo.normaliser(poly) == indo.normaliser(sous_poly):
+                    if indo.egaux(poly, sous_poly):
                         return True
                     
         return False
@@ -833,7 +848,7 @@ class GroupeForet(QGroupBox):
             # on parcourt chaque polygone de la liste de coordonnées construite
             for poly in liste_coords:
                 # si les deux polygones sont égaux, on renvoie True
-                if indo.normaliser(sous_poly) == indo.normaliser(poly):
+                if indo.egaux(sous_poly, poly):
                     return True
                 
         # si on n'a pas trouvé d'égalité, on renvoie False
@@ -865,7 +880,7 @@ class GroupeForet(QGroupBox):
                 # pour chaque polygone parmi les sous-polygones des coordonnées
                 for sous_poly in sous_polys:
                     # si les deux polygones sont égaux
-                    if indo.normaliser(poly) == indo.normaliser(sous_poly):
+                    if indo.egaux(poly, sous_poly):
                         # commun vaut True
                         commun = True
 
@@ -901,7 +916,7 @@ class GroupeForet(QGroupBox):
             commun = False
             for poly in indo.sous_polygones(coords_temp):
                 for sous_poly in sous_polys:
-                    if indo.normaliser(poly) == indo.normaliser(sous_poly):
+                    if indo.egaux(poly, sous_poly):
                         commun = True
             if not commun:
                 liste.append(elem)
@@ -1034,7 +1049,7 @@ class GroupeForet(QGroupBox):
                         if 0 <= idx and idx < len(coords_liste):
                             coords_temp = coords_liste[idx]
 
-                            if indo.normaliser(coords_temp) == coords_a_suppr:
+                            if indo.egaux(coords_temp, coords_a_suppr):
                                 self.fen.inter.retirer_polygone_a_foret(
                                     foret["id"], idx
                                 )

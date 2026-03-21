@@ -1,5 +1,6 @@
 import requests
-from shapely.geometry import shape, Point, Polygon, MultiPolygon
+from shapely.geometry import shape, Point, Polygon, MultiPolygon, mapping
+from shapely.ops import orient
 
 class RequetesOverpass:
     def __init__(self):
@@ -11,8 +12,9 @@ class RequetesOverpass:
         self.headers = {
             "User-Agent": "CarteForets/1.0 (contact: lambda.light@proton.me)"
         }
+        self.nb_essais = len(self.apis)
 
-    def zone_verte(self, coords):
+    def zone_verte(self, coords, essai = 0):
         lat, lon = coords
 
         delta = 0.01  # ~1km bounding box
@@ -98,48 +100,69 @@ class RequetesOverpass:
             # Pick polygon that contains the click
             pnt = Point(lon, lat)
 
+            # on cherche d'abord un polygone qui contient le clic
             containing = []
-            for f in features:
-                geom = shape(f["geometry"])
+            for feature in features:
+                geom = shape(feature["geometry"])
 
                 if geom.contains(pnt):
-                    containing.append(f)
+                    containing.append(feature)
 
             if containing:
                 closest = containing[0]
-                geom = closest["geometry"]
-
-                # Pour un MultiPolygon, ne garder que le sous-polygone cliqué
-                if geom["type"] == "MultiPolygon":
-                    for sous_poly in geom["coordinates"]:
-                        forme_poly = shape(
-                            {"type": "Polygon", "coordinates": sous_poly}
-                        )
-
-                        if forme_poly.contains(pnt):
-                            closest = {
-                                "type": "Feature",
-                                "geometry": {
-                                    "type": "Polygon",
-                                    "coordinates": sous_poly
-                                },
-                                "properties": {}
-                            }
-
-                            resultat = {
-                                "type": "FeatureCollection",
-                                "features": [closest]
-                            }
-
-                            return resultat
-
             else:
                 return {"type": "FeatureCollection", "features": []}
 
+            # Pour un MultiPolygon, on ne garde que le sous-polygone cliqué
+            if closest["geometry"]["type"] == "MultiPolygon":
+                geom_dict = closest["geometry"]
+                meilleur = None
+
+                # on cherche d'abord un sous-polygone qui contient strictement
+                # le point cliqué
+                for sous_poly in geom_dict["coordinates"]:
+                    forme_poly = shape(
+                        {"type": "Polygon", "coordinates": sous_poly}
+                    )
+                    if forme_poly.contains(pnt) and meilleur is None:
+                        meilleur = sous_poly
+
+                # si aucun ne contient strictement le point (clic sur bordure),
+                # on prend le sous-polygone le plus proche du clic
+                if meilleur is None:
+                    meilleur = min(
+                        geom_dict["coordinates"],
+                        key=lambda coordonnees: shape(
+                            {"type": "Polygon", "coordinates": coordonnees}
+                        ).distance(pnt)
+                    )
+
+                # on crée le dictionnaire à renvoyer
+                closest = {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": meilleur
+                    },
+                    "properties": {}
+                }
+
+            # normalisation du "winding order" (anneaux extérieurs en sens 
+            # antihoraire) pour afficher correctement le polygone
+            try:
+                geom_shapely = shape(closest["geometry"])
+                geom_orientee = orient(geom_shapely, sign=1.0)
+                closest["geometry"] = mapping(geom_orientee)
+
+            except Exception as e:
+                print("Erreur :", e)
 
             resultat = {"type": "FeatureCollection", "features": [closest]}
             return resultat
 
         except Exception as e:
             print("Erreur :", e)
-            return {"type": "FeatureCollection", "features": []}
+            if essai < self.nb_essais:
+                return self.zone_verte(coords, essai = essai + 1)
+            else:
+                return {"type": "FeatureCollection", "features": []}
