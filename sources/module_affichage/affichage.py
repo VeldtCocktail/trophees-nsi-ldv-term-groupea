@@ -25,7 +25,7 @@ from module_reseau import intercepteur
 # détail au nom de la table correspondant dans la base de données (BDD)
 DICO_TABLES_DETAILS = {
     "arbres": "FORET_ARBRE",
-    "anim": "FORET_ANIM",
+    "animaux": "FORET_ANIM",
     "eau": "FORET_EAU",
     "champis": "FORET_CHAMPI",
     "risques": "FORET_RISQUE"
@@ -35,7 +35,7 @@ DICO_TABLES_DETAILS = {
 # détail à l'identifiant de ce détail dans la table de la BDD qui y correspond
 DICO_ID_DETAILS = {
     "arbres": "id_arbre",
-    "anim": "id_anim",
+    "animaux": "id_anim",
     "eau": "id_eau",
     "champis": "id_champi",
     "risques": "id_risque"
@@ -45,7 +45,7 @@ DICO_ID_DETAILS = {
 # détail au nom du fichier csv correspondant dans le répertoire .\data
 DICO_CSV_DETAILS = {
     "arbres":  "bdd_arbres.csv",
-    "anim":    "bdd_animaux.csv",
+    "animaux":    "bdd_animaux.csv",
     "champis": "bdd_toad.csv",
     "eau":     "eau.csv",
     "risques": "bdd_risques.csv"
@@ -56,7 +56,7 @@ DICO_CSV_DETAILS = {
 # lui correspond
 LISTE_DETAILS = {
     "arbres": indo.charger_donnees_csv(['data', 'bdd_arbres.csv']),
-    "anim": indo.charger_donnees_csv(['data', 'bdd_animaux.csv']),
+    "animaux": indo.charger_donnees_csv(['data', 'bdd_animaux.csv']),
     "champis": indo.charger_donnees_csv(['data', 'bdd_toad.csv']),
     "eau": indo.charger_donnees_csv(['data', 'eau.csv']),
     "risques": indo.charger_donnees_csv(['data', 'bdd_risques.csv'])
@@ -197,12 +197,15 @@ class GroupeForet(QGroupBox):
 
         # on crée une zone horizontale pour la superficie
         layout_superficie = QHBoxLayout()
-        label_superficie = QLabel("Superficie")
+        label_superficie = QLabel("Superficie (ha)")
         label_superficie.setObjectName("label-champ")
         self.superficie = QLineEdit()
         self.superficie.setPlaceholderText("Superficie")
+        self.calc_superficie = QPushButton("#")
+        self.calc_superficie.clicked.connect(self.calculer)
         layout_superficie.addWidget(label_superficie)
         layout_superficie.addWidget(self.superficie)
+        layout_superficie.addWidget(self.calc_superficie)
 
         # on crée une zone horizontale pour les visiteurs
         layout_visit = QHBoxLayout()
@@ -508,7 +511,7 @@ class GroupeForet(QGroupBox):
         # on enregistre les détails temporaires pour le type qui était affiché
         self.enregistrer_details_temp()
         # on définit le type des détails en cours de modification à "anim"
-        self.type_details = "anim"
+        self.type_details = "animaux"
         # puis on appelle la méthode d'affichage des détails
         self.afficher_details()
 
@@ -632,6 +635,16 @@ class GroupeForet(QGroupBox):
             for texte in self.details_temp[self.type_details]:
                 # en ajoutant chaque détail à la liste des éléments affichés
                 self.liste_valeurs.addItem(texte)
+
+    def calculer(self):
+        id_foret = self.dico_foret.get('id', None)
+
+        if id_foret:
+            superficie = self.fen.inter.calculer_superficie_foret(id_foret)
+            self.fen.inter.bdd.modifier_ligne(
+                "FORET", (("id_foret", id_foret), "superficie", superficie)
+            )
+            self.superficie.setText(str(superficie))
 
     def changer_mode_sel(self):
         """
@@ -972,7 +985,10 @@ class GroupeForet(QGroupBox):
 
             self.fen.inter.bdd.modifier_ligne(
                 "FORET",
-                (("id_foret", foret["id"]), "nb_visi_par_an", foret["nb_visit"])
+                (
+                    ("id_foret", foret["id"]),
+                    "nb_visi_par_an", foret["nb_visit"]
+                )
             )
 
             # on appelle la méthode de modification du nom de la forêt dans le
@@ -1109,6 +1125,7 @@ class GroupeForet(QGroupBox):
         self.nb_visit.setText(str(foret.get("nb_visit", "")))
 
         self.bouton_supprimer.setEnabled("id" in foret)
+        self.calc_superficie.setEnabled("id" in foret)
 
         if self.fen.debug: print("Update :", foret)
 
@@ -1250,11 +1267,10 @@ class GroupeRecherche(QGroupBox):
         id_foret = liste_infos[0][0]
         superficie = liste_infos[0][4]
 
-        if superficie == 0.0:
-            superficie = self.fen.inter.calculer_superficie_foret(id_foret)
-            self.fen.inter.bdd.modifier_ligne(
-                "FORET", (("id_foret", id_foret), "superficie", superficie)
-            )
+        superficie = self.fen.inter.calculer_superficie_foret(id_foret)
+        self.fen.inter.bdd.modifier_ligne(
+            "FORET", (("id_foret", id_foret), "superficie", superficie)
+        )
 
         dico_details = self.rechercher_details_foret(id_foret)
 
@@ -1293,7 +1309,7 @@ class GroupeRecherche(QGroupBox):
             dico_details,
             [
                 ("arbres", liste_id_arbres, "bdd_arbres.csv"),
-                ("anim", liste_id_anim, "bdd_animaux.csv"),
+                ("animaux", liste_id_anim, "bdd_animaux.csv"),
                 ("champis", liste_id_champis, "bdd_toad.csv"),
                 ("eau", liste_id_eau, "eau.csv"),
                 ("risques", liste_id_risques, "bdd_risques.csv")
