@@ -22,33 +22,55 @@ JavaScript ↔ Python via QWebChannel)
 ## Structure du Projet
 
 ```
-racine/
 ├── data/                           # Données du projet (GeoJSON, SQLite, styles)
-├── sources/                        # Code source Python
-│   ├── main.py                     # Script de test/lancement
-│   ├── module_affichage/           # Interface PyQt5 et gestion des vues
-│   ├── module_bdd/                 # Gestion SQLite et GeoJSON
-│   ├── module_cartes/              # Génération de cartes Folium
-│   └── module_overpass/            # Interaction avec l'API Overpass (OSM)
-├── cartes/                         # Cartes HTML générées
-├── outils_git/                     # Scripts d'automatisation Git
-├── looping/                        # Diagrammes et modèles conceptuels
+│   ├── cartes/                     # Répertoire des cartes HTML créées et utilisées
+│   │   └── carte.html              # Fichier HTML de la carte affichée
+│   ├── bdd_animaux.csv             # Liste des animaux pouvant être sélectionnés
+│   ├── bdd_arbres.csv              # Liste des arbres pouvant être sélectionnés
+│   ├── bdd_risques.csv             # Liste des risques pouvant être sélectionnés
+│   ├── bdd_toad.csv                # Liste des champignons pouvant être sélectionnés
+│   ├── bdd.db                      # Base de données SQLite contenant les données à afficher
+│   ├── eau.csv                     # Liste des cours d'eau pouvant être sélectionnés
+│   ├── forets_vendee.geojson       # Base de données GeoJSON contenant les forêts à afficher sur la carte
+│   └── style.qss                   # Fichier de style de l'interface graphique
 ├── docs/                           # Documentation technique
-├── journal.md                      # Journal de bord du développement
-├── presentation.md                 # Présentation du projet
-├── requirements.txt                # Dépendances Python
-├── start.sh                        # Script de lancement (Linux)
-└── README.md                       # Documentation principale
+│   └── docs_bdd.md                 # Documentation de la base de données SQLite
+├── sources/                        # Code source Python
+│   ├── module_affichage/           # Gestion de l'interface PyQt5
+│   │   ├── __init__.py             # Initialisation du module
+│   │   └── affichage.py            # Fenêtre principale de l'application
+│   ├── module_bdd/                 # Gestion de l'interaction avec les bases de données
+│   │   ├── __init__.py             # Initialisation du module
+│   │   └── interaction_donnees.py  # Classes et fonctions utiles à la communication avec les BDD
+│   ├── module_cartes/              # Gestion de la création des cartes HTML
+│   │   ├── __init__.py             # Initialisation du module
+│   │   └── carte.py                # Génération de la carte affichée par le programme
+│   ├── module_overpass/            # Gestion des requêtes Overpass
+│   │   ├── __init__.py             # Initialisation du module
+│   │   └── overpass.py             # Requête Overpass lors d'un clic sur la carte
+│   ├── module_reseau/              # Gestion des composantes réseau du projet
+│   │   ├── __init__.py             # Initialisation du module
+│   │   ├── intercepteur.py         # Intercepteur et modificateur de requêtes
+│   │   └── serveur.py              # Gestion du serveur local
+│   ├── dependances.sh              # Installation des dépendances système pour certaines distributions Linux
+│   ├── main.py                     # Script de lancement de l'application pour Windows
+│   └── start.sh                    # Script de lancement de l'application pour Linux
+├── journal.md                      # Journal de la création du projet
+├── presentation.md                 # Fichier de présentation du projet
+├── README.md                       # Documentation principale
+└── requirements.txt                # Dépendances Python
 ```
 
 ## Technologies Utilisées
 
-- **Python 3.x**
+- **Python 3.13.0**
 - **Folium** : Création de cartes interactives
+- **OpenStreetMap** : Tuiles de la carte Folium
+- **Overpass** : API de requêtes OpenStreetMap
 - **PyQt5** : Interface graphique
 - **QtWebEngine** : Affichage de contenu web dans PyQt5
 - **QWebChannel** : Communication bidirectionnelle JavaScript ↔ Python
-- **SQLite3** : Base de données
+- **SQLite3** : Base de données SQL
 - **GeoJSON** : Format de données géographiques
 
 ## Installation
@@ -63,31 +85,18 @@ racine/
    .venv\Scripts\activate     # Sur Windows
    ```
 
-3. **Installer les dépendances** :
+## Utilisation (Windows)
+
+### Installer les dépendances :
    ```bash
    pip install -r requirements.txt
    ```
 
-## Utilisation
-
-### Afficher la carte dans le navigateur
+### Lancer le projet
 ```bash
 python sources/main.py
 ```
-Cette commande génère et ouvre la carte des forêts directement dans votre navigateur web.
-
-### Afficher la carte avec interface de gestion
-```bash
-python sources/module_affichage/affichage.py
-```
-Cette commande affiche la carte dans une fenêtre d'application graphique avec des boutons pour ajouter et supprimer des 
-forêts.
-
-### Tester la gestion des clics sur la carte
-```bash
-python sources/module_affichage/gestion_clicks.py
-```
-Cette commande affiche la carte avec capture des coordonnées GPS lors des clics (affichées dans la console).
+Cette commande lance l'interface graphique de l'application
 
 ### Générer uniquement le fichier HTML
 ```bash
@@ -95,118 +104,24 @@ python sources/module_cartes/carte.py
 ```
 Génère le fichier `carte.html` sans l'afficher.
 
-## Gestion des Données
-
-Le fichier `sources/module_bdd/interaction_donnees.py` contient les classes nécessaires pour gérer les données du 
-projet de manière synchronisée.
-
-### Classes principales
-
-- **BaseDeDonnees** : Gère les opérations CRUD (Create, Read, Update, Delete) sur la base SQLite.
-- **Interaction_JSON** : Gère la lecture et la modification du fichier GeoJSON (ajout/suppression de zones 
-géographiques).
-- **Interaction_Donnees** : Classe coordinatrice qui synchronise les changements entre la base SQLite et le fichier 
-GeoJSON.
-
-### Méthodes de la coordinatrice
-
-- `ajouter_foret(valeurs_bdd, coords_json)` : Ajoute une forêt partout.
-- `supprimer_foret(id_foret)` : Supprime une forêt partout.
-- `rechercher_foret(critere)` : Recherche des forêts dans la BDD.
-- `ajouter_polygone_a_foret(id_foret, coords)` : Ajoute une zone géographique.
-- `retirer_polygone_a_foret(id_foret, index)` : Retire une zone géographique.
-
-### Exemple d'utilisation
-```python
-from sources.module_bdd.interaction_donnees import Interaction_Donnees
-
-inter = Interaction_Donnees("data/bdd.db", "data/forets_vendee.geojson")
-# Ajout d'une forêt dans la BDD et le GeoJSON simultanément
-inter.ajouter_foret([1, "Forêt de Mervent", 5000, 10000, 1, 2, 3, 4], [[[-1.5, 46.5], ...]])
-```
-
-## Outils Git (Automatisation)
-
-Le dossier `outils_git/` contient des scripts pour automatiser les opérations Git courantes.
-
-### Scripts de commit automatisé
-
-**Linux/Mac** :
-```bash
-./outils_git/commit.sh -f nom_du_fichier "message de commit"
-./outils_git/commit.sh -d nom_du_dossier "message de commit"
-```
-
-**Windows** :
-```cmd
-outils_git\commit.bat -f nom_du_fichier "message de commit"
-outils_git\commit.bat -d nom_du_dossier "message de commit"
-```
-
-Ces scripts ajoutent automatiquement le fichier ou dossier spécifié, créent un commit avec le message fourni, et 
-poussent les changements vers la branche `main`.
-
-### Scripts de mise à jour
-
-**Linux/Mac** :
-```bash
-./outils_git/git-update.sh
-```
-
-**Windows** :
-```cmd
-outils_git\git-update.bat
-```
-
-Ces scripts récupèrent les dernières modifications depuis le dépôt distant.
-
-## Interface Graphique
-
-### Fenêtre principale (`sources/module_affichage/affichage.py`)
-
-L'interface graphique PyQt5 comprend :
-- Une carte interactive Folium intégrée via QtWebEngine
-- Un panneau latéral avec des boutons de gestion
-- Une fenêtre modale pour ajouter/modifier des forêts avec :
-  - 7 champs de saisie pour les informations de la forêt
-  - Des boutons radio pour indiquer la présence de chasseurs
-
-### Gestion des clics (`sources/module_affichage/gestion_clicks.py`)
-
-Démonstrateur de la communication JavaScript ↔ Python :
-- Utilise `QWebChannel` pour créer un pont entre le JavaScript de la carte Folium et Python
-- Capture les coordonnées GPS (latitude, longitude) lors des clics sur la carte
-- Affiche les coordonnées dans la console Python en temps réel
-
-## Équipe
-
-Projet réalisé par des élèves de NSI du lycée Léonard de Vinci de Montaigu :
-- Mathéo PASQUIER (T08)
-- Charlélie PINEAU (T02)
-- Léon RAIFAUD (T02)
-- Maden USSEREAU (T03)
-
-## Journal de Bord
-
-Consultez le fichier [`journal.md`](journal.md) pour suivre l'évolution du projet séance par séance.
-
-## Explication du lancement
+## Utilisation (Linux)
 
 ### Sur les distributions Linux les plus populaires :
 Note : pour une isolation des imports de librairies externes, on utilisera un environnement virtuel pour la suite du 
-guide. On peut en initialiser un avec ```python3 -m venv .venv``` sur systèmes d'exploitiation Linux et Windows, avec 
-Python 3 d'installé. Pour installer les librairies nécessaires, on fera :
-Sur Linux : 
-```bash
-source .venv/bin/activate
-pip install -r requirements.txt
-```
+guide. On peut en initialiser un avec ```python3 -m venv .venv``` sur systèmes d'exploitation Linux avec 
+Python 3 d'installé.
 Afin de permettre un lancement sans accroc, il faut d'abord installer certaines dépendances système. Cela est géré avec 
 ```dependences.sh```. Ensuite, ```start.sh``` gère un fonctionnement normal. Il n'est nécessaire d'exécuter
 ```dependences.sh``` qu'une seule fois par système, mais il faut utiliser ```start.sh``` à chaque fois que l'utilisateur
 veut utiliser le programme.
 
-### Sur Linux type Debian/Ubuntu, avec apt
+ Pour installer les librairies nécessaires, on fera, une fois les dépendances installées :
+```bash
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Installation des dépendances sur Linux type Debian/Ubuntu, avec apt
 D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```, même chose avec 
 ```dependences.sh```:
 ```bash
@@ -248,3 +163,31 @@ Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
 ```
 Note : en lançant ```dependences.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet 
 nécessaire de garantir l'installation de certains paquets via ```pacman```
+
+## Gestion des Données
+
+Le fichier `sources/module_bdd/interaction_donnees.py` contient les classes nécessaires pour gérer les données du projet de manière synchronisée.
+
+### Classes principales
+
+- **BaseDeDonnees** : Gère les opérations CRUD (Create, Read, Update, Delete) sur la base SQLite.
+- **Interaction_JSON** : Gère la lecture et la modification du fichier GeoJSON (ajout/suppression de zones  géographiques).
+- **Interaction_Donnees** : Classe coordinatrice qui synchronise les changements entre la base SQLite et le fichier GeoJSON.
+
+## Interface Graphique
+
+### Fenêtre principale (`sources/module_affichage/affichage.py`)
+
+L'interface graphique PyQt5 comprend :
+- Une carte interactive Folium intégrée via QtWebEngine
+- Un panneau latéral avec des boutons de gestion
+- Une fenêtre modale pour ajouter/modifier des forêts
+
+## Équipe
+
+Projet réalisé par des élèves de NSI du lycée Léonard de Vinci de Montaigu :
+- Mathéo PASQUIER (T08)
+- Charlélie PINEAU (T02)
+- Léon RAIFAUD (T02)
+- Maden USSEREAU (T03)
+
