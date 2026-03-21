@@ -181,10 +181,10 @@ Démonstrateur de la communication JavaScript ↔ Python :
 ## Équipe
 
 Projet réalisé par des élèves de NSI du lycée Léonard de Vinci de Montaigu :
-- Mathéo PASQUIER (T08)(#absoluteMeyzop)
-- Charlélie PINEAU (T02)#CP
-- Léon RAIFAUD (T02)(🥡)
-- Maden USSEREAU (T03)(#legoat) 
+- Mathéo PASQUIER (T08)
+- Charlélie PINEAU (T02)
+- Léon RAIFAUD (T02)
+- Maden USSEREAU (T03)
 
 ## Journal de Bord
 
@@ -248,7 +248,3 @@ Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
 ```
 Note : en lançant ```dependences.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet 
 nécessaire de garantir l'installation de certains paquets via ```pacman```
-
-## Mention Spéciale
-
-"Mais c'est qui Mark Down ?"
