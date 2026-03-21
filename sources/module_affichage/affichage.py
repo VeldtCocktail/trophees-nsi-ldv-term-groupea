@@ -1138,7 +1138,11 @@ class GroupeForet(QGroupBox):
 
         self.nom_foret.setText(foret.get("nom", ""))
         self.superficie.setText(str(foret.get("superficie", "")))
-        self.nb_visit.setText(str(foret.get("nb_visit", "")))
+        if foret.get("nb_visit", 0) > 0:
+            self.nb_visit.setText(str(foret.get("nb_visit")))
+        else:
+            self.nb_visit.setText("Inconnu")
+
 
         self.bouton_supprimer.setEnabled("id" in foret)
         self.calc_superficie.setEnabled("id" in foret)
