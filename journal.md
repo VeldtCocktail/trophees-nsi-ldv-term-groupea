@@ -46,23 +46,23 @@
 
 ### Séance n°13 (03/02/2026)
 - interface graphique PyQT
-- Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
+- Faire en sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
 - Recherche base de données type d'arbre
 
  ### Séance n°14 (05/02/2026) sans Maden, ni Charlélie
 - interface graphique PyQT
-- Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
+- Faire en sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
 
 ### Séance n°15 (06/02/2026)
 - interface graphique PyQT
 - Création d'une nouvelle base de données d'espece d'arbre
-- Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
+- Faire en sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
 
 ### Séance n°16 (10/02/2026)
  - interface graphique PyQT
  - interaction BBD (faire un sorte qu'on puisse ajouter un polygone dans une forêt)
  - Base de données champignon et animaux
- - Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
+ - Faire en sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
 
 ### Séance n°17 (12/02/2026)
 - interface graphique PyQT
@@ -72,7 +72,7 @@
 
 ### Séance n°18 (03/03/2026)
 - Interface graphique (Mathéo)
-- Maden + Léon : fonctionnement sur Ubuntu/Debian ENFIN réussi !
+- Maden + Léon : fonctionnement sur Ubuntu/Debian
 - Journal et compte-rendu (Charlélie)
 
 ### Séance n°19 (05/03/2026)

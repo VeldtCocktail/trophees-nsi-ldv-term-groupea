@@ -120,9 +120,66 @@ Voici la répartition de la programmation des modules du projet :
 
 # 3 - Présentation des étapes du projet
 
+## Conception et choix de l'implémentation
+
+Après avoir réfléchi au programme que nous allions réaliser, listé les fonctionnalités que nous voulions y intégrer et réparti les tâches dans le groupe, nous avons commencé les recherches nécessaires pour coder ce projet.
+Nous avons très vite pris conscience que notre choix initial, qui était d'afficher toutes les forêts de France, nécessiterait des bases de données très denses, et nous avons donc choisi de commencer par la Vendée en gardant la possibilité d'étendre plus tard notre projet à une zone plus large.
+Nous avons initialement récupéré l'entièreté des espaces verts de Vendée en formulant une requête [Overpass](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL) sur [Overpass Turbo](https://overpass-turbo.eu/), ce qui a constitué un fichier GeoJSON de 800 000 lignes dont nous ne pouvions pas vraiment faire grand chose.
+Nous avons donc ajusté notre requête pour obtenir uniquement ce qui pouvait s'apparenter à une forêt située en Vendée, et qui possédait un nom.
+
+```cs OverpassQL
+// @name forets_vendee
+
+[out:json][timeout:60];
+
+area["boundary"="administrative"]
+     ["admin_level"="6"]
+     ["ref:INSEE"="85"]
+     ->.vendee;
+
+(
+  way["landuse"="forest"]["name"](area.vendee);
+
+  relation["landuse"="forest"]["name"](area.vendee);
+  
+  way["natural"="wood"]["name"](area.vendee);
+  
+  
+  relation["natural"="wood"]["name"](area.vendee);
+);
+
+out geom;
+```
+
+Après avoir obtenu un fichier de taille plus raisonnable, notre professeur nous a parlé de folium pour générer des cartes en HTML, et nous avons donc lu la documentation pour apprendre à l'utiliser.
+Nous avons en parallèle fait le choix d'utiliser PyQt5 pour l'interface graphique, puisque certains membres du groupe l'avaient déjà utilisé auparavant et que nous avions trouvé pendant nos recherche une manière d'afficher des fichiers HTML grâce à un moteur web intégré à PyQt.
+
+Au même moment, nous avons de plus créé la base de données SQLite pour accueillir les données concernant les forêts de Vendée.
+
+## Développement des fonctionnalités de base
+
+Nous avons progressivement implémenté certaines fonctionnalités du projet, ce qui a constitué la base fonctionnelle de notre application.
+- Nous avons créé le code permettant de générer une carte sur lesquelles les polygones correspondant aux forêts de Vendée sont en couleur.
+- Nous avons téléchargé et modifié, ou bien créé, quelques fichiers CSV contenant les données dont nous avions besoin pour enregistrer des détails pour chaque forêt.
+- Nous avons réalisé un début d'interface graphique du projet, qui permettait seulement de visualiser la carte HTML des forêts dans un moteur web.
+
+## Implémentation des objectifs déterminés lors de la phase de réflexion
+
+Ensuite, nous avons avancé simultanément sur les quatre principaux aspects du projet :
+- L'exécution d'une requête Overpass lors d'un clic sur la carte, qui permet de récupérer l'espace vert cliqué, ce qui est absolument nécessaire pour que l'utilisateur puisse enregistrer une forêt.
+- L'interface graphique de l'application, pour permettre à l'utilisateur de consulter, d'ajouter, de modfifier et de supprimer des forêts.
+- La recherche de types de détails à afficher et la construction de fichiers CSV pour contenir ces listes de détails.
+- L'interaction avec les bases de données SQLite et CSV, pour permettre la création, la recherche, la modification et la suppression des forêts par l'utilisateur ainsi que l'enregistrement de détails concernant ces forêts.
+
+## Implémentation des fonctionnalités plus complexes, interopérabilité et finalisation
+
+Enfin, en parallèle de la finalisation de l'interface graphique et de la correction de bugs, nous avons implémenté les aspects plus complexes du projet, tels que la gestion des polygones d'une forêt, le calcul automatique de la superficie, ainsi que le déplacement de la carte sur une forêt lorsqu'on la sélectionne dans la zone de recherche.
+Nous avons également rendu le projet fonctionnel sur les principales distributions Linux à travers la gestion des dépendances système et un script de lancement de l'application spécifique à ces systèmes d'exploitation.
+
+Pour finaliser le projet, nous avons fini par corriger les bugs qui subsistaient, restructurer le code, charger la carte depuis un serveur local pour respecter les conditions d'utilisation des tuiles OpenStreetMap et rédiger tous les commentaires et toutes les spécifications des fonctions du programme.
 
 
-# 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
+# 4 -  Validation de l’opérationnalité du projet et de son fonctionnement
 
 ## A - Vérification des bugs et bon fonctionnement de l'application
 
@@ -137,26 +194,25 @@ Aussi, cela nous a permis d'utiliser des extraits de données pour tester le bon
 Tout au long du développement de notre projet, plusieurs difficultés se sont placées sur notre chemin. Cela nous a obligé à réfléchir à des solutions pertinentes, efficaces et pouvant être inclues dans notre programme de façon cohérente et facilement compréhensible/ débogable.
 
 Un des défis associés à lister et afficher les forêts est de réussir à récupérer les polygones correspondant aux forêts. En effet, un de nos objectifs était non seulement de lister et afficher les forêts que nous pouvons trouver via Overpass (et par extension OpenStreetMap), mais également de permettre à l'utilisateur d'en créer de nouvelles, d'en supprimer, et de les modifier en termes de détails (arbres, insectes, etc ...).
-Malgré l'existence de bibliothèques comme Shapely et JSON nous permettant d'interagir avec ces polygones, il a fallu faire correspondre les données liées aux polygones seulement de [forets_vendee.geojson](data/forets_vendee.geojson) avec les données de la base de données SQLite [bdd.db](data/bdd.db), comme par exemple les noms des forêts, leur superficie, etc ...  
+Malgré l'existence de bibliothèques comme Shapely et JSON nous permettant d'interagir avec ces polygones, il a fallu faire correspondre les données liées aux polygones seulement de [forets_vendee.geojson](data/forets_vendee.geojson) avec les données de la base de données SQLite [bdd.db](data/bdd.db), comme par exemple les noms des forêts, leur superficie, etc.
 
 # 5 - Ouverture
 
-## A – Idées d'amélioration du projet
+## A – Analyse critique
+
+Nous estimons que le programme que nous avons réalisé est relativement facilement accessible, que ce soit dans les recherche de forêts (permettant à l'utilisateur d'avoir la localisation de la forêt et des informations dessus) mais également dans la création ou la modification d'une forêt (en lui permettant de modifier les informations lorsque celles-ci sont fausses ou encore de rajouter une forêt si celle-ci viens d'etre créée) grâce aux boutons, aux fenêtres ou encore aux barres de recherches, que nous avons tenté de rendre assez visibles et intuitifs.
+
+Le nombre de fonctionnalités est toutefois relativement limité, ce qui est dû principalement à un manque d'idées et de temps pour en réaliser certaines.
+
+## B – Idées d'amélioration du projet
 
 Pour améliorer notre programme permettant d'afficher les emplacements des forêts, nous pourrions travailler sur plusieurs aspects différents.
 
-Au niveau esthétique, nous pourrions améliorer le style des barres de recherche mais nous pouvions également faire en sorte de mettre des icones ou des images sur les différentes fenetre de selection pour permettre à un utilisateur de se repérer plus facilement.
+Au niveau esthétique, nous pourrions améliorer le style des barres de recherche, et nous pourrions également faire en sorte de mettre des icones ou des images sur les différentes fenêtres de sélection pour permettre à un utilisateur de se repérer plus facilement.
 
+Au niveau fonctionnel, nous pourrions prendre une carte ayant plus de précisions pour permettre à l'utilisateur de visualiser plus précisément où se trouve la forêt. Nous pourrions aussi faire en sorte que l'utilisateur puisse mettre une note et un commentaire pour chaque forêt, que l'on enregistrerait comme information sur la forêt. Nous pourrions également implémenter un système de comptes et d'administration, pour que les modifications soient vérifiées par un modérateur avant d'être appliquées.
 
-Au niveau fonctionnel, nous pourrions prendre une carte ayant plus de précisions pour permettre à l'utilisateur de visualiser plus précisément où se trouve la forêt. Nous aurions pu aussi faire en sorte que l'utilisateur puisse mettre une note et un commentaire pour chaque forêts que l'on aurais également stockés comme informations sur la forêt. 
-
-
-Nous pourrions enfin faire en sorte de pouvoir élargir ce programme pour qu'il soit accessible au monde entier et réussir à capturer toutes les forêts du monde. Mais également nous pourrions faire en sorte de connaitre de nouvelles informations si des choses arrive dans la forêt ou encore si des activités sont accessibles tels que des chemins de randonnées ou encore si des compétitions sportives se font ici etc ... 
-
-## B – Analyse critique
-
-Nous voulions que notre programme que nous avons réalisée soit facilement accessible : que ce soit dans les recherche de forêts (permettant à l'utilisateur d'avoir la localisation de la forêts et des informations dessus) mais également dans la création ou la modifications d'une forêt (permettant de modifier les infos lorsque celle ci sont fausse ou encore de rajouter une forêt si celle-ci viens d'etre crée) grâce aux boutons, aux fenêtres ou encore aux barres de recherches sont également assez visibles et intuitifs.
-
+Nous pourrions enfin augmenter l'efficacité de la recherche et de la modification de forêts en enregistrant les informations par zone géographique (département ou région) afin de pouvoir élargir à la France entière tout en restant rapide et efficace. Nous pourrions également ajouter des informations sur les activités accessibles telles que des chemins de randonnée ou la pratique d'autres sports. 
 
 ## C – Compétences développées
 
