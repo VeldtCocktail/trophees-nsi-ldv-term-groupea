@@ -3,7 +3,7 @@
 ## Description
 
 SilvaDaVinci est une application à but informatif. Notre projet permet de visualiser des forêts sur une carte
-et de gérer des données à leur sujet : on peut notamment y renseigner les différents type d’arbres, les espèces animales présentes, les risques et d’autres données encore.
+et de gérer des données à leur sujet. On peut notamment y renseigner les différents type d’arbres, les espèces animales présentes, les risques et d’autres données encore.
 L’application permet également de créer des nouvelles forêts en sélectionnant leur localisation sur la carte interactive et en y ajoutant les données connues, qui pourront ensuite être modifiées par l’utilisateur.
 
 Ce projet a été développé dans le cadre du concours des Trophées NSI.
