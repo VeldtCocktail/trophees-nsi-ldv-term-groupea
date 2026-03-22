@@ -109,9 +109,13 @@ Voici la répartition de la programmation des modules du projet :
 | 08/03 | Maden | 3h | Gestion des données | Affichage et sauvegarde BDD |
 | 13/03 | Maden | 3h | Polygones | Ajout/suppression fonctionnels |
 | 14/03 | Maden | 5h | Corrections | Bugs corrigés, structure améliorée |
-| 15–17/03 | Maden / Léon | 6h | Documentation | Commentaires et nettoyage |
-| 18/03 | Maden | 2h | Présentation | Fichier final rédigé |
+| 15/03 | Maden | 1h | Documentation | Commentaires |
+| 16/03 | Maden | 1h | Documentation | Commentaires |
+| 17/03 | Maden | 2h | Documentation | Commentaires |
+| 17/03 | Léon | 3h | Documentation | Commentaires |
+| 18/03 | Maden | 2h | Présentation | Rédaction d'une partie de la présentation |
 | 19/03 | Charlélie | 1h | Visuel | style.qss |
+| 21/03 | Maden | 9h | Commentaires et rédaction | Rédaction des spécifications, des commentaires et d'une partie de la présentation du projet |
 
 # 3 - Présentation des étapes du projet
 

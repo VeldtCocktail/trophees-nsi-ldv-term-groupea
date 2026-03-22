@@ -1,4 +1,4 @@
-# Journal - A COMPLETER A CHAQUE COURS
+# Journal - SilvaDaVinci
 
 ### Séance n°1 (15/12/2025) 
 - réflexion sur le choix de l’application.
@@ -49,11 +49,11 @@
 - Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
 - Recherche base de données type d'arbre
 
- ### Séance n°14 (05/02/2026) sans Maden, ni Charlélie 😢
+ ### Séance n°14 (05/02/2026) sans Maden, ni Charlélie
 - interface graphique PyQT
 - Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
 
-### Séance n°15 (06/02/2026) retour de Maden et de Charlélie 🥳
+### Séance n°15 (06/02/2026)
 - interface graphique PyQT
 - Création d'une nouvelle base de données d'espece d'arbre
 - Fait sorte que quand on clique sur un espace vert ça le selectionne avec une requette overpass
@@ -73,18 +73,33 @@
 ### Séance n°18 (03/03/2026)
 - Interface graphique (Mathéo)
 - Maden + Léon : fonctionnement sur Ubuntu/Debian ENFIN réussi !
-- Journal et compte rendu (Charlélie)
+- Journal et compte-rendu (Charlélie)
 
 ### Séance n°19 (05/03/2026)
 - Maden + Mathéo : Poursuite de l'interface graphique -> réflexion sur l'enregistrement des arbres d'une forêt
 - Léon : mise à jour du README, prise en charge des autre distibutions Linux
-- Journal et compte rendu (Charlélie)
+- Journal et compte-rendu (Charlélie)
   
 ### Séance n°20 (10/03/2026) sans Maden
 - Léon : mise à jour du README, prise en charge des autre distibutions Linux. 
--  Mathéo : Poursuite de l'interface graphique
--  Charlélie : Journal et compte rendu
-  
+- Mathéo : Poursuite de l'interface graphique
+- Charlélie : Journal et compte-rendu
+
+### Séance n°21 (12/03/2026)
+- Léon : calcul de la superficie d'une forêt, spécifications
+- Maden, Mathéo : poursuite de l'interface graphique
+- Charlélie : compte-rendu, style de l'interface graphique
+
+### Séance n°22 (13/03/2026)
+- Léon, Maden : spécifications
+- Maden, Mathéo : Suppression de détails
+- Charlélie : Compte-rendu, style de la carte
+
+### Séance n°23 (20/03/2026)
+- Léon, Maden : correction de bug sur Linux lié à l'attente du serveur
+- Mathéo : poursuite de l'interface graphique
+- Charlélie : poursuite du compte-rendu et du style
+
 ## Travail hors cours de NSI :
 
 - 14/01/2026 : Léon : début de réalisation du programme pour l'interaction avec la base de données + finalisation le même jour. La classe BaseDeDonnees permet une interaction généralisée avec une base de données compatible SQLite.
@@ -106,7 +121,13 @@
 
 - 16/03/1026 : Maden (1h) : Commentaires
 
-- 17/03/2026 : Léon (3h ) : Commentaires
+- 17/03/2026 : Léon (3h) : Commentaires
 - 17/03/2026 : Maden (2h) : Commentaires
 
 - 18/03/2026 : Maden (2h) : presentation.md
+
+- 21/03/2026 : Maden (9h) : Spécifications, commentaires, correction des derniers bugs
+
+## Note importante
+
+Il est probable que ce journal ne soit pas complet, ce qui est dû à des oublis de le compléter lors d'un travail réalisé chez soi sur le projet. Merci de ne pas tenir compte de ces imprécisions et de se référer également à la section **2 - D** de [presentation.md](presentation.md) qui est probablement plus complète sur certains aspects de la création du projet.

@@ -42,7 +42,7 @@ threading.Thread(target = serveur.lancer_serveur, daemon = True).start()
 # on attend que le serveur soit prêt avant de charger la page dans le WebEngine
 serveur.attendre_serveur(hote="127.0.0.1")
 
-carte.generer_carte((46.3930189, -1.480289), debug = True)
+carte.generer_carte((46.974, -1.314), debug = True)
 app = QApplication(sys.argv)
 
 window = affichage.FenetrePrincipale(debug = True)

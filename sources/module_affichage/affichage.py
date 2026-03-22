@@ -1,10 +1,10 @@
-# Projet : ???
-# Auteurs : Mathéo Pasquier, Maden Ussereau
+# Projet : SilvaDaVinci
+# Auteurs : Mathéo PASQUIER, Maden USSEREAU, Léon RAIFAUD, Charlélie PINEAU
 
 # importation des bibliothèques nécessaires
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QListWidget, QGroupBox,
-    QLineEdit, QRadioButton, QComboBox, QLabel, QMessageBox
+    QLineEdit, QLabel, QMessageBox
 )
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtWebChannel import QWebChannel
@@ -201,6 +201,7 @@ class GroupeForet(QGroupBox):
         label_superficie.setObjectName("label-champ")
         self.superficie = QLineEdit()
         self.superficie.setPlaceholderText("Superficie")
+        self.superficie.setReadOnly(True)
         self.calc_superficie = QPushButton("#")
         self.calc_superficie.clicked.connect(self.calculer)
         layout_superficie.addWidget(label_superficie)
@@ -951,6 +952,27 @@ class GroupeForet(QGroupBox):
         if foret["nom"] == "":
             foret["nom"] = "Forêt sans nom"
 
+        # on vérifie que le nom de la forêt ne désigne pas déjà une autre forêt
+        for autre_foret in self.fen.groupe_recherche_foret.noms_forets:
+            # si le nom est le même
+            if foret['nom'] == autre_foret:
+                # si l'identifiant est différent
+                autre_id = self.fen.groupe_recherche_foret.foret_depuis_nom(
+                    foret['nom']
+                ).get('id')
+                if foret.get('id', -1) != autre_id:
+                    # on ajoute un caractère au nom de la forêt actuelle
+                    foret['nom'] = foret['nom'] + '*'
+
+                    # on informe l'utilisateur
+                    self.fen.msg_box = QMessageBox()
+                    self.fen.msg_box.setWindowTitle("Information")
+                    self.fen.msg_box.setText(
+                        f"Nom déjà présent dans la BDD ! \
+                        Modifié en {foret['nom']} !"
+                    )
+                    self.fen.msg_box.show()
+
         try:
             foret["superficie"] = float(self.superficie.text())
         except:
@@ -1104,13 +1126,15 @@ class GroupeForet(QGroupBox):
         Sortie \\: \n
             None
         """
+        # On s'assure qu'une forêt soit en cours de modification
         if "id" not in self.dico_foret:
             if self.fen.debug: print("Aucune forêt sélectionnée")
             return
     
+        # on récupère l'identifiant de la forêt
         id_foret = self.dico_foret["id"]
     
-        # Suppression des tables de détails
+        # Suppression des occurences de la forêt dans les tables de détails
         for type_detail in DICO_TABLES_DETAILS.keys():
             self.fen.inter.bdd.supprimer_ligne(
                 DICO_TABLES_DETAILS[type_detail],
@@ -1129,13 +1153,31 @@ class GroupeForet(QGroupBox):
         self.fen.recharger_carte()
 
     def mettre_a_jour(self, foret):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+            foret:dict[str: any] : dictionnaire de la forêt à afficher
+    
+        Rôle \\: \n
+            Mettre à jour les éléments du groupe de modification de forêt en
+            remplaçant ceux affichés par ceux du dictionnaire foret passé en
+            paramètre
+    
+        Sortie \\: \n
+            None
+        """
+        # on modifie la valeur des attributs de la classe
         self.dico_foret = foret
         self.mode_sel = False
-        self.bouton_sel.setChecked(False)
-        self.polygones_temp = []
 
+        # la sélection est désactivée
+        self.bouton_sel.setChecked(False)
+
+        # on vide les listes de polygone à ajouter et à supprimer
+        self.polygones_temp = []
         self.polygones_a_suppr = []
 
+        # on remplace le texte des informations par les nouvelles valeurs
         self.nom_foret.setText(foret.get("nom", ""))
         self.superficie.setText(str(foret.get("superficie", "")))
         if foret.get("nb_visit", 0) > 0:
@@ -1143,32 +1185,81 @@ class GroupeForet(QGroupBox):
         else:
             self.nb_visit.setText("Inconnu")
 
-
+        # on active ou désactive les boutons de suppression et de calcul de la
+        # superficie en fonction de si on crée ou on modifie une forêt
         self.bouton_supprimer.setEnabled("id" in foret)
         self.calc_superficie.setEnabled("id" in foret)
 
+        # message en console si debug vaut True
         if self.fen.debug: print("Update :", foret)
 
+        # on met à jour les détails
         self.details_temp = foret.get("details", {})
         if "details" not in foret.keys():
             foret["details"] = {}
 
+        # le détail affiché par défaut est la liste des arbres
         self.liste_valeurs.clear()
         self.type_details = "arbres"
         self.afficher_details()
 
     def reinitialiser(self):
+        """
+        Entrées \\: \n
+            self:GroupeForet : instance de la classe GroupeForet
+    
+        Rôle \\: \n
+            Vider tous les éléments du groupe de modification de forêt grâce à
+            un appel de mettre_a_jour auquel on passe un dictionnaire vide en
+            paramètre
+    
+        Sortie \\: \n
+            None
+        """
+        # on appelle la méthode mettre_a_jour en passant un dictionnaire vide
         self.mettre_a_jour({})
 
+
 class GroupeRecherche(QGroupBox):
+    """
+    Classe qui implémente le groupe de recherche de forêt par nom ou bien par
+    présence d'un détail de n'importe quel type (arbres, animaux, ...)
+    """
+    
     def __init__(self, fenetre):
+        """
+        Entrées \\: \n
+            self:GroupeRecherche : instance de la classe GroupeRecherche
+            fenetre:FenetrePrincipale : instance de la classe FenetrePrincipale
+                qui instancie cette classe
+        
+        Rôle \\: \n
+            Initialisation de la classe GroupeRecherche
+        
+        Sortie \\: \n
+            None
+        """
+        # on initialise la superclasse QGroupBox
         super().__init__("Rechercher une forêt")
+        # on enregistre la fenêtre principale comme attribut d'instance
         self.fen = fenetre
 
+        # on initialise les données du groupe puis son interface graphique
         self.init_donnees()
         self.init_interface()
 
     def init_donnees(self):
+        """
+        Entrées \\: \n
+            self:GroupeRecherche : instance de la classe GroupeRecherche
+        
+        Rôle \\: \n
+            Initialisation des données de la classe GroupeRecherche
+        
+        Sortie \\: \n
+            None
+        """
+        # on charge la liste des noms des forêts grâce au module BDD
         if self.fen.debug: print("Chargement des forêts...")
         self.noms_forets = indo.charger_noms_forets(
             ['data', 'forets_vendee.geojson']
@@ -1176,124 +1267,244 @@ class GroupeRecherche(QGroupBox):
         if self.fen.debug: print("Forêts chargées !")
 
     def init_interface(self):
+        """
+        Entrées \\: \n
+            self:GroupeRecherche : instance de la classe GroupeRecherche
+        
+        Rôle \\: \n
+            Initialisation de l'interface de la classe GroupeRecherche
+        
+        Sortie \\: \n
+            None
+        """
+        # on définit le nom de l'objet PyQt
         self.setObjectName('groupe-foret')
+
+        # on crée un layout vertical qui contiendra tous les éléments
         layout = QVBoxLayout()
 
+        # zone de recherche de forêts
         self.rech_for = QLineEdit()
         self.rech_for.setPlaceholderText("Rechercher une forêt")        
         self.rech_for.textChanged.connect(self.chercher_foret)
 
+        # liste des résultats de la recherche
         self.res_rech_for = QListWidget()
         self.res_rech_for.itemClicked.connect(
             self.afficher_groupe_foret
         )
 
+        # zone de recherche de détails
         self.rech_det = QLineEdit()
         self.rech_det.setPlaceholderText("Rechercher un détail")
         self.rech_det.textChanged.connect(self.chercher_detail)
 
+        # liste des résultats de la recherche
         self.res_rech_det = QListWidget()
         self.res_rech_det.itemClicked.connect(self.chercher_forets_det)
 
+        # on ajoute ces 4 éléments au layout créé
         layout.addWidget(self.rech_for)
         layout.addWidget(self.res_rech_for)
         layout.addWidget(self.rech_det)
         layout.addWidget(self.res_rech_det)
 
+        # puis on définit ce layout comme layout principal de la classe
         self.setLayout(layout)
 
     def chercher_foret(self, texte):
+        """
+        Entrées \\: \n
+            self:GroupeRecherche : instance de la classe GroupeRecherche
+            texte:str : texte qu'on cherche parmi les noms des forêts
+        
+        Rôle \\: \n
+            Mettre à jour la liste des forêts dont le nom contient le texte que
+            l'utilisateur a saisi dans la zone de recherche de forêts par leur
+            nom
+        
+        Sortie \\: \n
+            None
+        """
+        # on vide la liste des résultats de recherche
         self.res_rech_for.clear()
+        # on retire les majuscules, espaces inutiles et accents du texte saisi
         texte = str(texte).strip().lower().translate(ACCENTS)
 
-        if not texte:
-            return
-
-        for nom in self.noms_forets:
-            if texte in nom.strip().lower().translate(ACCENTS):
-                self.res_rech_for.addItem(nom)
+        # si le texte est non vide
+        if texte:
+            # pour chaque nom de forêt dans la liste des noms chargée plus tôt
+            for nom in self.noms_forets:
+                # si le texte est présent dans le nom
+                if texte in nom.strip().lower().translate(ACCENTS):
+                    # on ajoute ce nom de forêt à la liste des résultats
+                    self.res_rech_for.addItem(nom)
 
     def afficher_groupe_foret(self):
+        """
+        Entrées \\: \n
+            self:GroupeRecherche : instance de la classe GroupeRecherche
+        
+        Rôle \\: \n
+            Afficher le groupe de modification de la forêt dont le nom a été
+            cliqué dans la zone des résultats de la recherche de forêt
+        
+        Sortie \\: \n
+            None
+        """
+        # si un élément de la liste des résultats de recherche est sélectionné
         if self.res_rech_for.currentItem():
             
+            # on récupère le nom cliqué
             nom = self.res_rech_for.currentItem().text()
 
+            # on utilise ce nom pour récupérer le dictionnaire de la forêt qui
+            # lui correspond
             foret = self.foret_depuis_nom(nom)
 
-            if not foret:
+            # si ce dictionnaire n'existe pas, on qutte la méthode
+            if foret is None:
                 return
         
+            # on met à jour le groupe de modification de forêt à partir de la
+            # forêt choisie par l'utilisateur
             self.fen.groupe_modif_foret.mettre_a_jour(foret)
+            # puis on rechage la carte aux coordonnées de la forêt sélectionnée
             self.fen.recharger_carte()
 
+            # on cache le groupe de recherche
             self.hide()
+            # puis on affiche le groupe de modifications
             self.fen.groupe_modif_foret.show()
 
     def chercher_detail(self, texte):
+        """
+        Entrées \\: \n
+            self:GroupeRecherche : instance de la classe GroupeRecherche
+            texte:str : texte qu'on cherche parmi les noms des détails
+        
+        Rôle \\: \n
+            Mettre à jour la liste des détails dont le nom contient le texte
+            que l'utilisateur a saisi dans la zone de recherche de détails
+        
+        Sortie \\: \n
+            None
+        """
+        # on vide la liste des résultats de recherche
         self.res_rech_det.clear()
+        # on retire les majuscules, espaces inutiles et accents du texte saisi
         texte = str(texte).strip().lower().translate(ACCENTS)
 
+        # si le texte est non vide
         if texte:
+            # pour chaque clé de dictionnaire de détails dans la liste
             for cle_dico in LISTE_DETAILS:
+                # pour chaque nom de détail de ce type
                 for nom_det in LISTE_DETAILS[cle_dico]:
+                    # si le nom du détail contient le texte saisi
                     if texte in nom_det.strip().lower().translate(ACCENTS):
+                        # on ajoute le nom du détail à la liste des résultats
                         self.res_rech_det.addItem(nom_det)
 
     def chercher_forets_det(self):
+        """
+        Entrées \\: \n
+            self:GroupeRecherche : instance de la classe GroupeRecherche
+        
+        Rôle \\: \n
+            Rechercher les forêts pour lesquelles le détail sélectionné parmi
+            la liste des résultats de recherche de détail est présent
+        
+        Sortie \\: \n
+            None
+        """
+        # on récupère le détail cliqué
         detail = self.res_rech_det.currentItem().text()
+        # on initialise le type de détail à None
         type_det = None
-        idx = 0
 
+        # on détermine le type du détail en parcourant les listes
         for cle_dico in LISTE_DETAILS:
             if detail in LISTE_DETAILS[cle_dico]:
                 type_det = cle_dico
                 if self.fen.debug: print("Type détail :", type_det)
 
-            idx += 1
-
+        # si on a trouvé un type au détail
         if type_det:
+            # on vide la liste des résultats de recherche de forêt
             self.res_rech_for.clear()
 
+            # on récupère le chemin du fichier csv correspondant à ce type
             chemin_csv = os.sep.join(
                 ["data", DICO_CSV_DETAILS[type_det]]
             )
 
+            # on récupère l'identifiant du détail dans le fichier csv
             resultat = indo.rechercher_dans_csv(
                 chemin_csv, 1, detail
             )
-
             id_det = resultat[0][0]
 
-            liste_id_tuples = self.fen.inter.bdd.rechercher_valeur(
+            # on récupère la liste des lignes de la table d'association entre
+            # la forêt et le type du détail recherché qui contiennent cet id
+            liste_listes_id = self.fen.inter.bdd.rechercher_valeur(
                 DICO_TABLES_DETAILS[type_det],
                 (DICO_ID_DETAILS[type_det], id_det),
                 "id_foret"
             )
 
-            for elem in liste_id_tuples:
+            # pour chaque ligne de cette liste
+            for elem in liste_listes_id:
+                # on récupère l'identifiant de la forêt
                 id_foret = elem[0]
+                # puis on récupère la liste des forêts qui ont cet identifiant
                 foret = self.fen.inter.rechercher_foret(("id_foret", id_foret))
+                # puis le nom de la première (et seule) forêt qui a cet id
                 nom = foret[0][2]
+                # on ajoute enfin ce nom à la liste des résultats de recherche
                 self.res_rech_for.addItem(nom)
 
     def foret_depuis_nom(self, nom):
+        """
+        Entrées \\: \n
+            self:GroupeRecherche : instance de la classe GroupeRecherche
+            nom:str : nom de la forêt dont on veut récupérer le dictionnaire
+        
+        Rôle \\: \n
+            Construire à partir du nom d'une forêt le dictionnaire contenant
+            ses informations principales et ses détails
+        
+        Sortie \\: \n
+            dict[str: any] : dictionnaire de la forêt qui possède ce nom
+        """
+        # on récupère la liste des informations de la forêt dans la BDD
         liste_infos = self.fen.inter.rechercher_foret(("nom", nom))
+        # message en console si debug vaut True
         if self.fen.debug: print(liste_infos)
 
+        # si la liste d'informations n'existe pas ou est vide
         if not liste_infos:
+            # message en console si debug vaut True
             if self.fen.debug: print(f"Forêt '{nom}' introuvable en BDD")
+            # on renvoie un dictionnaire vide
             return {}
 
+        # sinon, on récupère l'identifiant de la forêt depuis la liste d'infos
         id_foret = liste_infos[0][0]
-        superficie = liste_infos[0][4]
 
+        # on calcule la superficie de la forêt à partir de son identifiant
         superficie = self.fen.inter.calculer_superficie_foret(id_foret)
+
+        # on modifie la ligne de la BDD avec la superficie calculée
         self.fen.inter.bdd.modifier_ligne(
             "FORET", (("id_foret", id_foret), "superficie", superficie)
         )
 
+        # on récupère le dictionnaire des détails de la forêt
         dico_details = self.rechercher_details_foret(id_foret)
 
+        # puis on construit le dictionnaire qui contient l'ensemble des infos
+        # de la forêt qu'on veut récupérer
         dico = {
             "id": id_foret,
             "nom": nom,
@@ -1303,12 +1514,30 @@ class GroupeRecherche(QGroupBox):
             "details": dico_details
         }
 
+        # message en console si debug vaut True
         if self.fen.debug: print(dico)
+
+        # on renvoie le dictionnaire construit
         return dico
     
     def rechercher_details_foret(self, id_foret):
+        """
+        Entrées \\: \n
+            self:GroupeRecherche : instance de la classe GroupeRecherche
+            id_foret:str : identifiant de la forêt dont on veut créer le
+                dictionnaire des détails
+        
+        Rôle \\: \n
+            Construire à partir du nom d'une forêt le dictionnaire contenant
+            ses informations principales et ses détails
+        
+        Sortie \\: \n
+            dict[str: any] : dictionnaire des détails de la forêt construit
+        """
+        # on initialise un dictionnaire vide
         dico_details = {}
 
+        # on liste les détails de la forêt pour chacun des cinq types de détail
         liste_id_arbres = self.fen.inter.bdd.rechercher_valeur(
             "FORET_ARBRE", ("id_foret", id_foret), "id_arbre"
         )
@@ -1325,7 +1554,9 @@ class GroupeRecherche(QGroupBox):
             "FORET_RISQUE", ("id_foret", id_foret), "id_risque"
         )
         
-        self.ajouter_a_dico(
+        # on ajoute au dictionnaire les types de détails pour les clés, et pour
+        # valeurs les listes des identifiants des détails trouvés dans la forêt
+        indo.ajouter_a_dico(
             dico_details,
             [
                 ("arbres", liste_id_arbres, "bdd_arbres.csv"),
@@ -1336,125 +1567,242 @@ class GroupeRecherche(QGroupBox):
             ]
         )
 
+        # on renvoie le dictionnaire de détails construit
         return dico_details
 
-    def ajouter_a_dico(self, dico, liste):
-        for ligne in liste:
-            
-            cle, liste_id, nom_csv = ligne
 
-            chemin_csv = os.sep.join(["data", nom_csv])
-
-            if cle not in dico:
-                dico[cle] = []
-
-
-            for id_tuple in liste_id:
-                id_val = str(id_tuple[0])
-                resultat = indo.rechercher_dans_csv(chemin_csv, 0, id_val)
-
-                if resultat:
-                    dico[cle].append(resultat[0][1])
-
-
-# Classe principale de l'application
 class FenetrePrincipale(QWidget):
+    """
+    Classe de la fenêtre principale de l'application, qui contient les groupes
+    de modification et de recherche ainsi que la carte dans un navigateur
+    """
+
     def __init__(self, debug = False):
+        """
+        Entrées \\: \n
+            self:FenetrePrincipale : instance de la classe FenetrePrincipale
+            debug:bool : messages de debug en console
+        
+        Rôle \\: \n
+            Initialisation de la classe FenetrePrincipale
+        
+        Sortie \\: \n
+            None
+        """
+        # on initialise la superclasse QWidget
         super().__init__()
 
+        # on affecte debug à un attribut d'instance
         self.debug = debug
 
+        # on crée une instance de la classe RequetesOverpass
         self.requetes = overpass.RequetesOverpass()
+
+        # on crée une instance de la classe InteractionDonnees
         self.inter = indo.InteractionDonnees(
             os.sep.join(["data", "bdd.db"]),
             os.sep.join(["data", "forets_vendee.geojson"]),
             debug
         )
         
-        self.view = QtWebEngineWidgets.QWebEngineView()
+        # on crée un moteur web à partir de la classe QWebEngineView de PyQt
+        self.moteur = QtWebEngineWidgets.QWebEngineView()
+
+        # on crée une instance de la classe IntercepteurRequetes
         self.intercepteur = intercepteur.IntercepteurRequetes(self, self.debug)
+
+        # on crée le profil utilisé par le navigateur
         profil = QtWebEngineWidgets.QWebEngineProfile.defaultProfile()
+        # on définit l'intercepteur de requêtes lié à ce profil
         profil.setUrlRequestInterceptor(self.intercepteur)
+        # on définit l'agent utilisé pour les requêtes HTTP (nécessité légale)
         profil.setHttpUserAgent(
             "DaVinciMap/1.0 (educational project)"
         )
 
-        self.view.load(QUrl("http://127.0.0.1:8000/data/cartes/carte.html"))
-
+        # on crée une instance de la classe Pont pour communiquer avec le JS
         self.pont = carte.Pont(self)
-        self.channel = QWebChannel()
-        self.channel.registerObject("pybridge", self.pont)
-        self.view.page().setWebChannel(self.channel)
+        # on crée une chaîne web pour permettre la communication JavaScript
+        self.chaine = QWebChannel()
+        # on enregistre le pont créé pour la chaîne
+        self.chaine.registerObject("pybridge", self.pont)
 
+        # on crée la page du moteur web de PyQt en appliquant le profil créé
+        page = QtWebEngineWidgets.QWebEnginePage(profil, self.moteur)
+        # on définit la chaîne web créée comme la chaîne web de cette page
+        page.setWebChannel(self.chaine)
+        # puis on définit cette page comme celle du moteur web
+        self.moteur.setPage(page)
+
+        # on charge depuis le serveur local la carte HTML des forêts
+        self.moteur.load(QUrl("http://127.0.0.1:8000/data/cartes/carte.html"))
+
+        # on appelle la méthode d'initialisation de l'interface graphiqe
         self.init_interface()
 
-        with open(os.sep.join(['data', 'style.qss'])) as fichier:
-            self.setStyleSheet(fichier.read())
-
+        # puis on affiche la fenêtre principale
         self.show()
 
     def init_interface(self):
-        self.setWindowTitle("Carte des forêts")
+        """
+        Entrées \\: \n
+            self:FenetrePrincipale : instance de la classe FenetrePrincipale
+        
+        Rôle \\: \n
+            Initialisation de l'interface graphique de la fenêtre principale
+        
+        Sortie \\: \n
+            None
+        """
+        # on définit le nom et la taille de la fenêtre
+        self.setWindowTitle("DaVinciMap - Carte des forêts")
         self.resize(1200, 700)
 
-        main_layout = QHBoxLayout(self)
+        # on crée le layout horizontal principal
+        layout_principal = QHBoxLayout()
 
-        # fenetre forêt
+        # groupe de modification de forêt
         self.groupe_modif_foret = GroupeForet(self)
         self.groupe_modif_foret.hide()
 
+        # groupe de recherche de forêt
         self.groupe_recherche_foret = GroupeRecherche(self)
         self.groupe_recherche_foret.hide()
 
-        # Barre gauche
-        interface_gauche = QVBoxLayout()
+        # barre d'action à gauche de la carte
+        barre_gauche = QVBoxLayout()
 
+        # bouton de création de forêt
         bouton_nouveau = QPushButton("+")
+        bouton_nouveau.setObjectName("bouton-action")
         bouton_nouveau.clicked.connect(self.afficher_nouvelle_foret)
 
+        # bouton de recherche de forêt
         bouton_recherche = QPushButton("🔍")
         bouton_recherche.clicked.connect(self.afficher_groupe_recherche)
-
-        bouton_nouveau.setObjectName("bouton-action")
         bouton_recherche.setObjectName("bouton-action")
 
-        interface_gauche.addStretch()
-        interface_gauche.addWidget(bouton_recherche)
-        interface_gauche.addWidget(bouton_nouveau)
+        # on ajoute les deux boutons en bas de la barre d'action
+        barre_gauche.addStretch()
+        barre_gauche.addWidget(bouton_recherche)
+        barre_gauche.addWidget(bouton_nouveau)
 
-        main_layout.addLayout(interface_gauche)
-        main_layout.addWidget(self.groupe_recherche_foret)
-        main_layout.addWidget(self.groupe_modif_foret)
-        main_layout.addWidget(self.view, 1)
+        # on ajoute au layout principal la barre d'action, les groupe d'actions
+        # des forêts puis le moteur web qui contient la carte HTML
+        layout_principal.addLayout(barre_gauche)
+        layout_principal.addWidget(self.groupe_recherche_foret)
+        layout_principal.addWidget(self.groupe_modif_foret)
+        layout_principal.addWidget(self.moteur, 1)
+
+        # on définit layout_principal comme layout de la fenêtre
+        self.setLayout(layout_principal)
+
+        # on applique le style QSS à l'interface graphique depuis le fichier
+        with open(os.sep.join(['data', 'style.qss'])) as fichier:
+            self.setStyleSheet(fichier.read())
 
     def afficher_nouvelle_foret(self):
+        """
+        Entrées \\: \n
+            self:FenetrePrincipale : instance de la classe FenetrePrincipale
+        
+        Rôle \\: \n
+            Afficher l'interface permettant d'enregistrer une nouvelle forêt
+            dans la base de données
+        
+        Sortie \\: \n
+            None
+        """
+        # on met à jour le groupe de modification de forêt à partir d'un
+        # dictionnaire vide
         self.groupe_modif_foret.mettre_a_jour({})
+        # on cache le groupe de recherche de forêt
         self.groupe_recherche_foret.hide()
+        # puis on affiche le groupe de modification de forêt
         self.groupe_modif_foret.show()
 
     def afficher_groupe_recherche(self):
+        """
+        Entrées \\: \n
+            self:FenetrePrincipale : instance de la classe FenetrePrincipale
+        
+        Rôle \\: \n
+            Afficher l'interface permettant de rechercher une forêt par son nom
+            ou par un des détails enregistrés
+        
+        Sortie \\: \n
+            None
+        """
+        # on cache le groupe de modification de forêt
         self.groupe_modif_foret.hide()
-        self.groupe_recherche_foret.show()
+        # on désactive la sélection
+        self.groupe_modif_foret.mode_sel = False
+
+        # si le groupe de recherche est caché, on l'affiche, sinon on le cache
+        if self.groupe_recherche_foret.isVisible():
+            self.groupe_recherche_foret.hide()
+        else:
+            self.groupe_recherche_foret.show()
 
     def gerer_clic(self, coord, zoom):
+        """
+        Entrées \\: \n
+            self:FenetrePrincipale : instance de la classe FenetrePrincipale
+            coord:tuple[float] : latitude et longitude du clic enregistré
+            zoom:int : facteur de zoom de la carte
+        
+        Rôle \\: \n
+            Gérer un clic sur la carte en déléguant cette gestion au groupe de
+            modification de forêt si la sélection est activée
+        
+        Sortie \\: \n
+            None
+        """
+        # on récupère la latitude et la longitude du clic
         lat, lon = coord
 
+        # message en console si debug vaut True
         if self.debug:
             print(f'Click reçu en : {lat}, {lon} | Zoom : {zoom}')
 
+        # si la sélection est activée
         if self.groupe_modif_foret.mode_sel:
+            # message en console si debug vaut True
             if self.debug: print("Clic enregistré et sélection activée :)")
 
+            # on appelle la méthode de gestion de clic du groupe adéquat
             self.groupe_modif_foret.gerer_clic_cartes(coord, zoom)
 
-    def recharger_carte(self, coord = None, zoom = 12):
+    def recharger_carte(self, coord = None, zoom = 13):
+        """
+        Entrées \\: \n
+            self:FenetrePrincipale : instance de la classe FenetrePrincipale
+            coord:tuple[float] : latitude et longitude du clic enregistré
+            zoom:int : facteur de zoom de la carte
+        
+        Rôle \\: \n
+            Remplacer la carte du moteur web par une nouvelle carte centrée sur
+            les coordonnées passées en paramètres et sur laquelle la forêt en
+            cours de modification est colorée, de même que les polygones à
+            ajouter et supprimer
+        
+        Sortie \\: \n
+            None
+        """
+        # on récupère l'identifiant de la forêt en cours de modification s'il
+        # existe (None sinon)
         id_foret = self.groupe_modif_foret.dico_foret.get("id")
 
+        # si les coordonnées ne sont pas en paramètres
         if coord is None:
+            # on tente de récupérer les coordonnées du centre de la forêt en
+            # cours de modification
             if id_foret:
                 nom = self.groupe_modif_foret.dico_foret.get("nom", "")
                 coord = self.inter.recuperer_centre_foret(nom)
 
+            # s'il n'y en a pas, on tente de récupérer celles d'un point d'un
+            # des polygones à ajouter
             if coord is None and self.groupe_modif_foret.polygones_temp:
                 premier = self.groupe_modif_foret.polygones_temp[0]
                 geom = premier["features"][0]["geometry"]["coordinates"]
@@ -1462,29 +1810,41 @@ class FenetrePrincipale(QWidget):
                     point = geom[0][0]
                     coord = (point[1], point[0])
 
+            # si les coordonnées valent toujours None, on crée par défaut la
+            # carte à la latitude et la longitude de Montaigu-Vendée
             if coord is None:
-                coord = (46.67, -1.43)
+                coord = (46.974, -1.314)
 
+        # on récupère les polygones à ajouter et supprimer pour les colorer
         donnees_temp = self.groupe_modif_foret.polygones_temp
         donnees_suppr = self.groupe_modif_foret.polygones_a_suppr
 
+        # on récupère les polygones de la forêt sélectionnée, dans la BDD
         donnees_select = []
         if id_foret:
+            # on récupère les lignes de la BDD
             infos = self.inter.bdd.rechercher_ligne(
                 "FORET", ("id_foret", id_foret)
             )
 
+            # on récupère un éventuel identifiant de la feature correspondant à
+            # la forêt sélectionnée, on prend l'identifiant de la forêt sinon
             id_feature = str(infos[0][1]) if infos else str(id_foret)
 
+            # on récupère la feature de la forêt sélectionnée
             feature = self.inter.rechercher_feature(str(id_feature))
             if feature and "geometry" in feature:
+                # puis on affecte à donnees_select une collection contenant
+                # cette feature, pour la mettre en couleur sur la carte
                 donnees_select = [
                     {"type": "FeatureCollection", "features": [feature]}
                 ]
 
+        # on apelle la méthode de génération de la carte
         carte.generer_carte(
             coord, zoom, donnees_temp, donnees_select, donnees_suppr,
             self.debug
         )
 
-        self.view.load(QUrl("http://127.0.0.1:8000/data/cartes/carte.html"))
+        # puis on recharge cette carte dans le moteur web depuis le serveur
+        self.moteur.load(QUrl("http://127.0.0.1:8000/data/cartes/carte.html"))

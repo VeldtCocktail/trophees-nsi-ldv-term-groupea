@@ -1,4 +1,4 @@
-# Carte des Forêts de Vendée
+# SilvaDaVinci
 
 ## Description
 
@@ -190,4 +190,3 @@ Projet réalisé par des élèves de NSI du lycée Léonard de Vinci de Montaigu
 - Charlélie PINEAU (T02)
 - Léon RAIFAUD (T02)
 - Maden USSEREAU (T03)
-
