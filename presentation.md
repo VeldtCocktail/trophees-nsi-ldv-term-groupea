@@ -117,7 +117,7 @@ Voici la répartition de la programmation des modules du projet :
 | 19/03 | Charlélie | 1h | Visuel | style.qss |
 | 21/03 | Maden | 9h | Commentaires | Rédaction des spécifications et des commentaires |
 | 21/03 | Maden | 4h | Commentaires et rédaction | Rédaction de commentaires et poursuite de la présentation |
-| 22/03 | Charlélie | 8h | Vidéo | Montage de la vidéo |
+| 22/03 | Charlélie | 9h | Vidéo | Montage de la vidéo |
 
 # 3 - Présentation des étapes du projet
 
