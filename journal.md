@@ -128,6 +128,8 @@
 
 - 21/03/2026 : Maden (9h) : Spécifications, commentaires, correction des derniers bugs
 
+- 22/03/2026 : Maden (4h) : Fin des commentaires, poursuite de la rédaction de presentation.md
+
 ## Note importante
 
 Il est probable que ce journal ne soit pas complet, ce qui est dû à des oublis de le compléter lors d'un travail réalisé chez soi sur le projet. Merci de ne pas tenir compte de ces imprécisions et de se référer également à la section **2 - D** de [presentation.md](presentation.md) qui est probablement plus complète sur certains aspects de la création du projet.

@@ -77,7 +77,7 @@ Voici la répartition de la programmation des modules du projet :
 
 ### En classe
 
-| Période | Élève | Temps passé | Objectifs | Résultats |
+| Période | Élèves | Temps passé | Objectifs | Résultats |
 |--------|------|------------|----------|----------|
 | Cours du 15/12 | Tous | 1h | Réflexion sur le projet | Plusieurs idées proposées |
 | Cours du 18/12 | Tous | 1h | Choix du projet | Projet de carte de forêts choisi, réflexion sur les données |
@@ -115,9 +115,12 @@ Voici la répartition de la programmation des modules du projet :
 | 17/03 | Léon | 3h | Documentation | Commentaires |
 | 18/03 | Maden | 2h | Présentation | Rédaction d'une partie de la présentation |
 | 19/03 | Charlélie | 1h | Visuel | style.qss |
-| 21/03 | Maden | 9h | Commentaires | Rédaction des spécifications, et des commentaires |
+| 21/03 | Maden | 9h | Commentaires | Rédaction des spécifications et des commentaires |
+| 21/03 | Maden | 4h | Commentaires et rédaction | Rédaction de commentaires et poursuite de la présentation |
 
 # 3 - Présentation des étapes du projet
+
+
 
 # 4 -  Validation de l’opérationnalité du projet/de son fonctionnement
 
