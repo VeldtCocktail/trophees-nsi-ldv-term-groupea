@@ -34,6 +34,7 @@ JavaScript ↔ Python via QWebChannel)
 │   ├── forets_vendee.geojson       # Base de données GeoJSON contenant les forêts à afficher sur la carte
 │   └── style.qss                   # Fichier de style de l'interface graphique
 ├── docs/                           # Documentation technique
+│   ├── docs_csv.md                 # Documentation des fichiers CSV
 │   └── docs_bdd.md                 # Documentation de la base de données SQLite
 ├── sources/                        # Code source Python
 │   ├── module_affichage/           # Gestion de l'interface PyQt5
@@ -55,6 +56,12 @@ JavaScript ↔ Python via QWebChannel)
 │   ├── dependances.sh              # Installation des dépendances système pour certaines distributions Linux
 │   ├── main.py                     # Script de lancement de l'application pour Windows
 │   └── start.sh                    # Script de lancement de l'application pour Linux
+├── tests/                          # Module de tests de l'application
+│   ├── __init__.py                 # Initialisation du module
+│   ├── bdd_arbres_test.csv         # Fichier CSV de test
+│   ├── bdd_test.db                 # Base de données de test
+│   ├── forets_test.geojson         # Données géographiques de test
+│   └── tests_interaction.py        # Script de test du module d'interaction avec les bases de données
 ├── journal.md                      # Journal de la création du projet
 ├── presentation.md                 # Fichier de présentation du projet
 ├── README.md                       # Documentation principale
