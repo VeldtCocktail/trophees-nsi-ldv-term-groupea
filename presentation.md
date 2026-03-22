@@ -157,4 +157,8 @@ Nous voulions que notre programme que nous avons réalisée soit facilement acce
 
 ## C – Compétences personnelles développées
 
+Grâce à ce projet assez conséquent pour cette année de Terminale, nous avons pu développer certaines qualités, techniques ou des façons de travailler nouvelles. Il a fallu que nous apprenions à gérer notre temps : chaque séance devait être productive afin de ne pas ralentir le groupe et l’avancée du projet, tout en aidant les autres face aux différentes difficultés que nous pouvions rencontrer. Nous avons également amélioré la maîtrise du codage, notamment l’utilisation de PyQt pour l’interface, ainsi que la manière de penser pour écrire un code suffisamment lisible et compréhensible.
+
 ## D – Accessibilité et inclusion
+
+Application intuitive, sans trop de texte dans tous les sens, couleurs vives et distinctes.
