@@ -596,6 +596,7 @@ class InteractionJSON:
             if props.get('id') == id_feature or props.get('@id') == id_feature:
                 # Mise à jour du nom
                 props['name'] = nouveau_nom
+                print('Nom mis à jour :', id_feature, nouveau_nom)
                 # Persistance de la modification
                 self.sauvegarder()
                 return True
@@ -706,10 +707,10 @@ class InteractionDonnees:
 
         Rôle \\: \n
             Recherche des forêts dans la BDD correspondant au critère.
-            Si on cherche par nom, cela permet de retrouver l'id GeoJSON.
+            Si on cherche par nom, cela permet de retrouver l’id GeoJSON.
 
         Sortie \\: \n
-            list[any] : ligne trouvée
+            list[tuple(any)] : ligne trouvée (liste contenant un seul tuple)
         """
         return self.bdd.rechercher_ligne("FORET", critere)
 
@@ -802,8 +803,7 @@ class InteractionDonnees:
         """
         # On récupère toutes les features du GeoJSON
         # Liste de toutes les features GeoJSON
-        features = self.json.data.get('features', [])    
-        if self.debug: print(features)
+        features = self.json.data.get('features', [])
 
         # Parcours de chaque feature GeoJSON
         for feature in features:                         
@@ -1002,11 +1002,11 @@ class InteractionDonnees:
         """
         Entrées \\: \n
             self:InteractionDonnees : instance de la classe InteractionDonnees
-            id_foret:str : identifiant de la forêt à modifier
+            id_feature:str : identifiant de la feature de la forêt à modifier
             nouveau_nom:str : nouveau nom de la forêt
 
         Rôle \\: \n
-            Modifier le nom d'une forêt dans le fichier GeoJSON uniquement
+            Modifier le nom d’une forêt dans le fichier GeoJSON uniquement
 
         Sortie \\: \n
             None
@@ -1035,7 +1035,7 @@ def charger_donnees_csv(liste, col = 1):
         col:int : indice de la colonne à extraire
 
     Rôle \\: \n
-        Charger les données d'une colonne spécifique d'un fichier CSV
+        Charger les données d’une colonne spécifique d’un fichier CSV
 
     Sortie \\: \n
         list[str] : liste des valeurs du fichier à la colonne 'col'

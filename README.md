@@ -104,6 +104,11 @@ python sources/module_cartes/carte.py
 ```
 Génère le fichier `carte.html` sans l'afficher.
 
+### Lancer le script de tests de l'interaction avec les données
+```bash
+python -m tests.tests_interaction
+```
+
 ## Utilisation (Linux)
 
 ### Sur les distributions Linux les plus populaires :
@@ -135,6 +140,7 @@ Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
 ```
 Note : en lançant ```dependences.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet 
 nécessaire de garantir l'installation de certains paquets via ```apt```
+
 ### Sur Linux type Fedora/Red Hat, avec dnf
 D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```, même chose avec 
 ```dependences.sh```:
@@ -149,6 +155,7 @@ Ensuite, pour lancer le projet en lui-même, on exécute ce script avec :
 ```
 Note : en lançant ```dependences.sh```, il est nécessaire d'avoir les droits de superutilisateur. Il nous est en effet 
 nécessaire de garantir l'installation de certains paquets via ```dnf```
+
 ### Sur Linux type Arch, avec pacman
 D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```, même chose avec 
 ```dependences.sh```:

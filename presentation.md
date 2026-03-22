@@ -115,7 +115,7 @@ Voici la répartition de la programmation des modules du projet :
 | 17/03 | Léon | 3h | Documentation | Commentaires |
 | 18/03 | Maden | 2h | Présentation | Rédaction d'une partie de la présentation |
 | 19/03 | Charlélie | 1h | Visuel | style.qss |
-| 21/03 | Maden | 9h | Commentaires et rédaction | Rédaction des spécifications, des commentaires et d'une partie de la présentation du projet |
+| 21/03 | Maden | 9h | Commentaires | Rédaction des spécifications, et des commentaires |
 
 # 3 - Présentation des étapes du projet
 
