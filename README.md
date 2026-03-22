@@ -17,8 +17,7 @@ JavaScript ↔ Python via QWebChannel)
 - **Interface de gestion des forêts** : Fenêtres dédiées pour ajouter et modifier les informations sur les forêts
 - **Base de données SQLite** : Stockage et gestion des informations sur les forêts
 - **Données géographiques** : Utilisation de fichiers GeoJSON pour les contours des forêts
-- **Informations complémentaires** : Base de données sur les champignons et les risques associés
-
+- **Informations complémentaires** : Bases de données sur les arbres, animaux, champignons, cours d'eau et risques
 ## Structure du Projet
 
 ```
