@@ -126,12 +126,6 @@ Afin de permettre un lancement sans accroc, il faut d'abord installer certaines 
 ```dependences.sh``` qu'une seule fois par système, mais il faut utiliser ```start.sh``` à chaque fois que l'utilisateur
 veut utiliser le programme.
 
- Pour installer les librairies nécessaires, on fera, une fois les dépendances installées :
-```bash
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
 ### Installation des dépendances sur Linux type Debian/Ubuntu, avec apt
 D'abord, il faut faire en sorte que le fichier ```start.sh``` soit exécutable, avec ```chmod```, même chose avec 
 ```dependences.sh```:
@@ -184,8 +178,8 @@ Le fichier `sources/module_bdd/interaction_donnees.py` contient les classes néc
 ### Classes principales
 
 - **BaseDeDonnees** : Gère les opérations CRUD (Create, Read, Update, Delete) sur la base SQLite.
-- **Interaction_JSON** : Gère la lecture et la modification du fichier GeoJSON (ajout/suppression de zones  géographiques).
-- **Interaction_Donnees** : Classe coordinatrice qui synchronise les changements entre la base SQLite et le fichier GeoJSON.
+- **InteractionJSON** : Gère la lecture et la modification du fichier GeoJSON (ajout/suppression de zones  géographiques).
+- **InteractionDonnees** : Classe coordinatrice qui synchronise les changements entre la base SQLite et le fichier GeoJSON.
 
 ## Interface Graphique
 
