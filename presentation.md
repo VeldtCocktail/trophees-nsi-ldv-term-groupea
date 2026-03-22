@@ -158,9 +158,9 @@ Nous pourrions enfin faire en sorte de pouvoir élargir ce programme pour qu'il 
 Nous voulions que notre programme que nous avons réalisée soit facilement accessible : que ce soit dans les recherche de forêts (permettant à l'utilisateur d'avoir la localisation de la forêts et des informations dessus) mais également dans la création ou la modifications d'une forêt (permettant de modifier les infos lorsque celle ci sont fausse ou encore de rajouter une forêt si celle-ci viens d'etre crée) grâce aux boutons, aux fenêtres ou encore aux barres de recherches sont également assez visibles et intuitifs.
 
 
-## C – Compétences personnelles développées
+## C – Compétences développées
 
-Grâce à ce projet assez conséquent pour cette année de Terminale, nous avons pu développer certaines qualités, techniques ou des façons de travailler nouvelles. Il a fallu que nous apprenions à gérer notre temps : chaque séance devait être productive afin de ne pas ralentir le groupe et l’avancée du projet, tout en aidant les autres face aux différentes difficultés que nous pouvions rencontrer. Nous avons également amélioré la maîtrise du codage, notamment l’utilisation de PyQt pour l’interface, ainsi que la manière de penser pour écrire un code suffisamment lisible et compréhensible.
+Grâce à ce projet assez conséquent pour cette année de Terminale, nous avons pu développer certaines compétences techniques et des façons de travailler nouvelles. Il a fallu que nous apprenions à gérer notre temps : chaque séance devait être productive afin de ne pas ralentir le groupe et l’avancée du projet, tout en aidant les autres face aux différentes difficultés que nous pouvions rencontrer. Nous avons également amélioré la maîtrise du codage, notamment l’utilisation de PyQt pour l’interface, ainsi que la manière de penser pour écrire un code suffisamment lisible et compréhensible.
 
 ## D – Accessibilité et inclusion
 
