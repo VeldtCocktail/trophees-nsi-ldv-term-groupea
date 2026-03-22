@@ -87,7 +87,7 @@ Voici la répartition de la programmation des modules du projet :
 | Cours du 15/01 | Tous | 1h | Travail sur les données | Amélioration des données et export HTML |
 | Cours du 16/01 | Tous | 1h | Affichage de la carte | Carte affichée avec PyQt5 |
 | Cours du 23/01 | Tous | 1h | Début interface graphique | Interface PyQt commencée |
-| Cours du 27/01 | Tous | 1h | Interface graphique | Avancement de l’interface |
+| Cours du 27/01 | Tous | 1h | Interface graphique | Avancement de l'interface |
 | Cours du 29/01 | Tous | 1h | Interface graphique | Poursuite du développement |
 | Cours du 30/01 | Tous | 1h | Interface graphique | Interface enrichie |
 | Cours du 03/02 | Tous | 1h | Interaction carte | Sélection des forêts via Overpass |
@@ -180,7 +180,7 @@ Nous avons également rendu le projet fonctionnel sur les principales distributi
 Pour finaliser le projet, nous avons fini par corriger les bugs qui subsistaient, restructurer le code, charger la carte depuis un serveur local pour respecter les conditions d'utilisation des tuiles OpenStreetMap et rédiger tous les commentaires et toutes les spécifications des fonctions du programme.
 
 
-# 4 -  Validation de l’opérationnalité du projet et de son fonctionnement
+# 4 -  Validation de l'opérationnalité du projet et de son fonctionnement
 
 ## A - Vérification des bugs et bon fonctionnement de l'application
 
@@ -192,10 +192,51 @@ Aussi, cela nous a permis d'utiliser des extraits de données pour tester le bon
 
 ## B - Difficultés rencontrées et solutions algorithmiques
 
-Tout au long du développement de notre projet, plusieurs difficultés se sont placées sur notre chemin. Cela nous a obligé à réfléchir à des solutions pertinentes, efficaces et pouvant être inclues dans notre programme de façon cohérente et facilement compréhensible/ débogable.
+Tout au long du développement de notre projet, plusieurs difficultés se sont placées sur notre chemin. Cela nous a obligé à réfléchir à des solutions pertinentes, efficaces et pouvant être incluses dans notre programme de façon cohérente et facilement compréhensible.
 
-Un des défis associés à lister et afficher les forêts est de réussir à récupérer les polygones correspondant aux forêts. En effet, un de nos objectifs était non seulement de lister et afficher les forêts que nous pouvons trouver via Overpass (et par extension OpenStreetMap), mais également de permettre à l'utilisateur d'en créer de nouvelles, d'en supprimer, et de les modifier en termes de détails (arbres, insectes, etc ...).
-Malgré l'existence de bibliothèques comme Shapely et JSON nous permettant d'interagir avec ces polygones, il a fallu faire correspondre les données liées aux polygones seulement de [forets_vendee.geojson](data/forets_vendee.geojson) avec les données de la base de données SQLite [bdd.db](data/bdd.db), comme par exemple les noms des forêts, leur superficie, etc.
+Un des défis associés à lister et afficher les forêts est de réussir à récupérer les polygones correspondant aux forêts. En effet, un de nos objectifs était non seulement de lister et afficher les forêts que nous pouvons trouver via Overpass (et par extension OpenStreetMap), mais également de permettre à l'utilisateur d'en créer de nouvelles, d'en supprimer, et de les modifier en termes de détails (arbres, animaux, etc.).
+Malgré l'existence de bibliothèques comme Shapely et JSON nous permettant d'interagir avec ces polygones, il a fallu faire correspondre les données liées aux polygones seulement de [forets_vendee.geojson](data/forets_vendee.geojson) avec les données de la base de données SQLite [bdd.db](data/bdd.db), comme par exemple les noms des forêts, leur superficie, etc. Nous sommes donc parvenus à enregistrer les identifiants des _features_ GeoJSON dans notre base de données SQLite grâce à la méthode [`synchro_depuis_json`](sources/module_bdd/interaction_donnees.py#L793) de la classe `InteractionDonnees`.
+
+Nous avons également dû réfléchir au cas de la modification des détails d'une forêt dans la base de données.
+En effet, lors de la modification de ces détails, il fallait enregistrer dans la base de données les associations `FORET - ARBRES`, `FORET - ANIMAUX`, etc.
+Cela implique de réfléchir à ce qui devait se passer si ces détails étaient enregistrés dans une forêt, puis que l'utilisateur choisissait de les retirer lors de la modification de la forêt.
+Pour simplifier le programme et éviter les doublons, nous avons choisi de supprimer toutes les lignes concernant cette forêt des tables d'associations avant d'enregistrer uniquement les détails sélectionnés par l'utilisateur à l'issue de la modification de la forêt, quitte à enregistrer à nouveau ce qui l'était déjà et qui n'a pas été modifié.
+
+```python
+# extrait de GroupeForet.enregistrer_foret_bdd()
+
+# pour chaque type de détail
+for type_detail in LISTE_DETAILS.keys():
+    # on supprime les détails de ce type pour la forêt qu'on modifie
+    self.fen.inter.bdd.supprimer_ligne(
+        DICO_TABLES_DETAILS[type_detail],
+        ("id_foret", foret["id"])
+    )
+
+    # on enregistre ensuite les identifiants des détails de ce type
+    if type_detail in self.details_temp:
+        for valeur in self.details_temp[type_detail]:
+            chemin_csv = os.sep.join(
+                ["data", DICO_CSV_DETAILS[type_detail]]
+            )
+            resultat = indo.rechercher_dans_csv(
+                chemin_csv, 1, valeur
+            )
+            if self.fen.debug: print(
+                f"Recherche de {valeur} dans {chemin_csv} : {resultat}"
+            )
+
+            if resultat:
+                id_val = resultat[0][0]
+                self.fen.inter.bdd.ajouter_ligne(
+                    DICO_TABLES_DETAILS[type_detail],
+                    [foret["id"], id_val]
+                )
+```
+
+Il est évident que cette approche devient peu efficace lorsqu'on manipule des grandes quantités de données, parce que cela remplace toutes les lignes des tables d'association, même celles qui n'ont pas été modifiées. 
+Néanmoins, dans le cas de notre application de gestion de forêts, l'utilisation de ces associations ne nécessite pas cette optimisation.
+En effet, étant donné le nombre relativement faible de détails pouvant être enregistrés, même si l'utilisateur associe plusieurs dizaines de détails à la forêt, la suppression de toutes les lignes et l'enregistrement des nouveaux détails reste extrêmement rapide, bien trop pour que cela change quelque chose à son expérience.
 
 # 5 - Ouverture
 
@@ -217,7 +258,7 @@ Nous pourrions enfin augmenter l'efficacité de la recherche et de la modificati
 
 ## C – Compétences développées
 
-Grâce à ce projet assez conséquent pour cette année de Terminale, nous avons pu développer certaines compétences techniques et des façons de travailler nouvelles. Il a fallu que nous apprenions à gérer notre temps : chaque séance devait être productive afin de ne pas ralentir le groupe et l’avancée du projet, tout en aidant les autres face aux différentes difficultés que nous pouvions rencontrer. Nous avons également amélioré la maîtrise du codage, notamment l’utilisation de PyQt pour l’interface, ainsi que la manière de penser pour écrire un code suffisamment lisible et compréhensible.
+Grâce à ce projet assez conséquent pour cette année de Terminale, nous avons pu développer certaines compétences techniques et des façons de travailler nouvelles. Il a fallu que nous apprenions à gérer notre temps : chaque séance devait être productive afin de ne pas ralentir le groupe et l'avancée du projet, tout en aidant les autres face aux différentes difficultés que nous pouvions rencontrer. Nous avons également amélioré la maîtrise du codage, notamment l'utilisation de PyQt pour l'interface, ainsi que la manière de penser pour écrire un code suffisamment lisible et compréhensible.
 
 ## D – Accessibilité et inclusion
 

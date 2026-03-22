@@ -692,9 +692,9 @@ class InteractionDonnees:
         # Récupération des infos BDD
         infos = self.bdd.rechercher_ligne("FORET", ("id_foret", id_foret)) 
         # id_feature = colonne [1] de la table
-        id_feature = str(infos[0][1]) if infos else str(id_foret)           
+        id_feature = str(infos[0][1]) if infos else str(id_foret)
         # Suppression dans le GeoJSON
-        self.json.supprimer_feature(id_feature)                             
+        self.json.supprimer_feature(id_feature)
 
         # Suppression BDD
         self.bdd.supprimer_ligne("FORET", ("id_foret", id_foret))
@@ -731,9 +731,9 @@ class InteractionDonnees:
         # Recherche de la forêt en BDD
         infos = self.bdd.rechercher_ligne("FORET", ("id_foret", id_foret))  
         # Extraction de l'id_feature GeoJSON
-        id_feature = str(infos[0][1]) if infos else str(id_foret)           
+        id_feature = str(infos[0][1]) if infos else str(id_foret)
         # Ajout du polygone dans le GeoJSON
-        return self.json.ajouter_a_feature(id_feature, nouvelles_coords)    
+        return self.json.ajouter_a_feature(id_feature, nouvelles_coords)
 
     def retirer_polygone_a_foret(self, id_foret, index_polygone):
         """
@@ -751,9 +751,9 @@ class InteractionDonnees:
         # Recherche de la forêt en BDD
         infos = self.bdd.rechercher_ligne("FORET", ("id_foret", id_foret))  
         # Extraction de l'id_feature GeoJSON
-        id_feature = str(infos[0][1]) if infos else str(id_foret)           
+        id_feature = str(infos[0][1]) if infos else str(id_foret)
         # Retrait du polygone dans le GeoJSON
-        return self.json.retirer_de_feature(id_feature, index_polygone)     
+        return self.json.retirer_de_feature(id_feature, index_polygone)
 
     def rechercher_feature(self, id_feature):
         """
@@ -785,9 +785,9 @@ class InteractionDonnees:
         # Recherche de la forêt en BDD
         infos = self.bdd.rechercher_ligne("FORET", ("id_foret", id_foret))  
         # Extraction de l'id_feature GeoJSON
-        id_feature = str(infos[0][1]) if infos else str(id_foret)           
+        id_feature = str(infos[0][1]) if infos else str(id_foret) 
         # Recherche dans le GeoJSON
-        feature = self.rechercher_feature(id_feature)                  
+        feature = self.rechercher_feature(id_feature)
         return feature
 
     def synchro_depuis_json(self):
@@ -806,11 +806,11 @@ class InteractionDonnees:
         features = self.json.data.get('features', [])
 
         # Parcours de chaque feature GeoJSON
-        for feature in features:                         
+        for feature in features:
             # On extrait l'identifiant et le nom depuis les propriétés
             props = feature.get('properties', {})
             # ID OpenStreetMap (format '@id')
-            id_geojson = props.get('@id')                
+            id_geojson = props.get('@id')
             # Si pas d'ID, on saute cette feature pour éviter les erreurs
             if not id_geojson:
                 continue
@@ -845,7 +845,7 @@ class InteractionDonnees:
                 valeurs = [nouvel_id, id_geojson, nom, 0, 0.0, 0]   
                 if self.debug: print("Ajout de la ligne", valeurs)
                 # Insertion dans la BDD
-                self.bdd.ajouter_ligne("FORET", valeurs)             
+                self.bdd.ajouter_ligne("FORET", valeurs)
 
     def synchro_depuis_bdd(self):
         """
@@ -860,18 +860,18 @@ class InteractionDonnees:
         """
         # On récupère toutes les forêts de la BDD
         # Toutes les lignes de la table FORET
-        forets = self.bdd.recuperer_tout("FORET")          
+        forets = self.bdd.recuperer_tout("FORET")
 
         # Parcours de chaque forêt en BDD
-        for foret in forets:                               
+        for foret in forets:  
             # Structure de la table FORET: id_foret, id_feature, nom, ...
             # Colonne id_feature (index 1)
-            id_feature = foret[1]                          
+            id_feature = foret[1]
             # Colonne nom (index 2)
-            nom = foret[2]                                 
+            nom = foret[2]
 
             # On ignore les forêts sans id_feature (données incomplètes)
-            if not id_feature:                             
+            if not id_feature:
                 continue
 
             # On vérifie si la forêt existe déjà dans le GeoJSON
@@ -900,28 +900,28 @@ class InteractionDonnees:
         resultats = self.bdd.rechercher_ligne("FORET", ("nom", nom_foret))  
         if not resultats:
             # Forêt inconnue
-            return None                                     
+            return None
 
         # Structure de la table FORET: id_foret, id_feature, nom, ...
         # On prend le premier résultat
         # Extraction de l'id_feature (colonne index 1)
-        id_feature = resultats[0][1]                        
+        id_feature = resultats[0][1]
 
         # 2. Rechercher la feature dans le GeoJSON
         feature = self.json.rechercher_feature(id_feature)
         # Absence de géométrie => pas de centre calculable
-        if not feature or not feature.get('geometry'):      
+        if not feature or not feature.get('geometry'):
             return None
 
         # 3. Calculer le centre avec shapely
         # Conversion en objet shapely
-        geometrie = shape(feature['geometry'])              
+        geometrie = shape(feature['geometry'])
         # Calcul du centroïde géographique
-        centre = geometrie.centroid                         
+        centre = geometrie.centroid
 
         # Géométrie vide : pas de centroïde
         if centre.is_empty:
-            return None                                     
+            return None
 
         # Retourne (latitude, longitude)
         return centre.y, centre.x 
@@ -946,9 +946,9 @@ class InteractionDonnees:
             res = self.bdd.rechercher_ligne("FORET", ("id_foret", id_entree))
             if not res:
                 # Forêt introuvable en BDD
-                return None                                 
+                return None
             # Extraction de l'id_feature (colonne index 1)
-            id_feature = res[0][1]                          
+            id_feature = res[0][1]
         else:
             # On suppose que c'est l'id_feature directement
             id_feature = id_entree
@@ -956,21 +956,21 @@ class InteractionDonnees:
         # Récupération de la feature
         feature = self.json.rechercher_feature(id_feature)
         # Absence de géométrie => superficie incalculable
-        if not feature or not feature.get('geometry'):      
+        if not feature or not feature.get('geometry'):
             return None
 
         # Calcul de la superficie
         # Conversion en objet shapely
-        geometrie = shape(feature['geometry'])              
+        geometrie = shape(feature['geometry'])
         # La géométrie est en degrés (WGS84)
 
         if geometrie.is_empty:
             # Géométrie vide => superficie nulle
-            return 0.0                                      
+            return 0.0
 
         # On calcule l'aire en degrés carrés
         # Aire brute en degrés² (non métrique)
-        aire_deg2 = geometrie.area                          
+        aire_deg2 = geometrie.area
 
         # Conversion en hectares (approximation pour la France)
         # 1 degré de latitude ~= 111132 m
@@ -978,14 +978,14 @@ class InteractionDonnees:
         # On utilise le centre de la géométrie pour la latitude
 
         # Centre de la géométrie pour la correction de longitude
-        centre = geometrie.centroid                         
+        centre = geometrie.centroid
         # Latitude en radians (nécessaire pour cos)
-        lat_rad = math.radians(centre.y)                   
+        lat_rad = math.radians(centre.y)
 
         # Mètres par degré de latitude en France
-        m_per_deg_lat = 111132                              
+        m_per_deg_lat = 111132
         # Mètres par degré de longitude (varie avec la latitude)
-        m_per_deg_lon = 111132 * math.cos(lat_rad)         
+        m_per_deg_lon = 111132 * math.cos(lat_rad)
 
         # Superficie en m2 = aire_deg2 * m_per_deg_lat * m_per_deg_lon
         # Conversion degrés² -> m²
@@ -1042,18 +1042,18 @@ def charger_donnees_csv(liste, col = 1):
     """
     data = []
     # Construction du chemin depuis une liste de segments
-    chemin = os.sep.join(liste)                            
+    chemin = os.sep.join(liste)
     # Encodage Latin-3 (ISO 8859-3) pour les caractères spéciaux
     with open(chemin, newline='', encoding="ISO 8859-3") as f:  
         # Le fichier CSV utilise le point-virgule comme séparateur
-        reader = csv.reader(f, delimiter=";")              
+        reader = csv.reader(f, delimiter=";")
         # On saute la première ligne (en-tête des colonnes)
-        next(reader, None)                                 
+        next(reader, None)
         for row in reader:
             # On vérifie que la ligne a bien la colonne demandée
-            if len(row) > col:                             
+            if len(row) > col:
                 # Extraction de la valeur dans la colonne souhaitée
-                data.append(row[col])                     
+                data.append(row[col])
 
     # on revoie la liste des valeurs
     return data
@@ -1077,14 +1077,14 @@ def rechercher_dans_csv(chemin, col, valeur):
     # Encodage Latin-3 pour les caractères spéciaux
     with open(chemin, newline="", encoding="ISO 8859-3") as fichier:  
         # Séparateur point-virgule
-        reader = csv.reader(fichier, delimiter=";")        
+        reader = csv.reader(fichier, delimiter=";")
         # Saut de la ligne d'en-tête
-        next(reader, None)                                 
+        next(reader, None)
         for ligne in reader:
             # Vérification de la longueur et de la valeur recherchée
             if len(ligne) > col and ligne[col] == valeur:  
                 # Ajout de la ligne entière si le critère est satisfait
-                data.append(ligne)                         
+                data.append(ligne)
 
     # on revoie la liste des lignes trouvées
     return data
@@ -1106,7 +1106,7 @@ def charger_noms_forets(liste):
 
     # Chargement du GeoJSON en mémoire
     with open(chemin_json, encoding="utf-8") as f:
-        data = json.load(f)                                
+        data = json.load(f)
 
     noms = []
     # Parcours de toutes les features
@@ -1200,7 +1200,7 @@ def sous_polygones(coords):
         coords_norm:list[list[list[list[float]]]] : polygone uniformisé
     """
     # Normalisation des coordonnées (conversion tuples -> listes)
-    coords_norm = normaliser(coords)               
+    coords_norm = normaliser(coords)
     if coords_norm and coords_norm[0]:
         # coords peut être un Polygon ou un MultiPolygon, on détecte lequel en
         # regardant si le premier élément est une liste de points ou une liste
@@ -1209,10 +1209,10 @@ def sous_polygones(coords):
         # Si MultiPolygon : 4 niveaux d'imbrication
         if isinstance(coords_norm[0][0][0], list):  
             # MultiPolygon : déjà une liste de polygones
-            return coords_norm       
+            return coords_norm
 
         # Polygon : on l'encapsule dans une liste pour uniformiser
-        return [coords_norm]         
+        return [coords_norm]
 
 
 def egaux(coords_a, coords_b, tolerance = 0.99):
