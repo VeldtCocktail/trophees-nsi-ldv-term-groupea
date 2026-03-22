@@ -1,3 +1,6 @@
+# Projet : SilvaDaVinci
+# Auteurs : Mathéo PASQUIER, Maden USSEREAU, Léon RAIFAUD, Charlélie PINEAU
+
 # importation des bibliothèques nécessaires
 import folium
 import pathlib
@@ -126,7 +129,9 @@ def generer_carte(
 
     map_name = carte.get_name()
 
-    # portion de code générée par l'intelligence artificielle
+    # portion de code générée par l'intelligence artificielle pour créer une
+    # communication entre la carte et le programme Python afin de transmettre
+    # les coordonnées de chaque clic sur la carte
     click_js = f"""
     function bindMapClick() {{
         if (typeof {map_name} !== 'undefined') {{
@@ -157,12 +162,26 @@ def generer_carte(
     """
     # fin de la portion générée par IA
 
+    # on ajoute ces éléments JavaScript au code de la carte
     carte.get_root().script.add_child(folium.Element(click_js))
     carte.get_root().html.add_child(folium.Element(qwebchannel_js))
 
+    # puis on l'enregistre dans le répertoire data\cartes
     carte.save(pathlib.Path("data", "cartes", "carte.html"))
 
+
 def fonction_style_permanent(elem):
+    """
+    Entrées \\: \n
+        elem:any : élément sur lequel le style sera appliqué
+    
+    Rôle \\: \n
+        Renvoyer un dictionnaire de style CSS à appliquer aux éléments de la
+        carte qui sont "permanents"
+    
+    Sortie \\: \n
+        dict[str: any] : style à appliquer
+    """
     return {
         "fillColor": "#2e8b57",
         "color": "#1f5f3f",
@@ -170,7 +189,19 @@ def fonction_style_permanent(elem):
         "fillOpacity": 0.6
     }
 
+
 def fonction_style_select(elem):
+    """
+    Entrées \\: \n
+        elem:any : élément sur lequel le style sera appliqué
+    
+    Rôle \\: \n
+        Renvoyer un dictionnaire de style CSS à appliquer aux éléments de la
+        carte qui sont sélectionnés
+    
+    Sortie \\: \n
+        dict[str: any] : style à appliquer
+    """
     return {
         "fillColor": "#230e80e6",
         "color": "#0000ff00",
@@ -178,7 +209,19 @@ def fonction_style_select(elem):
         "fillOpacity": 0.5
     }
 
+
 def fonction_style_temp(elem):
+    """
+    Entrées \\: \n
+        elem:any : élément sur lequel le style sera appliqué
+    
+    Rôle \\: \n
+        Renvoyer un dictionnaire de style CSS à appliquer aux éléments de la
+        carte qui sont "temporaires"
+    
+    Sortie \\: \n
+        dict[str: any] : style à appliquer
+    """
     return {
         "fillColor": "#eeff00",
         "color": "#0000ff00",
@@ -186,7 +229,19 @@ def fonction_style_temp(elem):
         "fillOpacity": 0.4
     }
 
+
 def fonction_style_suppr(elem):
+    """
+    Entrées \\: \n
+        elem:any : élément sur lequel le style sera appliqué
+    
+    Rôle \\: \n
+        Renvoyer un dictionnaire de style CSS à appliquer aux éléments de la
+        carte qui doivent être supprimés
+    
+    Sortie \\: \n
+        dict[str: any] : style à appliquer
+    """
     return {
         "fillColor": "#e21313ed",
         "color": "#0000ff00",

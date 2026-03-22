@@ -2,11 +2,11 @@
 
 ## Description
 
-Application de visualisation et de gestion des forêts en Vendée. Ce projet permet d'afficher sur une carte interactive 
-les différentes forêts du département, avec des informations détaillées sur chacune d'entre elles (superficie, 
-biodiversité, champignons, etc.).
+SilvaDaVinci est une application à but informatif. Notre projet permet de visualiser des forêts sur une carte
+et de gérer des données à leur sujet : on peut notamment y renseigner les différents type d’arbres, les espèces animales présentes, les risques et d’autres données encore.
+L’application permet également de créer des nouvelles forêts en sélectionnant leur localisation sur la carte interactive et en y ajoutant les données connues, qui pourront ensuite être modifiées par l’utilisateur.
 
-Développé dans le cadre du cours de NSI (Numérique et Sciences Informatiques).
+Ce projet a été développé dans le cadre du concours des Trophées NSI.
 
 ## Fonctionnalités
 
@@ -197,10 +197,14 @@ L'interface graphique PyQt5 comprend :
 - Un panneau latéral avec des boutons de gestion
 - Une fenêtre modale pour ajouter/modifier des forêts
 
-## Équipe
+## Auteurs
 
 Projet réalisé par des élèves de NSI du lycée Léonard de Vinci de Montaigu :
 - Mathéo PASQUIER (T08)
 - Charlélie PINEAU (T02)
 - Léon RAIFAUD (T02)
 - Maden USSEREAU (T03)
+
+## License
+
+Ce projet est sous licence GNU GPL v3+ - voir le fichier LICENSE pour plus d'informations.

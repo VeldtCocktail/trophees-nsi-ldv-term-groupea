@@ -10,5 +10,5 @@ import math
 from shapely.geometry import shape, mapping
 from shapely.ops import orient
 
-# fichiers à importer lorsqu'on exécute " from module_affichage import * "
+# fichiers à importer lorsqu'on exécute " from module_bdd import * "
 __all__ = ['interaction_donnees']
