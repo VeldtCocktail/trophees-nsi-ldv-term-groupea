@@ -190,6 +190,10 @@ Cela se manifeste par des fichiers (absents aujourd'hui) qui ont permis de teste
 Par exemple, dans le cas du module s'occupant de la base de données (voir le dossier ```module_bdd```), un fichier précédemment nommé ```tests.py``` nous a permis d'essayer et tester de nouvelles fonctions/ méthodes associées à la base de données. 
 Aussi, cela nous a permis d'utiliser des extraits de données pour tester le bon fonctionnement de l'application, sans avoir à les charger dans leur entièreté.
 
+Concernant l'interface utilisateur, nous avons fréquemment lancé le programme afin d'observer le fonctionnement des divers composants interactifs (boutons, listes, barres de recherche). Cela nous a permis d'identifier et de rectifier des problèmes associés à l'ajustement ou à la mise à jour des données présentées.
+
+Pour finir, afin de valider l'ensemble de l'application, nous avons mis en œuvre des scénarios d'usage complets : recherche de forêts, création et suppression de polygones, réalisation de requêtes Overpass et contrôle de la mise à jour cartographique. Ces tests globaux ont été essentiels pour garantir que les divers modules (base de données, affichage et cartes) fonctionnaient ensemble sans problème et que l'application demeurait stable et réactive.
+
 ## B - Difficultés rencontrées et solutions algorithmiques
 
 Tout au long du développement de notre projet, plusieurs difficultés se sont placées sur notre chemin. Cela nous a obligé à réfléchir à des solutions pertinentes, efficaces et pouvant être incluses dans notre programme de façon cohérente et facilement compréhensible.
