@@ -14,7 +14,7 @@ Nous avons également réfléchi à la manière dont nous pourrions remplir notr
 
 ## C - Objectifs
 
-Les fonctionnalités initiales que nous avions choisis pour la réalisation de notre application étaient les suivants :
+Les fonctionnalités initiales que nous avions choisies pour la réalisation de notre application étaient les suivantes :
 - Affichage des forêts sur une carte : nous avons dès le début souhaité afficher en couleur les forêts sur une carte interactive
 - Création et modification des données géométriques : nous souhaitions implémenter la possiblité pour l'utilisateur de modifier les espaces des forêts, d'en enregistrer de nouvelles ou encore de modifier leurs caractéristiques, même si nous ne savions pas encore comment nous nous y prendrions
 - Affichage d'informations à propos de chaque forêt : nous voulions permettre à l'utilisateur de rechercher des forêts et d'accéder à plusieurs informations les concernant, telles que les variétés d'arbres ou les espèces qu'on peut y trouver.
@@ -187,8 +187,10 @@ Pour finaliser le projet, nous avons fini par corriger les bugs qui subsistaient
 Afin d'éviter les bugs, nous avons mis en place plusieurs tests et vérifications. 
 Pour permettre une meilleure organisation des tests, nous avons décidé de vérifier le bon fonctionnement de chaque module séparément, puis de vérifier le bon fonctionnement de l'application dans son ensemble.
 Cela se manifeste par des fichiers (absents aujourd'hui) qui ont permis de tester plusieurs fonctionnalités cruciales du programme. 
-Par exemple, dans le cas du module s'occupant de la base de données (voir le dossier ```module_bdd```), un fichier précédemment nommé ```tests.py``` nous a permis d'essayer et tester de nouvelles fonctions/ méthodes associées à la base de données. 
+Par exemple, dans le cas du module s'occupant de la base de données (voir le dossier ```module_bdd```), un fichier précédemment nommé ```tests.py``` nous a permis d'essayer et tester de nouvelles fonctions etméthodes associées à la base de données. 
 Aussi, cela nous a permis d'utiliser des extraits de données pour tester le bon fonctionnement de l'application, sans avoir à les charger dans leur entièreté.
+
+Pour rendre le projet conforme à la structure des Trophées NSI, nous avons récemment déplacé certains de ces tests dans le module [```tests```](tests/).
 
 Concernant l'interface utilisateur, nous avons fréquemment lancé le programme afin d'observer le fonctionnement des divers composants interactifs (boutons, listes, barres de recherche). Cela nous a permis d'identifier et de rectifier des problèmes associés à l'ajustement ou à la mise à jour des données présentées.
 
@@ -248,7 +250,7 @@ En effet, étant donné le nombre relativement faible de détails pouvant être 
 
 Nous estimons que le programme que nous avons réalisé est relativement facilement accessible, que ce soit dans les recherche de forêts (permettant à l'utilisateur d'avoir la localisation de la forêt et des informations dessus) mais également dans la création ou la modification d'une forêt (en lui permettant de modifier les informations lorsque celles-ci sont fausses ou encore de rajouter une forêt si celle-ci viens d'etre créée) grâce aux boutons, aux fenêtres ou encore aux barres de recherches, que nous avons tenté de rendre assez visibles et intuitifs.
 
-Le nombre de fonctionnalités est toutefois relativement limité, ce qui est dû principalement à un manque d'idées et de temps pour en réaliser certaines.
+Le nombre de fonctionnalités est toutefois relativement limité, ce qui est dû principalement à un manque d'idées et de temps pour en réaliser certaines, telles qu'une éventuelle modification de la carte pour la rendre plus interactive, ainsi que d'autres idées d'amélioration.
 
 ## B – Idées d'amélioration du projet
 
@@ -266,8 +268,15 @@ Grâce à ce projet assez conséquent pour cette année de Terminale, nous avons
 
 ## D – Accessibilité et inclusion
 
-Nous avons tenté de rendre cette application accessible à la majorité de ses utilisateurs potentiels. Le thème sombre est un élément classique du travail sur l’accessibilité, et permet l’utilisation de l’application dans un environnement sombre. Cela permet une accessibilité sans risque de crise d'épilepsie aux personnes pouvant être photosensible.
+Nous avons tenté de rendre cette application accessible à la majorité de ses utilisateurs potentiels. Le thème n'est ni trop sombre ni trop lumineux, ce qui est un élément classique du travail sur l'accessibilité, et permet donc l'utilisation de l'application dans un environnement de n'importe quelle luminosité.
 
-Nous avons de plus utilisé des palettes de couleurs contrastées pour les textes, les boutons et autres éléments de navigation, et  l’arrière-plan, afin de ne pas occasionner de désagrément ou de difficulté aux personnes atteintes de daltonismes ou de divers troubles de la vision lors de l’utilisation del’application. Les textes des différentes pages sont ainsi bien visibles, ce qui permet une utilisation facile par tout le monde.
+Nous avons de plus utilisé des palettes de couleurs contrastées pour les textes, les boutons et autres éléments de navigation, et  l'arrière-plan, afin de ne pas occasionner de désagrément ou de difficulté aux personnes atteintes de daltonisme ou de divers troubles de la vision lors de l'utilisation de l'application. Les textes des différentes pages sont ainsi bien visibles, ce qui permet une utilisation facile par tout le monde.
 
-Enfin, nous avons essayé de rendre l’application au maximum responsive, c’est-à-dire que les différents éléments qui sont présents sur les pages s’adaptent à la largeur de l’écran de l’utilisateur, comme la  barre sur le côté qui se déplace en dessous de la barre de navigation lorsque la largeur est réduite.
+# Auteurs
+
+Maden USSEREAU
+Charlélie PINEAU
+Léon RAIFAUD
+Mathéo PASQUIER
+
+Elèves du lycée **Léonard de Vinci** de Montaigu-Vendée
