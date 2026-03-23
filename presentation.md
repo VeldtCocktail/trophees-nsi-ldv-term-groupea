@@ -250,9 +250,9 @@ Le nombre de fonctionnalités est toutefois relativement limité, ce qui est dû
 
 Pour améliorer notre programme permettant d'afficher les emplacements des forêts, nous pourrions travailler sur plusieurs aspects différents.
 
-Au niveau esthétique, nous pourrions améliorer le style des barres de recherche, et nous pourrions également faire en sorte de mettre des icones ou des images sur les différentes fenêtres de sélection pour permettre à un utilisateur de se repérer plus facilement.
+Au niveau esthétique, nous pourrions améliorer le style des barres de recherche, et nous pourrions également faire en sorte de mettre des icones ou des images sur les différentes fenêtres de sélection pour permettre à un utilisateur de se repérer plus facilement mais égalment pour permettre aux utilisateur ayant des difficultés de lectures de n'être pas en difficulté face aux site internet.
 
-Au niveau fonctionnel, nous pourrions prendre une carte ayant plus de précisions pour permettre à l'utilisateur de visualiser plus précisément où se trouve la forêt. Nous pourrions aussi faire en sorte que l'utilisateur puisse mettre une note et un commentaire pour chaque forêt, que l'on enregistrerait comme information sur la forêt. Nous pourrions également implémenter un système de comptes et d'administration, pour que les modifications soient vérifiées par un modérateur avant d'être appliquées.
+Au niveau fonctionnel, nous pourrions prendre une carte ayant plus de précisions pour permettre à l'utilisateur de visualiser plus précisément où se trouve la forêt. Nous pourrions aussi faire en sorte que l'utilisateur puisse mettre une note et un commentaire pour chaque forêt, que l'on enregistrerait comme information sur la forêt. Nous pourrions également implémenter un système de comptes et d'administration, pour que les modifications soient vérifiées par un modérateur avant d'être appliquées. Nous aurions pu également faire en sorte que tu bruit ce dégage de chaque bouton pour faire que les personnes ayant des difficulté à voir puisse savoir sur quoi ils cliquent.
 
 Nous pourrions enfin augmenter l'efficacité de la recherche et de la modification de forêts en enregistrant les informations par zone géographique (département ou région) afin de pouvoir élargir à la France entière tout en restant rapide et efficace. Nous pourrions également ajouter des informations sur les activités accessibles telles que des chemins de randonnée ou la pratique d'autres sports. 
 
@@ -262,4 +262,8 @@ Grâce à ce projet assez conséquent pour cette année de Terminale, nous avons
 
 ## D – Accessibilité et inclusion
 
-Application intuitive, sans trop de texte dans tous les sens, couleurs vives et distinctes.
+Nous avons tenté de rendre cette application accessible à la majorité de ses utilisateurs potentiels. Le thème sombre est un élément classique du travail sur l’accessibilité, et permet l’utilisation de l’application dans un environnement sombre. Cela permet une accessibilité sans risque de crise d'épilepsie aux personnes pouvant être photosensible.
+
+Nous avons de plus utilisé des palettes de couleurs contrastées pour les textes, les boutons et autres éléments de navigation, et  l’arrière-plan, afin de ne pas occasionner de désagrément ou de difficulté aux personnes atteintes de daltonismes ou de divers troubles de la vision lors de l’utilisation del’application. Les textes des différentes pages sont ainsi bien visibles, ce qui permet une utilisation facile par tout le monde.
+
+Enfin, nous avons essayé de rendre l’application au maximum responsive, c’est-à-dire que les différents éléments qui sont présents sur les pages s’adaptent à la largeur de l’écran de l’utilisateur, comme la  barre sur le côté qui se déplace en dessous de la barre de navigation lorsque la largeur est réduite.
